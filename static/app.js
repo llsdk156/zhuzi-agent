@@ -142,9 +142,10 @@ const dailyQuotes = [
     { quote: "“人心虚灵不昧，以具众理而应万事。学者先须收拾此心，莫令逐物迁变。”", author: "—— 考亭夫子 · 《朱子语类》" }
 ];
 
-// 4. 全局语音配音控制器 (默认关闭自动播音以提升极致流畅度，点击气泡或按钮随时可朗诵)
-let autoTTS = false;
+// 4. 全局语音配音控制器（默认开启实时诵读出声，声情并茂）
+let autoTTS = true;
 let currentVoiceStyle = "yunjian"; // 考亭大儒苍劲风骨
+
 let currentAudio = null;
 let currentTTSAbortController = null;
 let currentTTSButton = null;
@@ -511,6 +512,9 @@ async function sendQuery(moduleKey, queryOverride) {
                             if (moduleKey === "qa" && window.avatarEngine) {
                                 avatarEngine.onComplete(fullText);
                             }
+                            if (moduleKey === "qa" && currentTaskFlow) {
+                                updateTaskFlowChips(fullText);
+                            }
                         }
                     } catch (err) {
                         console.warn("JSON解析微恙:", err);
@@ -538,7 +542,7 @@ async function sendQuery(moduleKey, queryOverride) {
             container.scrollTop = container.scrollHeight;
         } else {
             console.error("对话请求发生异常:", err);
-            textEl.innerHTML = `<span style="color:#ef4444;">抱歉，考亭书院网络传信遇阻，请稍后重新提问。(${escapeHtml(err.message)})</span>`;
+            textEl.innerHTML = `<span style="color:#ef4444;">抱歉，考亭书院网络传信遇阻，请稍后重新提问【${escapeHtml(err.message)}】</span>`;
         }
     } finally {
         if (moduleKey === "qa" && window.avatarEngine && controller.signal.aborted) {
@@ -568,13 +572,14 @@ async function sendQuery(moduleKey, queryOverride) {
         delete activeAbortControllers[moduleKey];
         setGeneratingUIState(moduleKey, false);
 
-        // 显示并触发配音（仅在正常结束且有文字时，配音亦彻底杜绝括号）
+        // 显示并触发配音（任务流或开启配音时实时出声，彻底杜绝括号）
         if (ttsBtn && fullText.trim()) {
             ttsBtn.style.display = "inline-flex";
-            if (autoTTS && !controller.signal.aborted && fullText.length > 0) {
+            if ((autoTTS || currentTaskFlow) && !controller.signal.aborted && fullText.length > 0) {
                 playVoice(fullText, ttsBtn);
             }
         }
+
 
         if (input) {
             input.focus();
@@ -1083,8 +1088,14 @@ async function handleDocumentAnalysis(input) {
             method: "POST",
             body: formData
         });
-        const data = await res.json();
-        if (res.ok && data.prompt) {
+        let data;
+        try {
+            data = await res.json();
+        } catch (jsonErr) {
+            throw new Error(`服务器响应格式异常 状态码 ${res.status}`);
+        }
+
+        if (res.ok && data.code === 200 && data.prompt) {
             if (statusEl) {
                 statusEl.textContent = `《${file.name}》研析完成，即刻移步考亭精舍呈交先生朱砂手批！`;
                 statusEl.style.color = "#16a34a";
@@ -1094,10 +1105,10 @@ async function handleDocumentAnalysis(input) {
                 switchNav("qa");
                 sendQuery("qa", data.prompt);
                 showToast(`已将《${file.name}》呈递考亭先生即物穷理批阅`);
-            }, 700);
+            }, 600);
         } else {
             if (statusEl) {
-                statusEl.textContent = data.detail || "文献研析失败，请检查文件格式";
+                statusEl.textContent = data.detail || data.error || "文献研析失败，请检查文件格式";
                 statusEl.style.color = "#dc2626";
             }
         }
@@ -1108,6 +1119,219 @@ async function handleDocumentAnalysis(input) {
         }
     }
 }
+
+// ========================================================
+// 考亭书院 · 先生四大专修任务流管理器
+// ========================================================
+let currentTaskFlow = null;
+
+function appendAssistantParchment(moduleKey, text) {
+    const sess = chatSessions[moduleKey];
+    if (!sess) return;
+    const container = document.getElementById(sess.containerId);
+    if (!container) return;
+
+    const row = document.createElement("div");
+    row.className = "message-row assistant";
+    row.innerHTML = `
+        <div class="message-avatar"><img src="/static/avatar_ref_hd.png" alt="先生" class="msg-avatar-img"></div>
+        <div class="message-bubble parchment-bubble">
+            <div class="bubble-top-row">
+                <span class="speaker-label">考亭先生 · 专修开示</span>
+                <button class="tts-play-btn" onclick="playVoiceFromBubble(this)">
+                    <span class="tts-icon">🔊</span> <span class="tts-text">聆听先生讲学</span>
+                </button>
+            </div>
+            <div class="message-text">${renderMarkdown(cleanParentheses(text))}</div>
+            <div class="bubble-seal-mark">文公手定</div>
+        </div>
+    `;
+    container.appendChild(row);
+    container.scrollTop = container.scrollHeight;
+}
+
+function startTaskFlow(flowType) {
+    currentTaskFlow = flowType;
+    autoTTS = true;
+
+    closeUploadModal();
+    switchNav("qa");
+
+    const bar = document.getElementById("active-taskflow-bar");
+    const iconEl = document.getElementById("taskflow-bar-icon");
+    const titleEl = document.getElementById("taskflow-bar-title");
+    const chipsBar = document.getElementById("taskflow-quick-chips");
+    const defaultChipsBar = document.getElementById("qa-default-chips-bar");
+
+    if (defaultChipsBar) defaultChipsBar.style.display = "none";
+    if (bar) bar.style.display = "flex";
+    if (chipsBar) chipsBar.style.display = "flex";
+
+    let flowTitle = "";
+    let flowIcon = "";
+    let openingMsg = "";
+    let chipsHtml = "";
+
+    if (flowType === "thesis") {
+        flowIcon = "🎓";
+        flowTitle = "论文研撰指导专修工作流";
+        openingMsg = "考亭先生开讲：仁兄立意撰写理学学术大作，深契老夫‘道问学’之志！做学问正如造高塔，大本先立，方能层层筑就。老夫特拟五大具有学术深度与现实关怀的论文方向，仁兄可任选其一，亦可直接输入自定论题：";
+        chipsHtml = `
+            <button class="taskflow-quick-chip" onclick="selectThesisDirection('宋代理学理气论与现代自然观')">📌 1. 理气论与现代自然观</button>
+            <button class="taskflow-quick-chip" onclick="selectThesisDirection('《大学章句》格物致知与现代认知工夫')">📌 2. 格物致知与现代认知工夫</button>
+            <button class="taskflow-quick-chip" onclick="selectThesisDirection('朱子心性存养工夫与现代修养调适')">📌 3. 心性存养与现代身心修养</button>
+            <button class="taskflow-quick-chip" onclick="selectThesisDirection('武夷书院传统与现代书院制通识教育')">📌 4. 武夷书院传统与书院制改革</button>
+            <button class="taskflow-quick-chip" onclick="selectThesisDirection('《朱子家训》家风传承与当代伦理建构')">📌 5. 朱子家训与当代家风传承</button>
+        `;
+    } else if (flowType === "poetry") {
+        flowIcon = "📜";
+        flowTitle = "朱子古诗析理专修工作流";
+        openingMsg = "考亭先生开卷：老夫向来主张‘诗以道性情，诗以明物理’。仁兄可点击输入框旁相机图标上传古诗墨宝图片，亦可将诗作名篇直接键入对话框中，老夫当与仁兄由诗入道，详析其中之理趣诗境与武夷风物！";
+        chipsHtml = `
+            <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('请先生赏析《观书有感》其一“半亩方塘一鉴开，天光云影共徘徊。问渠那得清如许？为有源头活水来”之理趣与心性工夫。')">📖 赏析《观书有感》其一</button>
+            <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('请先生赏析《春日》“胜日寻芳泗水滨，无边光景一时新。等闲识得东风面，万紫千红总是春”中天道生生之意。')">📖 赏析《春日》</button>
+            <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('请先生赏析《武夷九曲棹歌》二曲与五曲中武夷山水景致与道体流行。')">📖 赏析《九曲棹歌》</button>
+            <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('请先生赏析《武夷精舍杂咏·隐屏峰》与考亭精舍之诗性哲学。')">📖 赏析《隐屏峰杂咏》</button>
+            <button class="taskflow-quick-chip" onclick="triggerPoetryImageUpload()">📷 拍照上传古诗墨宝图片</button>
+        `;
+    } else if (flowType === "scenery") {
+        flowIcon = "🏞️";
+        flowTitle = "武夷揽胜寄情专修工作流";
+        openingMsg = "考亭先生泛舟相邀：武夷山秀甲东南，千岩竞秀，万壑争流；本校武夷学院更是坐落于大王峰与幔亭峰下，涵泳理学八百年之灵气。不知仁兄今日欲先赏玩何处胜境？老夫当呈递画卷，并结合文献与当年亲历深情相告：";
+        chipsHtml = `
+            <button class="taskflow-quick-chip" onclick="selectScenerySpot('武夷学院朱子书院与逸夫图书馆')">🏛️ 武夷学院朱子书院与逸夫图书馆</button>
+            <button class="taskflow-quick-chip" onclick="selectScenerySpot('武夷山九曲清溪与竹筏漂流')">🚣 武夷山九曲清溪与竹筏漂流</button>
+            <button class="taskflow-quick-chip" onclick="selectScenerySpot('南平建阳考亭书院与道原堂')">🏮 南平建阳考亭书院与道原堂</button>
+            <button class="taskflow-quick-chip" onclick="selectScenerySpot('武夷山五夫镇紫阳楼与荷塘')">🏡 武夷山五夫镇紫阳楼与荷塘</button>
+            <button class="taskflow-quick-chip" onclick="selectScenerySpot('武夷山天游峰与隐屏峰')">⛰️ 武夷山天游峰与隐屏峰</button>
+            <button class="taskflow-quick-chip" onclick="selectScenerySpot('武夷宫与武夷精舍古建筑群')">🍃 武夷宫与武夷精舍古建筑群</button>
+        `;
+    } else if (flowType === "life") {
+        flowIcon = "⏳";
+        flowTitle = "朱子生平履历专修工作流";
+        openingMsg = "考亭先生感怀：老夫一生七十有一载，历尽世事沧桑、学思迁变，由佛老而归六经，由从政而归书院。仁兄欲垂询老夫哪一段难忘光景？尽请点选，老夫与汝娓娓道来，仁兄随时可发问研讨，直至尽晓圣贤一生求道风骨：";
+        chipsHtml = `
+            <button class="taskflow-quick-chip" onclick="selectLifeStage('幼承庭训与从师游学')">📜 1. 幼承庭训与从师游学</button>
+            <button class="taskflow-quick-chip" onclick="selectLifeStage('延平师事与弃佛归儒')">🌊 2. 延平师事与弃佛归儒</button>
+            <button class="taskflow-quick-chip" onclick="selectLifeStage('结庐武夷与撰集四书')">🌿 3. 结庐武夷与撰集四书</button>
+            <button class="taskflow-quick-chip" onclick="selectLifeStage('鹅湖之会与朱陆论辩')">🕊️ 4. 鹅湖之会与朱陆论辩</button>
+            <button class="taskflow-quick-chip" onclick="selectLifeStage('知南康军与复兴白鹿洞')">🌾 5. 知南康军与复兴白鹿洞</button>
+            <button class="taskflow-quick-chip" onclick="selectLifeStage('晚年考亭与庆元党禁')">⚡ 6. 晚年考亭与庆元党禁</button>
+        `;
+    }
+
+    if (iconEl) iconEl.textContent = flowIcon;
+    if (titleEl) titleEl.textContent = `当前专修：${flowTitle}`;
+    if (chipsBar) chipsBar.innerHTML = chipsHtml;
+
+    appendAssistantParchment("qa", openingMsg);
+    playVoice(openingMsg);
+    showToast(`已开启【${flowTitle}】`);
+}
+
+function exitTaskFlow() {
+    currentTaskFlow = null;
+    const bar = document.getElementById("active-taskflow-bar");
+    const chipsBar = document.getElementById("taskflow-quick-chips");
+    const defaultChipsBar = document.getElementById("qa-default-chips-bar");
+
+    if (bar) bar.style.display = "none";
+    if (chipsBar) chipsBar.style.display = "none";
+    if (defaultChipsBar) defaultChipsBar.style.display = "flex";
+    showToast("已退出当前专修任务流，恢复自由问学");
+}
+
+function selectThesisDirection(topic) {
+    sendTaskFlowQuery(`后学欲撰写理学学术论文，选题方向拟定为【${topic}】，请先生从选题立意、核心理学范畴与四段式大纲提纲予以全面指导。`);
+}
+
+function selectScenerySpot(spot) {
+    sendTaskFlowQuery(`后学欲畅游赏玩【${spot}】，请先生展示此胜境之画卷，并结合文献诗文讲述先生当年在此处的真实经历与哲思体悟。`);
+}
+
+function selectLifeStage(stage) {
+    sendTaskFlowQuery(`请先生以纯第一人称，详述您当年【${stage}】这一时期的亲身经历、重大历史事件、内心求索与道义风骨。`);
+}
+
+function sendTaskFlowQuery(text) {
+    sendQuery("qa", text);
+}
+
+function triggerPoetryImageUpload() {
+    const input = document.getElementById("poetry-file-input");
+    if (input) input.click();
+}
+
+async function handlePoetryImageFile(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    showToast(`正在呈交先生识读古诗墨宝《${file.name}》...`);
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+        const res = await fetch("/api/document/analyze", {
+            method: "POST",
+            body: formData
+        });
+        const data = await res.json();
+        if (res.ok && data.prompt) {
+            sendQuery("qa", data.prompt);
+            showToast("古诗墨宝呈递成功，先生正即物穷理析析中");
+        } else {
+            showToast(data.detail || "古诗墨宝识读失败，请重试");
+        }
+    } catch (err) {
+        showToast(`识读遇阻: ${err.message}`);
+    } finally {
+        input.value = "";
+    }
+}
+
+function updateTaskFlowChips(fullText) {
+    if (!currentTaskFlow) return;
+    const chipsBar = document.getElementById("taskflow-quick-chips");
+    if (!chipsBar) return;
+
+    if (currentTaskFlow === "thesis") {
+        if (fullText.includes("具体文献") || fullText.includes("索书号") || fullText.includes("是否需要老夫提供")) {
+            chipsBar.innerHTML = `
+                <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('需要文献，请先生列出本校特藏古籍之具体文献及逸夫图书馆六楼OPAC索书号。')">📚 需要本校特藏具体文献</button>
+                <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('暂不需要文献，请先生继续深入剖析论证脉络与核心论点。')">⏭️ 暂不需要，探讨框架</button>
+            `;
+        } else if (fullText.includes("是否满意") || fullText.includes("还需要老夫") || fullText.includes("某一章节")) {
+            chipsBar.innerHTML = `
+                <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('十分满意，无需补充，感谢先生指引门径！')">✅ 十分满意，无需补充</button>
+                <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('请先生指点如何撰写本论题之引言与结语。')">✍️ 探讨引言与结论</button>
+                <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('请先生深入剖析论文核心范畴之间的辩证关系。')">🔍 深入剖析核心概念</button>
+            `;
+        } else if (fullText.includes("嘉作") || fullText.includes("增辉考亭文脉") || fullText.includes("大器")) {
+            chipsBar.innerHTML = `
+                <button class="taskflow-quick-chip" onclick="exitTaskFlow()">🎓 研撰圆满，退出专修</button>
+                <button class="taskflow-quick-chip" onclick="startTaskFlow('thesis')">🔄 开启其他论文题目</button>
+            `;
+        }
+    } else if (currentTaskFlow === "scenery") {
+        chipsBar.innerHTML = `
+            <button class="taskflow-quick-chip" onclick="selectScenerySpot('武夷学院朱子书院与逸夫图书馆')">🏛️ 武夷学院朱子书院</button>
+            <button class="taskflow-quick-chip" onclick="selectScenerySpot('武夷山九曲清溪与竹筏漂流')">🚣 九曲清溪</button>
+            <button class="taskflow-quick-chip" onclick="selectScenerySpot('南平建阳考亭书院与道原堂')">🏮 考亭书院</button>
+            <button class="taskflow-quick-chip" onclick="selectScenerySpot('武夷山五夫镇紫阳楼与荷塘')">🏡 五夫紫阳楼</button>
+            <button class="taskflow-quick-chip" onclick="selectScenerySpot('武夷山天游峰与隐屏峰')">⛰️ 天游峰与隐屏峰</button>
+            <button class="taskflow-quick-chip" onclick="selectScenerySpot('武夷宫与武夷精舍古建筑群')">🍃 武夷宫精舍</button>
+            <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('暂且游毕，感谢先生相伴云游武夷山水！')">🏞️ 暂且游毕</button>
+        `;
+    } else if (currentTaskFlow === "life") {
+        chipsBar.innerHTML = `
+            <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('请问先生当时面对挫折与非议，内心如何居敬涵养、自我反省？')">💭 当时内心如何存养？</button>
+            <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('请先生讲述下一阶段的人生历程。')">➡️ 请述下一阶段</button>
+            <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('已知晓这段历史，没有疑问了，感谢先生开示！')">✅ 没有疑问了，不需要了</button>
+            <button class="taskflow-quick-chip" onclick="exitTaskFlow()">🚪 结束生平研讨</button>
+        `;
+    }
+}
+
 
 async function handleFileUpload(input) {
     const file = input.files[0];

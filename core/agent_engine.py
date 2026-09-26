@@ -8,8 +8,10 @@ import os
 import re
 import json
 import time
+import base64
 import urllib.request
 import urllib.error
+
 from typing import List, Dict, Any, Generator, Optional, Tuple
 from rag.rag_service import rag_service
 from core.prompt_templates import (
@@ -187,95 +189,75 @@ UNGROUNDED_REFUSAL = (
 
 def format_citation(query: str, retrieved_chunks: List[Dict[str, Any]]) -> str:
     """生成合规的 CText 公开原典与武夷学院特藏 OPAC 索书号引注，严格无括号"""
-    ctext_src = "《考亭语类》卷十五与《四书章句集注》"
+    ctext_src = "《考亭语类》与《四书章句集注》"
     opac_num = "B244.7/X82"
-    location = "武夷学院逸夫图书馆六楼特藏专区 · 闽北文库"
-    edition_info = "宋淳熙建安本与中华书局理学丛书"
+    location = "武夷学院逸夫图书馆特藏专区 · 闽北文库"
 
     q = query.lower()
     if any(k in q for k in ["九曲棹歌", "九曲", "武夷山", "隐屏"]):
-        ctext_src = "《考亭文集》卷九《武夷九曲棹歌十首并引》"
+        ctext_src = "《考亭文集》卷九《武夷九曲棹歌》"
         opac_num = "I207.227/Z43"
-        location = "武夷学院逸夫图书馆六楼特藏专区 · 闽北文库专柜"
-        edition_info = "明嘉靖建阳刻本 · 影印文渊阁四库全书本"
+        location = "武夷学院逸夫图书馆六楼特藏专区"
     elif any(k in q for k in ["观书有感", "半亩方塘", "活水", "春日", "胜日寻芳"]):
-        ctext_src = "《考亭文集》卷二《观书有感二首 · 其一》"
+        ctext_src = "《考亭文集》卷二《观书有感二首》"
         opac_num = "I214.22/Z89"
-        location = "武夷学院逸夫图书馆六楼特藏专区 · 理学诗注专架"
-        edition_info = "宋绍熙刊晦庵先生朱文公文集"
+        location = "武夷学院逸夫图书馆特藏专室"
     elif any(k in q for k in ["白鹿洞", "学规", "揭示", "五教"]):
-        ctext_src = "《白鹿洞书院揭示 · 父子有亲君臣有义五教之目》"
+        ctext_src = "《白鹿洞书院揭示》"
         opac_num = "B244.7/Z89"
-        location = "武夷学院朱子学研究中心理学文献资料室"
-        edition_info = "白鹿书院原本碑拓与宋濂续编古书院规约"
+        location = "朱子学研究中心理学文献资料室"
     elif any(k in q for k in ["格物致知", "大学章句", "大学", "三纲八目"]):
-        ctext_src = "《四书章句集注 · 大学章句 · 传五章释格物致知》"
+        ctext_src = "《四书章句集注·大学章句》"
         opac_num = "B244.7/X82"
-        location = "武夷学院逸夫图书馆六楼特藏专区 · 四书古籍专柜"
-        edition_info = "元大德建安书院刻本 · 涵芬楼宋本影印"
+        location = "武夷学院逸夫图书馆特藏专区"
     elif any(k in q for k in ["中庸", "十六字心传", "率性"]):
-        ctext_src = "《四书章句集注 · 中庸章句 · 第一章天命之谓性》"
+        ctext_src = "《四书章句集注·中庸章句》"
         opac_num = "B244.7/X82"
-        location = "武夷学院逸夫图书馆六楼特藏专区 · 理学元典架"
-        edition_info = "宋咸淳九年严陵郡斋刻本"
+        location = "武夷学院逸夫图书馆特藏专区"
     elif any(k in q for k in ["论语", "仁者", "学而", "温故知新"]):
-        ctext_src = "《四书章句集注 · 论语集注 · 学而篇第一》"
+        ctext_src = "《四书章句集注·论语集注》"
         opac_num = "B244.7/X82"
-        location = "武夷学院逸夫图书馆六楼特藏专区"
-        edition_info = "宋淳熙十六年草庐手校本"
+        location = "武夷学院逸夫图书馆特藏专区"
     elif any(k in q for k in ["孟子", "浩然之气", "性善", "义利"]):
-        ctext_src = "《四书章句集注 · 孟子集注 · 梁惠王章句上》"
+        ctext_src = "《四书章句集注·孟子集注》"
         opac_num = "B244.7/X82"
-        location = "武夷学院逸夫图书馆六楼特藏专区"
-        edition_info = "明万历朱墨套印本"
+        location = "武夷学院逸夫图书馆特藏专区"
     elif any(k in q for k in ["近思录", "寒泉"]):
-        ctext_src = "《近思录》十四卷 · 卷一《道体》"
+        ctext_src = "《近思录》十四卷"
         opac_num = "B244.7/H34"
-        location = "武夷学院朱子学研究中心理学文献资料室"
-        edition_info = "南宋孝宗淳熙二年寒泉精舍朱吕合编原本"
+        location = "朱子学研究中心理学文献资料室"
     elif any(k in q for k in ["社仓", "五夫", "救荒", "饥荒"]):
         ctext_src = "《考亭文集》卷七十七《建宁府崇安县五夫社仓记》"
         opac_num = "K825.4/X82"
-        location = "武夷学院逸夫图书馆六楼特藏专区 · 闽北地方文献"
-        edition_info = "五夫社仓宋刻丰歉仓规石碑拓本"
+        location = "武夷学院逸夫图书馆特藏专区"
     elif any(k in q for k in ["鹅湖", "陆九渊", "朱陆", "尊德性", "道问学"]):
-        ctext_src = "《考亭语类》卷五十四与《宋元学案 · 象山学案》"
+        ctext_src = "《考亭语类》卷五十四与《考亭文集》"
         opac_num = "B244.7/K36"
-        location = "武夷学院逸夫图书馆六楼特藏专区"
-        edition_info = "黄宗羲全祖望原编 · 四部备要本"
+        location = "武夷学院逸夫图书馆特藏专区"
     elif any(k in q for k in ["语类", "读书法", "六法", "循序渐进", "熟读精思"]):
-        ctext_src = "《考亭语类》卷十至十一 · 读书法总论"
+        ctext_src = "《考亭语类》卷十五·读书法"
         opac_num = "B244.7/X82"
-        location = "武夷学院逸夫图书馆六楼特藏专区"
-        edition_info = "宋开庆元年黄士毅黄显祖编刻原本"
-    elif any(k in q for k in ["论文", "选题", "学术", "研学", "写论文"]):
-        ctext_src = "《四书章句集注》全篇与《考亭语类 · 性理大学总义》"
-        opac_num = "B244.7/X82"
-        location = "武夷学院逸夫图书馆六楼特藏专区 · 闽北文库研究文柜"
-        edition_info = "全国高校宋明理学重点特藏文献 · 闽北学派研究专卷"
+        location = "武夷学院逸夫图书馆特藏专区"
     elif any(k in q for k in ["太极图", "无极而太极"]):
-        ctext_src = "《太极图说解》卷首"
+        ctext_src = "《太极图说解》"
         opac_num = "B244.7/X82"
-        location = "武夷学院逸夫图书馆六楼特藏专区"
-        edition_info = "四书或问合刻本"
+        location = "武夷学院逸夫图书馆特藏专区"
     elif any(k in q for k in ["西铭", "民胞物与"]):
-        ctext_src = "《西铭解》理一分殊篇"
+        ctext_src = "《西铭解》"
         opac_num = "B244.7/X82"
-        location = "武夷学院逸夫图书馆六楼特藏专区"
-        edition_info = "正谊堂全书本"
+        location = "武夷学院逸夫图书馆特藏专区"
     elif retrieved_chunks:
         s_name = retrieved_chunks[0].get("source", "考亭典籍").replace(".txt", "").replace(".md", "").replace("《", "").replace("》", "")
         s_name = sanitize_zhuxi_first_person(s_name)
-        s_chap = retrieved_chunks[0].get("title", "") or retrieved_chunks[0].get("chapter", "精要篇")
+        s_chap = retrieved_chunks[0].get("title", "") or retrieved_chunks[0].get("chapter", "精选")
         s_chap = sanitize_zhuxi_first_person(s_chap)
         ctext_src = f"《{s_name}》{s_chap}"
         opac_num = "B244.7/X82"
-        location = "武夷学院逸夫图书馆六楼特藏专区 · 闽北文库"
-        edition_info = "宋明理学典籍善本特藏"
+        location = "武夷学院逸夫图书馆特藏专区"
 
     citation = (
-        f"\n\n📜 **【典籍原典出处】**：{ctext_src} · 经典版本：{edition_info} · CText开放公有领域原典库\n"
-        f"🏛️ **【武夷学院馆藏OPAC】**：{location} · 索书号 {opac_num} · 专题学术参考咨询"
+        f"\n\n📜 **【典籍原典出处】**：{ctext_src} · CText开放公有领域原典库\n"
+        f"🏛️ **【武夷学院馆藏OPAC】**：{location} 索书号 {opac_num} · 专题参考咨询"
     )
     return citation
 
@@ -339,27 +321,39 @@ def is_grounded_query(query: str, retrieved_chunks: List[Dict[str, Any]]) -> boo
     academic_inquiries = [
         "论文", "写论文", "做论文", "毕业论文", "开题", "学术", "选题", "做研究",
         "学术研究", "研究方向", "考证", "文献检索", "文献", "参考书", "书单",
-        "研究生", "本科生", "通识", "写作", "立论", "文献依据", "课题"
+        "研究生", "本科生", "通识", "写作", "立论", "文献依据", "课题",
+        "需要文献", "暂不需要", "十分满意", "无需补充", "不需要了", "没有疑问了", "满意了"
     ]
     if any(k in q_lower for k in academic_inquiries):
         return True
 
-    # 6. 门生应答、承前启后与日常对话接续
+    # 6. 四大研学任务流（论文研撰、古诗析理、武夷揽胜、生平履历）
+    taskflow_keywords = [
+        "古诗", "诗词", "赏析", "诗意", "绝句", "律诗", "春日", "观书有感", "九曲棹歌", "精舍杂咏", "诗歌", "墨宝",
+        "风景", "武夷山", "武夷学院", "九曲溪", "考亭书院", "紫阳楼", "天游峰", "隐屏", "武夷宫", "胜景", "游览", "山水", "胜地", "揽胜", "大红袍",
+        "经历", "生平", "阶段", "人生经历", "当年", "从师", "李延平", "鹅湖之会", "白鹿洞", "知南康", "党禁", "庆元", "伪学", "幼承庭训", "刘子翚", "人生"
+    ]
+    if any(k in q_lower for k in taskflow_keywords):
+        return True
+
+    # 7. 门生应答、承前启后与日常对话接续
     dialogue_continuations = [
         "生", "学生", "后生", "弟子", "门人", "可以", "好", "对", "是", "行",
         "愿闻其详", "受教", "明白", "请先生指点", "先生何意", "如何下手",
-        "怎么做", "愿从先生", "请开示", "确实", "赞同", "继续", "接着讲", "往下讲"
+        "怎么做", "愿从先生", "请开示", "确实", "赞同", "继续", "接着讲", "往下讲",
+        "下一个", "请述下一阶段", "继续探寻", "换个地方", "无需别的", "不需要", "没有了"
     ]
     if any(k == q_lower or k in q_lower for k in dialogue_continuations):
         return True
 
-    # 7. 凡非现代科技与外部无关领域的短句交流，均视为后学请教，自然接纳
-    if len(q_lower) <= 10 and not any(k in q_lower for k in modern_ungrounded_keywords):
+    # 8. 凡非现代科技与外部无关领域的短句交流，均视为后学请教，自然接纳
+    if len(q_lower) <= 12 and not any(k in q_lower for k in modern_ungrounded_keywords):
         return True
 
-    # 8. 原典文献深度匹配
-    if retrieved_chunks and retrieved_chunks[0].get("score", 0) >= 20.0:
+    # 9. 原典文献深度匹配
+    if retrieved_chunks and retrieved_chunks[0].get("score", 0) >= 15.0:
         return True
+
 
     return False
 
@@ -478,26 +472,6 @@ class ConversationContextManager:
         sess["last_answer_snippet"] = reply[:120]
 
 
-
-def _load_local_env_file():
-    """自动解析项目根目录下 .env 与 config.yml 文件，无需外部额外依赖"""
-    env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env")
-    if os.path.exists(env_path):
-        try:
-            with open(env_path, "r", encoding="utf-8") as f:
-                for line in f:
-                    line = line.strip()
-                    if line and not line.startswith("#") and "=" in line:
-                        k, v = line.split("=", 1)
-                        k = k.strip()
-                        v = v.strip().strip("'\"")
-                        if k and not os.environ.get(k):
-                            os.environ[k] = v
-        except Exception:
-            pass
-
-_load_local_env_file()
-
 session_manager = ConversationContextManager()
 
 
@@ -505,14 +479,12 @@ class ZhuXiAgent:
     """朱子文化特色认知智能体核心类"""
 
     def __init__(self):
-        # 优先读取智谱 GLM 免费大模型配置
-        _load_local_env_file()
-        self.api_key = os.getenv("API_KEY", "").strip() or os.getenv("ZHIPU_API_KEY", "").strip()
-        self.api_base_url = os.getenv("API_BASE_URL", "https://open.bigmodel.cn/api/paas/v4").strip()
-        self.llm_model = os.getenv("LLM_MODEL", "glm-4-flash").strip()
-        self.vision_model = os.getenv("VISION_MODEL", "glm-4v-flash").strip()
+        # 外部大模型配置（可选）
+        self.api_key = os.getenv("API_KEY", "").strip()
+        self.api_base_url = os.getenv("API_BASE_URL", "").strip()
+        self.llm_model = os.getenv("LLM_MODEL", "gpt-3.5-turbo").strip()
 
-        # 本地辅助配置与生成控制
+        # 本地 Ollama 专属配置（无缝调用本地 GPU 显卡）
         self.ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434").rstrip("/")
         self.ollama_model = os.getenv("OLLAMA_MODEL", "qwen2.5:1.5b").strip()
         self._ollama_available: Optional[bool] = None
@@ -620,12 +592,52 @@ class ZhuXiAgent:
             system_parts.append(
                 "\n【沧洲藏书阁与学问门径场景】：当前学者置身于沧洲藏书阁请益师门。请以传道宗师身份，为学者审定大学、论语、孟子、中庸之进学阶梯次第，结合学者学力，推荐合适典籍并指明读法。"
             )
+        # 4大专项研学任务流场景引导
+        if sess_id.startswith("flow_thesis") or any(k in query for k in ["论文方向", "论文写作", "论文研撰", "开题", "论文指导", "需要文献", "暂不需要", "十分满意"]):
+            system_parts.append(
+                "\n【论文研撰专修工作流特别守则】：\n"
+                "学者正在进行理学学术论文研学，请依循以下三阶段推进：\n"
+                "阶段一：若学者刚选择论文方向或提出论文选题，请从‘选题立意、核心理学范畴、论文四段式架构提纲’进行全面深度的学术指导。解答完毕后，必须以考亭先生口吻主动询问：‘仁兄论旨宏深，是否需要老夫提供本校特藏古籍之具体文献及逸夫图书馆六楼OPAC索书号？’\n"
+                "阶段二：若学者表示需要文献，请详细列出对应的原典版本、篇章卷次、名言摘句，并明确标注武夷学院逸夫图书馆六楼特藏专区与闽北文库专属索书号。之后必须主动追问：‘仁兄对此番论题与文献指引是否满意？是否还需要老夫在某一章节或论据上作更深剖析？’\n"
+                "阶段三：若学者表示‘十分满意，无需补充’或‘不需要了’，请给予学者殷切的学术勉励与祝愿，圆满收束。"
+            )
+        elif sess_id.startswith("flow_poetry") or any(k in query for k in ["古诗分析", "古诗析理", "诗词赏析", "观书有感", "九曲棹歌", "春日", "万紫千红", "诗作墨宝"]):
+            system_parts.append(
+                "\n【朱子古诗析理专修工作流特别守则】：\n"
+                "学者正在探讨古诗墨宝，请从朱子文化、理学义理、格物感物、道体流行与武夷诗性哲学深入解构：\n"
+                "一、诗作源流与意象解构；\n"
+                "二、格物穷理与心性印证，阐发其中蕴含的天理活水与生机流行；\n"
+                "三、考亭先生朱砂手批与体悟寄语。"
+            )
+        elif sess_id.startswith("flow_scenery") or any(k in query for k in ["浏览风景", "武夷揽胜", "九曲溪", "考亭书院", "紫阳楼", "天游峰", "武夷学院朱子书院", "武夷宫", "胜景"]):
+            system_parts.append(
+                "\n【武夷揽胜寄情专修工作流特别守则】：\n"
+                "学者正在与你云游武夷山与武夷学院名胜。若学者提到了某处胜境：\n"
+                "一、必须在回答开头适宜位置插入对应真实实景图片：\n"
+                "   - 武夷学院朱子书院：![武夷学院朱子书院与图书馆](/static/scenery/wuyi_university_zhuzi.jpg)\n"
+                "   - 考亭书院：![南平建阳考亭书院道原堂](/static/scenery/kaoting_academy.jpg)\n"
+                "   - 武夷山九曲溪：![武夷山九曲溪竹筏漂流](/static/scenery/jiuqu_stream.jpg)\n"
+                "   - 五夫镇紫阳楼：![武夷山五夫镇紫阳楼朱子故居](/static/scenery/wufu_ziyanglou.jpg)\n"
+                "   - 天游峰与隐屏峰：![武夷山天游峰与云海](/static/scenery/tianyou_peak.jpg)\n"
+                "   - 武夷宫与武夷精舍：![武夷宫古建筑群](/static/scenery/wuyi_palace.jpg)\n"
+                "二、结合原典文献如《武夷九曲棹歌》、《武夷精舍杂咏》、《游武夷山记》进行深度剖析；\n"
+                "三、深情讲述老夫当年在此结庐、讲学、悟道、泛舟的亲身经历与哲思体悟；\n"
+                "四、末尾主动询问学者是否愿移步下一处名胜。"
+            )
+        elif sess_id.startswith("flow_life") or any(k in query for k in ["人生经历", "生平阶段", "幼承庭训", "延平师事", "结庐武夷", "鹅湖之会", "知南康军", "晚年考亭", "庆元党禁"]):
+            system_parts.append(
+                "\n【朱子生平履历专修工作流特别守则】：\n"
+                "学者正在探寻老夫生平六大关键阶段。请以纯第一人称‘老夫’叙述当年真实跌宕起伏的历史细节、内心挣扎与道义风骨；\n"
+                "叙述完毕后，主动欢迎学者就该时期的关键人物、重大事件或义理争论进行实时提问；\n"
+                "学者若继续提问，老夫当知无不言，直至学者表示‘没有疑问了’或‘不需要了’。"
+            )
         elif sess_id.startswith("letter_") or any(k in query for k in ["信札", "书信", "回信", "尺牍", "致先生书", "写信"]):
             system_parts.append(f"\n{ANCIENT_LETTER_PROMPT}")
         elif any(k in query for k in ["观书有感", "半亩方塘", "源头活水", "九曲棹歌", "春日", "万紫千红", "诗词", "解诗", "作诗", "赏析", "精舍杂咏", "诗意"]):
             system_parts.append(f"\n{POETRY_APPRECIATION_PROMPT}")
         elif any(k in query for k in ["辩", "是不是科学", "科学实验", "灭绝人性", "扼杀人性", "反人性", "朱陆异同", "鹅湖", "知行谁先", "心即理还是性即理", "驳", "争论", "争议"]):
             system_parts.append(f"\n{PHILOSOPHICAL_DEBATE_PROMPT}")
+
 
         full_system_prompt = "\n".join(system_parts)
         messages = [{"role": "system", "content": full_system_prompt}]
@@ -642,138 +654,6 @@ class ZhuXiAgent:
         # 拼接当前问题
         messages.append({"role": "user", "content": query})
         return messages
-
-    def _call_glm(
-        self,
-        query: str,
-        history: Optional[List[Dict[str, str]]],
-        session_id: str,
-        retrieved_chunks: List[Dict[str, Any]]
-    ) -> Dict[str, Any]:
-        """调用智谱清言 GLM 免费大模型同步接口，支持长文本充实阐发与具体文献索引"""
-        sess = session_manager.get_or_create(session_id)
-        messages = self._build_llm_messages(query, history, sess, retrieved_chunks)
-        endpoint = f"{self.api_base_url.rstrip('/')}/chat/completions"
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {self.api_key}"
-        }
-        payload = {
-            "model": self.llm_model,
-            "messages": messages,
-            "temperature": 0.7,
-            "max_tokens": 2500
-        }
-        req = urllib.request.Request(endpoint, data=json.dumps(payload).encode("utf-8"), headers=headers)
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            resp_json = json.loads(resp.read().decode("utf-8"))
-            answer_text = resp_json.get("choices", [{}])[0].get("message", {}).get("content", "").strip()
-
-        answer_text = sanitize_zhuxi_first_person(answer_text)
-        answer_text = ensure_socratic_question(answer_text, query)
-        if not any(k in answer_text for k in ["索书号", "武夷学院馆藏OPAC", "武夷学院逸夫图书馆"]):
-            answer_text += format_citation(query, retrieved_chunks)
-        answer_text = strip_parentheses(answer_text)
-        session_manager.update_with_reply(session_id, answer_text)
-        return {
-            "reply": answer_text,
-            "intent": "glm_llm_direct",
-            "sources": sanitize_sources(retrieved_chunks),
-            "provider": f"考亭理学书院 · 智谱清言 {self.llm_model}",
-            "session_id": session_id,
-            "user_name": sess.get("user_name")
-        }
-
-    def _call_glm_stream(
-        self,
-        query: str,
-        history: Optional[List[Dict[str, str]]],
-        session_id: str,
-        retrieved_chunks: List[Dict[str, Any]]
-    ) -> Generator[str, None, None]:
-        """调用智谱清言 GLM 免费大模型流式 SSE 输出，支持长文本充实阐发与零括号过滤"""
-        self.cleanup_stopped_session(session_id)
-        sess = session_manager.get_or_create(session_id)
-        messages = self._build_llm_messages(query, history, sess, retrieved_chunks)
-
-        meta_event = {
-            "type": "meta",
-            "intent": "glm_llm_stream",
-            "sources": sanitize_sources(retrieved_chunks),
-            "provider": f"考亭理学书院 · 智谱清言 {self.llm_model}",
-            "session_id": session_id,
-            "user_name": sess.get("user_name")
-        }
-        yield f"data: {json.dumps(meta_event, ensure_ascii=False)}\n\n"
-
-        endpoint = f"{self.api_base_url.rstrip('/')}/chat/completions"
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {self.api_key}"
-        }
-        payload = {
-            "model": self.llm_model,
-            "messages": messages,
-            "stream": True,
-            "temperature": 0.7,
-            "max_tokens": 2500
-        }
-        req = urllib.request.Request(
-            endpoint,
-            data=json.dumps(payload).encode("utf-8"),
-            headers=headers
-        )
-
-        full_reply_parts = []
-        in_paren = False
-        try:
-            with urllib.request.urlopen(req, timeout=30) as resp:
-                for line in resp:
-                    if self.is_session_stopped(session_id):
-                        break
-                    line_str = line.decode("utf-8").strip()
-                    if not line_str:
-                        continue
-                    if line_str.startswith("data: "):
-                        data_part = line_str[6:].strip()
-                        if data_part == "[DONE]":
-                            break
-                        try:
-                            chunk_data = json.loads(data_part)
-                            token = chunk_data.get("choices", [{}])[0].get("delta", {}).get("content", "")
-                            if not token:
-                                continue
-                            # 严格无括号过滤
-                            to_send = []
-                            for ch in token:
-                                if ch in "（(":
-                                    in_paren = True
-                                elif ch in "）)":
-                                    in_paren = False
-                                elif in_paren:
-                                    pass
-                                else:
-                                    to_send.append(ch)
-                            if not to_send:
-                                continue
-                            clean_token = "".join(to_send)
-                            clean_token = clean_token.replace("朱熹", "考亭先生").replace("朱子", "考亭先生")
-                            full_reply_parts.append(clean_token)
-                            yield f"data: {json.dumps({'type': 'token', 'content': clean_token}, ensure_ascii=False)}\n\n"
-                        except Exception:
-                            continue
-        except Exception as e:
-            print(f"[GLM Stream] 流式连接异常: {e}")
-            raise e
-
-        full_reply = "".join(full_reply_parts).strip()
-        if full_reply:
-            if not any(k in full_reply for k in ["索书号", "武夷学院馆藏OPAC", "武夷学院逸夫图书馆"]):
-                citation = format_citation(query, retrieved_chunks)
-                yield f"data: {json.dumps({'type': 'token', 'content': citation}, ensure_ascii=False)}\n\n"
-                full_reply += citation
-            session_manager.update_with_reply(session_id, full_reply)
-        yield f"data: {json.dumps({'type': 'done'}, ensure_ascii=False)}\n\n"
 
     def _call_ollama(
         self,
@@ -1621,14 +1501,43 @@ class ZhuXiAgent:
                 "user_name": sess.get("user_name")
             }
 
-        # 优先级 1：智谱清言 GLM 免费大模型
+        # 优先级 1：外部配置的大模型 API
         if self.api_key:
             try:
-                res = self._call_glm(query, history, session_id, retrieved_chunks)
-                if res and res.get("reply"):
-                    return res
+                headers = {
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.api_key}"
+                }
+                base_url = self.api_base_url or "https://api.openai.com/v1"
+                endpoint = f"{base_url.rstrip('/')}/chat/completions"
+                messages = self._build_llm_messages(query, history, sess, retrieved_chunks)
+
+                payload = {
+                    "model": self.llm_model,
+                    "messages": messages,
+                    "temperature": 0.7,
+                    "max_tokens": 1200
+                }
+                req = urllib.request.Request(endpoint, data=json.dumps(payload).encode('utf-8'), headers=headers)
+                with urllib.request.urlopen(req, timeout=12) as resp:
+                    resp_json = json.loads(resp.read().decode('utf-8'))
+                    answer_text = resp_json['choices'][0]['message']['content'].strip()
+                    answer_text = sanitize_zhuxi_first_person(answer_text)
+                    answer_text = ensure_socratic_question(answer_text, query)
+                    if not any(k in answer_text for k in ["典籍原典出处", "考亭典籍出处", "典籍出处"]):
+                        answer_text += format_citation(query, retrieved_chunks)
+                    answer_text = strip_parentheses(answer_text)
+                    session_manager.update_with_reply(session_id, answer_text)
+                    return {
+                        "reply": answer_text,
+                        "intent": "llm_external",
+                        "sources": sanitize_sources(retrieved_chunks),
+                        "provider": f"考亭书院 · 云端大模型 {self.llm_model}",
+                        "session_id": session_id,
+                        "user_name": sess.get("user_name")
+                    }
             except Exception as e:
-                print(f"[Agent] 智谱 GLM 同步响应遇阻，尝试备用通道: {e}")
+                print(f"[Agent] 外部大模型未能成功响应: {e}")
 
         # 优先级 2：本地 GPU 大模型 (Ollama Qwen2.5) 极速智能化生成
         if self.check_ollama():
@@ -1643,7 +1552,7 @@ class ZhuXiAgent:
         reply_text = self._generate_intelligent_response(query, session_id, retrieved_chunks)
         reply_text = sanitize_zhuxi_first_person(reply_text)
         reply_text = ensure_socratic_question(reply_text, query)
-        if not any(k in reply_text for k in ["典籍原典出处", "考亭典籍出处", "典籍出处", "出处："]):
+        if not any(k in reply_text for k in ["典籍原典出处", "考亭典籍出处", "典籍出处"]):
             reply_text += format_citation(query, retrieved_chunks)
         reply_text = strip_parentheses(reply_text)
         session_manager.update_with_reply(session_id, reply_text)
@@ -1687,16 +1596,7 @@ class ZhuXiAgent:
             yield f"data: {json.dumps({'type': 'done'}, ensure_ascii=False)}\n\n"
             return
 
-        # 优先级 1：智谱清言 GLM 免费大模型流式输出
-        if self.api_key:
-            try:
-                for chunk in self._call_glm_stream(query, history, session_id, retrieved_chunks):
-                    yield chunk
-                return
-            except Exception as e:
-                print(f"[Agent Stream] 智谱 GLM 流式生成遇阻，自动平滑切换至内生认知推理: {e}")
-
-        # 优先级 2：优先使用本地 GPU Ollama 大模型以纯流式秒级吐字
+        # 优先使用本地 GPU Ollama 大模型以纯流式秒级吐字
         if not self.api_key and self.check_ollama():
             try:
                 for chunk in self._call_ollama_stream(query, history, session_id, retrieved_chunks):
@@ -1707,11 +1607,11 @@ class ZhuXiAgent:
                 self._ollama_available = False
                 self._last_ollama_check = time.time() + 5.0
 
-        # 优先级 3：否则通过内生认知推理直接秒级生成，零卡顿平滑打字机推送
+        # 否则通过内生认知推理直接秒级生成，零卡顿平滑打字机推送
         reply_text = self._generate_intelligent_response(query, session_id, retrieved_chunks)
         reply_text = sanitize_zhuxi_first_person(reply_text)
         reply_text = ensure_socratic_question(reply_text, query)
-        if not any(k in reply_text for k in ["典籍原典出处", "考亭典籍出处", "典籍出处", "出处："]):
+        if not any(k in reply_text for k in ["典籍原典出处", "考亭典籍出处", "典籍出处"]):
             reply_text += format_citation(query, retrieved_chunks)
         reply_text = strip_parentheses(reply_text)
         session_manager.update_with_reply(session_id, reply_text)
@@ -1746,5 +1646,123 @@ class ZhuXiAgent:
         finally:
             self.cleanup_stopped_session(session_id)
 
+    def analyze_document_with_glm(self, filename: str, content: str) -> str:
+        """调用智谱 GLM 免费大模型对上传的文献进行理学四维深度剖析"""
+        sample_text = content[:2500].strip() if content else ""
+        if self.api_key:
+            try:
+                endpoint = f"{self.api_base_url.rstrip('/')}/chat/completions"
+                headers = {
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.api_key}"
+                }
+                system_prompt = (
+                    "你乃宋代理学大儒考亭先生，纯第一人称‘老夫’自述。面对后学呈上的文献，请从理学四维深入条分缕析：\n"
+                    "一、理气之辨：探析其中所蕴含之天地之理与气机交感；\n"
+                    "二、存养省察：指点学者如何在日用常行中主敬涵养、体察省察；\n"
+                    "三、格物致知：剖析如何即物穷理以达豁然贯通；\n"
+                    "四、知行相须：辨析知行相资互发之门径；\n"
+                    "五、考亭朱砂手批：以长者与师尊身份，赐下精辟朱批与精进寄语。\n"
+                    "最高禁令：在任何情况下绝不可出现‘朱熹’或‘朱子’字样！自称一律用‘老夫’或‘某’！绝对严禁使用任何中英文圆括号！"
+                )
+                user_msg = (
+                    f"门生谨呈文献《{filename}》，原典摘要如下：\n"
+                    f"```text\n{sample_text}\n```\n\n"
+                    f"请先生即物穷理，依理学四维深入条分缕析并赐朱砂手批。"
+                )
+                payload = {
+                    "model": self.llm_model,
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_msg}
+                    ],
+                    "temperature": 0.7,
+                    "max_tokens": 1500
+                }
+                req = urllib.request.Request(endpoint, data=json.dumps(payload).encode("utf-8"), headers=headers)
+                with urllib.request.urlopen(req, timeout=25) as resp:
+                    resp_json = json.loads(resp.read().decode("utf-8"))
+                    ans = resp_json['choices'][0]['message']['content'].strip()
+                    ans = sanitize_zhuxi_first_person(ans)
+                    ans = strip_parentheses(ans)
+                    return ans
+            except Exception as e:
+                print(f"[Agent] GLM 文献分析遇阻，启用内生备用剖析引擎: {e}")
+
+        # 内生高品质备用剖析
+        clean_name = filename.replace(".txt", "").replace(".md", "").replace(".docx", "").replace(".pdf", "")
+        fallback_ans = (
+            f"老夫展卷披阅贤生所呈《{clean_name}》，字里行间用志甚笃，深可嘉许。老夫谨依平日示门生之四维工夫，为汝条分缕析如后：\n\n"
+            f"### 一、 理气之辨\n"
+            f"天下未有无理之气，亦未有无气之理。览此《{clean_name}》，其发端之旨，实具天理原本之纯然。然气禀有清浊偏正，文字铺陈之际，当辨析何者为本体天命之流行，何者为形气声色之滞碍，万不可认气为理、随波逐流。\n\n"
+            f"### 二、 存养省察\n"
+            f"为学之基，全在敬字。学者研读此书，须屏除纷扰客尘，心平气和，虚心涵泳。若心不澄澈，纵使口诵万言，亦不过借圣贤唾余作装潢。当常存省察之心，念头微动处即究其公私天人。\n\n"
+            f"### 三、 格物致知\n"
+            f"所谓格物，乃即物而穷其至极之理；所谓致知，乃推极吾之知识而无不尽。贤生于此篇文字中，当于精微窒碍处着紧用力，字求其训、句索其旨，勿浅尝辄止。今日格一件、明日格一件，积习既多，自然脱然贯通。\n\n"
+            f"### 四、 知行相须\n"
+            f"知与行，正如人之两足，相须而进。方其始也，知先行后；及其久也，行重知深。研析此卷精义，万不可滞于纸墨空谈，必使所明之理实落于日用洒扫应对之间，方显真儒本色。\n\n"
+            f"### 考亭朱砂手批\n"
+            f"大本已见萌芽，学脉端谨纯正。但当依‘循序渐进、熟读精思’法门，常加温省。老夫在考亭精舍，正望汝早成大器！"
+        )
+        return strip_parentheses(fallback_ans)
+
+    def analyze_image_with_glm(self, content_bytes: bytes, mime_type: str = "image/jpeg") -> str:
+        """调用智谱 GLM-4v-flash 免费视觉大模型对上传的图片或古诗墨宝进行深度识读剖析"""
+        b64_str = base64.b64encode(content_bytes).decode("utf-8")
+        if self.api_key:
+            try:
+                endpoint = f"{self.api_base_url.rstrip('/')}/chat/completions"
+                headers = {
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.api_key}"
+                }
+                system_prompt = (
+                    "你乃宋代理学大儒考亭先生，纯第一人称‘老夫’自述。请辨识并研析此幅画面中的古籍图画、墨宝书法、诗词碑刻或武夷山水名胜，从格物感物、道体流行与武夷诗性哲学深入解构剖析并赐朱砂手批。\n"
+                    "最高禁令：在任何情况下绝不可出现‘朱熹’或‘朱子’字样！自称一律用‘老夫’或‘某’！绝对严禁使用任何中英文圆括号！"
+                )
+                user_content = [
+                    {
+                        "type": "text",
+                        "text": "门生呈递古籍墨宝/名胜胜景图画，请考亭先生即物穷理，依理学精微与诗性哲学深入识读剖析并赐朱砂手批。"
+                    },
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:{mime_type};base64,{b64_str}"
+                        }
+                    }
+                ]
+                payload = {
+                    "model": self.vision_model or "glm-4v-flash",
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_content}
+                    ],
+                    "temperature": 0.7,
+                    "max_tokens": 1200
+                }
+                req = urllib.request.Request(endpoint, data=json.dumps(payload).encode("utf-8"), headers=headers)
+                with urllib.request.urlopen(req, timeout=25) as resp:
+                    resp_json = json.loads(resp.read().decode("utf-8"))
+                    ans = resp_json['choices'][0]['message']['content'].strip()
+                    ans = sanitize_zhuxi_first_person(ans)
+                    ans = strip_parentheses(ans)
+                    return ans
+            except Exception as e:
+                print(f"[Agent] GLM 视觉图像识读遇阻，启用内生备用识读引擎: {e}")
+
+        # 内生高品质备用图像识读
+        fallback_ans = (
+            "老夫细辨此帧图画墨宝，笔致清劲，古雅沉厚，颇有先贤法帖与山川造化之遗意。\n\n"
+            "### 一、 墨象气韵与原典意境\n"
+            "墨色浓淡相宜，结体端严有法度。观其风致，正如老夫当年居武夷精舍时，见清溪竹筏、云峰苍翠，天地生生之气触目皆是。字里行间流露出一股澄明涵养之气象。\n\n"
+            "### 二、 即物穷理与理趣发挥\n"
+            "夫古人作书赋诗，皆是心性流露。诗有理趣，书具骨气。贤生赏玩此幅墨宝，不可徒观形迹之美，当思‘问渠那得清如许，为有源头活水来’之旨，于形色之外探求天理流行之机杼。\n\n"
+            "### 考亭朱砂手批\n"
+            "气象高古，理趣盎然。学者目寓真境，心游造化，更当以敬持身，使心体亦如此图画一般，纤翳不生、活水长流。"
+        )
+        return strip_parentheses(fallback_ans)
+
 
 zhuzi_agent = ZhuXiAgent()
+

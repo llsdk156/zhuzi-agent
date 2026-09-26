@@ -284,69 +284,152 @@ async def upload_custom_corpus(file: UploadFile = File(...)):
 @app.post("/api/document/analyze", summary="文献与图片深度识读剖析接口")
 async def analyze_document_or_image(file: UploadFile = File(...)):
     """接收用户上传的文本、文档或图片，自动调用智谱 GLM 免费大模型进行深度义理手批或图像识读"""
-    fn = file.filename.lower()
-    content_bytes = await file.read()
+    try:
+        fn = file.filename.lower()
+        content_bytes = await file.read()
 
-    # 1. 图片格式识别：PNG, JPG, JPEG, WEBP, BMP
-    image_exts = (".png", ".jpg", ".jpeg", ".webp", ".bmp")
-    if fn.endswith(image_exts):
-        ext = fn.rsplit(".", 1)[-1]
-        mime_type = "image/png" if ext == "png" else "image/webp" if ext == "webp" else "image/jpeg"
-        analysis = zhuzi_agent.analyze_image_with_glm(content_bytes, mime_type=mime_type)
+        # 1. 图片格式识别：PNG, JPG, JPEG, WEBP, BMP
+        image_exts = (".png", ".jpg", ".jpeg", ".webp", ".bmp")
+        if fn.endswith(image_exts):
+            ext = fn.rsplit(".", 1)[-1]
+            mime_type = "image/png" if ext == "png" else "image/webp" if ext == "webp" else "image/jpeg"
+            analysis = zhuzi_agent.analyze_image_with_glm(content_bytes, mime_type=mime_type)
+            return {
+                "code": 200,
+                "filename": file.filename,
+                "type": "image",
+                "prompt": f"弟子呈上古籍图画墨宝《{file.filename}》，请先生朱砂手批考释：\n\n{analysis}",
+                "analysis": analysis
+            }
+
+        # 2. 文本与文档格式提取：TXT, MD, DOCX, PDF
+        text_content = ""
+        if fn.endswith((".txt", ".md")):
+            try:
+                text_content = content_bytes.decode("utf-8")
+            except UnicodeDecodeError:
+                try:
+                    text_content = content_bytes.decode("gbk")
+                except Exception:
+                    text_content = content_bytes.decode("utf-8", errors="ignore")
+        elif fn.endswith(".docx"):
+            import io
+            try:
+                import docx
+                doc = docx.Document(io.BytesIO(content_bytes))
+                text_content = "\n".join([p.text for p in doc.paragraphs if p.text]).strip()
+            except Exception:
+                import zipfile
+                import xml.etree.ElementTree as ET
+                try:
+                    with zipfile.ZipFile(io.BytesIO(content_bytes)) as zf:
+                        xml_content = zf.read("word/document.xml")
+                        root = ET.fromstring(xml_content)
+                        texts = [elem.text for elem in root.iter() if elem.text]
+                        text_content = "\n".join(texts)
+                except Exception as ze:
+                    text_content = f"文档解析提示：{ze}"
+        elif fn.endswith(".pdf"):
+            import io
+            try:
+                import pypdf
+                reader = pypdf.PdfReader(io.BytesIO(content_bytes))
+                pages = [page.extract_text() or "" for page in reader.pages[:20]]
+                text_content = "\n".join(pages).strip()
+            except Exception:
+                raw_str = content_bytes.decode("latin-1", errors="ignore")
+                pdf_texts = re.findall(r"Tj\s*([^\n\r]+)", raw_str)
+                if pdf_texts:
+                    text_content = "\n".join(pdf_texts)
+                else:
+                    text_content = content_bytes.decode("utf-8", errors="ignore")
+        else:
+            return JSONResponse(
+                status_code=400,
+                content={
+                    "code": 400,
+                    "detail": "目前支持格式：TXT、MD、DOCX、PDF 文档以及 PNG、JPG、WEBP 图像"
+                }
+            )
+
+        if not text_content.strip():
+            text_content = f"文献《{file.filename}》内容为空或暂无法提取文本。"
+
+        analysis = zhuzi_agent.analyze_document_with_glm(file.filename, text_content)
         return {
             "code": 200,
             "filename": file.filename,
-            "type": "image",
-            "prompt": f"弟子呈上古籍图画墨宝《{file.filename}》，请先生朱砂手批考释：\n\n{analysis}",
+            "type": "document",
+            "prompt": f"弟子呈上文献《{file.filename}》，请先生朱砂手批指点：\n\n{analysis}",
             "analysis": analysis
         }
-
-    # 2. 文本与文档格式提取：TXT, MD, DOCX, PDF
-    text_content = ""
-    if fn.endswith((".txt", ".md")):
-        try:
-            text_content = content_bytes.decode("utf-8")
-        except UnicodeDecodeError:
-            try:
-                text_content = content_bytes.decode("gbk")
-            except Exception:
-                text_content = content_bytes.decode("utf-8", errors="ignore")
-    elif fn.endswith(".docx"):
-        import io
-        import zipfile
-        import xml.etree.ElementTree as ET
-        try:
-            with zipfile.ZipFile(io.BytesIO(content_bytes)) as zf:
-                xml_content = zf.read("word/document.xml")
-                root = ET.fromstring(xml_content)
-                texts = [elem.text for elem in root.iter() if elem.text]
-                text_content = "\n".join(texts)
-        except Exception as e:
-            text_content = f"文档解析提示：{e}"
-    elif fn.endswith(".pdf"):
-        raw_str = content_bytes.decode("latin-1", errors="ignore")
-        pdf_texts = re.findall(r"Tj\s*([^\n\r]+)", raw_str)
-        if pdf_texts:
-            text_content = "\n".join(pdf_texts)
-        else:
-            text_content = content_bytes.decode("utf-8", errors="ignore")
-    else:
-        raise HTTPException(
-            status_code=400,
-            detail="目前支持格式：TXT、MD、DOCX、PDF 文档以及 PNG、JPG、WEBP 图像"
+    except Exception as e:
+        print(f"[Analyze] 解析异常: {e}")
+        return JSONResponse(
+            status_code=500,
+            content={
+                "code": 500,
+                "detail": f"析理遇阻：{str(e)}",
+                "error": str(e)
+            }
         )
 
-    if not text_content.strip():
-        text_content = f"文献《{file.filename}》内容为空或暂无法提取文本。"
 
-    analysis = zhuzi_agent.analyze_document_with_glm(file.filename, text_content)
-    return {
-        "code": 200,
-        "filename": file.filename,
-        "type": "document",
-        "prompt": f"弟子呈上文献《{file.filename}》，请先生朱砂手批指点：\n\n{analysis}",
-        "analysis": analysis
-    }
+@app.get("/api/scenery/list", summary="获取武夷山与武夷学院名胜画卷列表")
+async def get_scenery_list():
+    """返回武夷学院朱子书院与武夷山胜境高品质画卷图库及文献出处"""
+    scenery_data = [
+        {
+            "id": "wuyi_univ",
+            "title": "武夷学院朱子书院与逸夫图书馆",
+            "image": "/static/scenery/wuyi_university_zhuzi.jpg",
+            "tag": "现代书院 · 道统传承 · 逸夫特藏",
+            "literature": "《武夷学院赋》与宋明理学特藏文献",
+            "description": "武夷学院座落于九曲溪畔、大王峰麓，校内特设朱子书院与逸夫图书馆宋明理学专题库，乃当代学子涵泳理学精义、赓续朱子文脉之重镇。"
+        },
+        {
+            "id": "jiuqu",
+            "title": "武夷山九曲清溪与竹筏漂流",
+            "image": "/static/scenery/jiuqu_stream.jpg",
+            "tag": "逝者如斯 · 九曲棹歌 · 道体流行",
+            "literature": "《武夷九曲棹歌》全十首",
+            "description": "一溪贯群山，清澈见底，三十六峰环拱。先生当年荡舟九曲，作棹歌十首，寄万物生生之理于一篙碧水之间。"
+        },
+        {
+            "id": "kaoting",
+            "title": "南平建阳考亭书院与道原堂",
+            "image": "/static/scenery/kaoting_academy.jpg",
+            "tag": "沧洲精舍 · 晚年讲学 · 考亭学派",
+            "literature": "《考亭书院记》、《沧洲精舍告先圣文》",
+            "description": "位于建阳麻阳溪畔，乃先生晚年著书讲学、安度余年之圣地。四方学者辐辏，考亭理学在此登峰造极。"
+        },
+        {
+            "id": "ziyanglou",
+            "title": "武夷山五夫镇紫阳楼与荷塘",
+            "image": "/static/scenery/wufu_ziyanglou.jpg",
+            "tag": "幼承庭训 · 创立社仓 · 荷风清芬",
+            "literature": "《五夫社仓记》、《紫阳书堂杂咏》",
+            "description": "先生受教于五夫刘子翚，定居四十载，著书立说，并创建五夫社仓赈济四方乡梓，门前万亩荷塘清芬远溢。"
+        },
+        {
+            "id": "tianyou",
+            "title": "武夷山天游峰与隐屏峰",
+            "image": "/static/scenery/tianyou_peak.jpg",
+            "tag": "丹霞绝壁 · 极目天游 · 隐屏讲筵",
+            "literature": "《游武夷山记》、《隐屏峰杂咏》",
+            "description": "武夷第一胜地，高插云汉，俯瞰九曲如青带盘绕。先生常携弟子登临啸傲，体认天地万物流行之一理。"
+        },
+        {
+            "id": "wuyigong",
+            "title": "武夷宫与武夷精舍古建筑群",
+            "image": "/static/scenery/wuyi_palace.jpg",
+            "tag": "结庐精舍 · 聚徒著书 · 溪山胜概",
+            "literature": "《武夷精舍杂咏序》",
+            "description": "隐屏峰下，九曲五曲之畔。淳熙十年先生结庐于此，聚徒授业十余载，《四书章句集注》多草创于此。"
+        }
+    ]
+    return {"code": 200, "total": len(scenery_data), "data": scenery_data}
+
 
 
 @app.get("/api/model/status", summary="当前大模型驱动状态")

@@ -29,11 +29,12 @@ test_tts.mp3
 Thumbs.db
 .agent/
 
+# 日志与测试临时文件
+*.log
+test_*
+test_*.*
+
 # 环境变量与密钥
 .env
 *.env
-
-# 日志与测试脚本
-*.log
-test_*.py
 
