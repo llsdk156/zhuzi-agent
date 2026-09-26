@@ -36,8 +36,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_stand",
                                 "face": "face_calm",
-                                "blackboard": "琴书五十载 隐屏云雾深
-武夷精舍 聚徒传道",
+                                "blackboard": "琴书五十载 隐屏云雾深\n武夷精舍 聚徒传道",
                                 "text": "诸生进前！今日老夫在武夷山隐屏峰下武夷精舍开席。淳熙十年，老夫卜居于此，结构精舍数楹，题曰武夷精舍。诸生环顾窗外，隐屏森秀，天柱玉立，清溪抱门。老夫且问：何以老夫不爱繁华郡邑，偏来这岩壑深秀处开讲？",
                                 "choices": [
                                         {
@@ -61,8 +60,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_explain_gesture",
                                 "face": "face_focused",
-                                "blackboard": "收摄放心 主敬存诚
-静中涵养 动中省察",
+                                "blackboard": "收摄放心 主敬存诚\n静中涵养 动中省察",
                                 "text": "善哉善问！学者当知，闹市之中，人心最易随波逐流、气浮心粗。老夫结庐隐屏，正欲借山川清虚之气，使门人收摄放心，主敬存诚。于静中体认仁义礼智之天理，方有入圣之基！",
                                 "choices": [
                                         {
@@ -76,8 +74,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_read_book",
                                 "face": "face_gentle",
-                                "blackboard": "即景明理 诗以言志
-物我两忘 融通太虚",
+                                "blackboard": "即景明理 诗以言志\n物我两忘 融通太虚",
                                 "text": "诗家之游，不过娱情适意；理学之游，贵在即景悟道。老夫作精舍杂咏十二首，自仁智堂至隐求室，无一处不是理学工夫的寄托。山川有条理，正如吾心有准则！",
                                 "choices": [
                                         {
@@ -91,8 +88,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_point_focus",
                                 "face": "face_serious",
-                                "blackboard": "穷理 正心 修身
-不为虚名 务求实学",
+                                "blackboard": "穷理 正心 修身\n不为虚名 务求实学",
                                 "text": "精舍讲学之旨，首在穷理、正心、修身。每日黎明起坐，整肃衣冠，端坐默涵。不求浮华虚誉，务使身心日与圣贤之教相孚，方不负此山水灵秀！",
                                 "choices": [
                                         {
@@ -106,8 +102,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_summary",
                                 "face": "face_encouraging",
-                                "blackboard": "精舍开山 考亭宗风
-道贯古今 理润身心",
+                                "blackboard": "精舍开山 考亭宗风\n道贯古今 理润身心",
                                 "text": "好！今日诸生初入精舍，志向既立，根基渐固。下座之后，宜于隐屏石壁下端坐涵泳，将今日所论反复体省。仁兄且勉之！",
                                 "choices": [
                                         {
@@ -131,8 +126,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_stand",
                                 "face": "face_calm",
-                                "blackboard": "武夷山上有仙灵 山下寒流曲曲清
-欲识高人岑寂趣 且听棹歌三两声",
+                                "blackboard": "武夷山上有仙灵 山下寒流曲曲清\n欲识高人岑寂趣 且听棹歌三两声",
                                 "text": "诸生请听！老夫泛舟武夷九曲溪，信手写下武夷九曲棹歌十首。后人多道是山水奇绝之咏，却不知老夫乃是将平生求道寻源之精义，全数融铸于一曲至九曲之行舟之中！仁兄试思，何以老夫之舟是从一曲溯流而上至九曲，而非顺流而下？",
                                 "choices": [
                                         {
@@ -156,8 +150,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_explain_gesture",
                                 "face": "face_focused",
-                                "blackboard": "由下流溯至源头
-由器入道 由粗入精",
+                                "blackboard": "由下流溯至源头\n由器入道 由粗入精",
                                 "text": "善哉！学者读书为学，正如扁舟溯九曲而上。一曲二曲处，风浪湍急，两岸崖壁险峻，此初学者破除客尘、摸索门径之时；行至五曲六曲，隐屏精舍在望，云开日出；及至八曲九曲，桑麻平旷，源头活水汪洋自肆！",
                                 "choices": [
                                         {
@@ -171,8 +164,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_read_book",
                                 "face": "face_gentle",
-                                "blackboard": "即物明理 鸢飞鱼跃
-自然真趣 触目菩提",
+                                "blackboard": "即物明理 鸢飞鱼跃\n自然真趣 触目菩提",
                                 "text": "溪流之回旋，山岩之参差，皆有必然条理。老夫于棹歌之中，寄托鸢飞鱼跃之道体。诸生舟行溪中，目之所及、耳之所闻，若能体察得天理流行，则无处不是道场！",
                                 "choices": [
                                         {
@@ -186,8 +178,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_point_focus",
                                 "face": "face_serious",
-                                "blackboard": "半亩方塘一鉴开 天光云影共徘徊
-问渠那得清如许 为有源头活水来",
+                                "blackboard": "半亩方塘一鉴开 天光云影共徘徊\n问渠那得清如许 为有源头活水来",
                                 "text": "源头活水，乃吾心不竭之生机与圣人之道体！若无活水灌注，方塘顷刻便成死水污淖。学者每日读书致知，正是不断引入源头活水，荡涤身心渣滓！",
                                 "choices": [
                                         {
@@ -201,8 +192,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_summary",
                                 "face": "face_encouraging",
-                                "blackboard": "九曲溯源 棹歌理趣
-理水相融 考亭心印",
+                                "blackboard": "九曲溯源 棹歌理趣\n理水相融 考亭心印",
                                 "text": "好！今日论及棹歌理趣，诸生当知诗中有理、理中有境。下座后宜默诵棹歌，回思行舟溯源之志！",
                                 "choices": [
                                         {
@@ -226,8 +216,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_stand",
                                 "face": "face_calm",
-                                "blackboard": "客来莫道无供设 一盏清茶便当席
-清虚静泰 涵养本原",
+                                "blackboard": "客来莫道无供设 一盏清茶便当席\n清虚静泰 涵养本原",
                                 "text": "诸生进前，且啜一盏武夷岩茶！山中岩隙所孕灵芽，吸日月精华，经炭火烹瀹，清香内敛。老夫烹茶待客，常以茶道示门人：饮茶不可牛饮，须平心静气、细品其甘苦回甘。仁兄试道其理：茶道与吾儒主敬涵养，有何通感之处？",
                                 "choices": [
                                         {
@@ -251,8 +240,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_explain_gesture",
                                 "face": "face_focused",
-                                "blackboard": "主敬以直内 涤除客尘
-心若止水 清气自生",
+                                "blackboard": "主敬以直内 涤除客尘\n心若止水 清气自生",
                                 "text": "善哉！茗茶之妙，全在一清字。人心本来虚明洞达，只因私欲杂念侵袭，遂致浊气用事。煎水瀹茗之际，看白汽袅袅、茶汤澄澈，学者敛气端坐，心意专注，此即居敬持志之现成法门！",
                                 "choices": [
                                         {
@@ -266,8 +254,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_point_focus",
                                 "face": "face_serious",
-                                "blackboard": "苦尽甘来 纯粹至善
-坚韧笃行 方成大器",
+                                "blackboard": "苦尽甘来 纯粹至善\n坚韧笃行 方成大器",
                                 "text": "岩茶初入口，微苦而涩，旋即生津回甘，芳馨久留舌本。圣学亦然！初学格物致知、收摄心性，甚觉束缚辛苦；及至积习日久，理明心泰，浩然自得，其乐不可胜言！",
                                 "choices": [
                                         {
@@ -281,8 +268,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_read_book",
                                 "face": "face_gentle",
-                                "blackboard": "澹泊明志 俭以养德
-君子之交 淡若清泉",
+                                "blackboard": "澹泊明志 俭以养德\n君子之交 淡若清泉",
                                 "text": "一盏清茶待远客，不假膏梁酒馔之费，尽显君子澹泊之风。为官处事，亦当如茶汤一般清澈透明，一尘不染，方不负天理民心！",
                                 "choices": [
                                         {
@@ -296,8 +282,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_summary",
                                 "face": "face_encouraging",
-                                "blackboard": "岩壑瀹茗 理在茶中
-以敬直内 终日怡然",
+                                "blackboard": "岩壑瀹茗 理在茶中\n以敬直内 终日怡然",
                                 "text": "甚好！今日品茶明理，日后诸生提壶啜茗之时，当常思此‘清、敬、澹、远’四字。以此涵养身心，必有受用！",
                                 "choices": [
                                         {
@@ -321,8 +306,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_stand",
                                 "face": "face_calm",
-                                "blackboard": "社仓石碑 垂范万世
-实学笃行 理在民心",
+                                "blackboard": "社仓石碑 垂范万世\n实学笃行 理在民心",
                                 "text": "诸生严肃！世人多讥老夫理学为虚名空谈、不切世用，此乃不知老夫者之妄言！乾道四年，建宁大饥，老夫力请于府，创置崇安五夫社仓。老夫尝言：天下莫大之恶，莫过于慕虚名而害实事。仁兄今日知老夫立社仓，其法度规矩究竟妙在何处？",
                                 "choices": [
                                         {
@@ -346,8 +330,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_explain_gesture",
                                 "face": "face_focused",
-                                "blackboard": "利不可独专 名不可虚受
-仓规严明 公心为上",
+                                "blackboard": "利不可独专 名不可虚受\n仓规严明 公心为上",
                                 "text": "立制至为精密！老夫手订社仓规约，设仓官、仓正，由乡贤洁廉者公选充管。每次开仓出纳，明立簿籍，贷谷取息不过极低二分；若遇大歉岁，全免其息；连年大饥，并免本钱！官不经手而民享其利，此所以垂范久远！",
                                 "choices": [
                                         {
@@ -361,8 +344,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_point_focus",
                                 "face": "face_serious",
-                                "blackboard": "民胞物与 念兹在兹
-经世致用 理学归宿",
+                                "blackboard": "民胞物与 念兹在兹\n经世致用 理学归宿",
                                 "text": "横渠先生言民胞物与，非空谈也！天下百姓嗷嗷待哺，吾辈读书穷理，若不能设法活其性命、安其生业，虽口谈仁义万卷，与土木何异？理学正是要落实于济世安民之中！",
                                 "choices": [
                                         {
@@ -376,8 +358,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_read_book",
                                 "face": "face_gentle",
-                                "blackboard": "不耗官帑 不累闾阎
-自治自足 万世永赖",
+                                "blackboard": "不耗官帑 不累闾阎\n自治自足 万世永赖",
                                 "text": "五夫社仓历十四年而储谷达数万石，全活数郡生灵。后来宋孝宗闻之，诏令天下诸州通行五夫社仓法。儒者经世，贵在实事求是，深谋远虑，不可图一时侥幸！",
                                 "choices": [
                                         {
@@ -391,8 +372,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_summary",
                                 "face": "face_encouraging",
-                                "blackboard": "五夫社仓 经世实学
-知行合一 王道根基",
+                                "blackboard": "五夫社仓 经世实学\n知行合一 王道根基",
                                 "text": "五夫社仓规约刻于石碑，至今犹存五夫里。仁兄切记：天下莫大之恶，莫过于慕虚名而害实事。今日学者读书，必当关切社稷民生，方不负此生顶天立地之身！",
                                 "choices": [
                                         {
@@ -416,8 +396,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_stand",
                                 "face": "face_calm",
-                                "blackboard": "淳熙二年 铅山之会
-尊德性与道问学 理学两峰对峙",
+                                "blackboard": "淳熙二年 铅山之会\n尊德性与道问学 理学两峰对峙",
                                 "text": "诸生请了！淳熙二年，东莱吕伯恭敦请老夫与陆九龄、陆九渊兄弟会于铅山鹅湖寺。九渊倡简易之工夫，主心即是理，以为发明本心则千圣自备，讥老夫道问学为支离。诸生且看，这场鹅湖论辩，究竟争的是什么关键？",
                                 "choices": [
                                         {
@@ -441,8 +420,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_explain_gesture",
                                 "face": "face_focused",
-                                "blackboard": "不可悬空索理
-致知格物 方见天理纯粹",
+                                "blackboard": "不可悬空索理\n致知格物 方见天理纯粹",
                                 "text": "诸生切记：人非生而知之者。若抛开六经群典、抛开天下万物之理，仅向自家里摸索，极易以己之偏见认作天理，流入陆学空疏放肆之弊！故必由格物致知，方能达至诚意正心之境！",
                                 "choices": [
                                         {
@@ -456,8 +434,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_point_focus",
                                 "face": "face_serious",
-                                "blackboard": "德性本尊 问学是功
-交相发用 不可偏废",
+                                "blackboard": "德性本尊 问学是功\n交相发用 不可偏废",
                                 "text": "老夫并非不尊德性！老夫尝言：尊德性而道问学。德性本尊，然而若无道问学之功，何以知所尊为何物？如盲人夜行，虽有向往光明之志，终恐失足深渊！",
                                 "choices": [
                                         {
@@ -471,8 +448,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_read_book",
                                 "face": "face_gentle",
-                                "blackboard": "和而不同 求同存异
-君子周而不比",
+                                "blackboard": "和而不同 求同存异\n君子周而不比",
                                 "text": "鹅湖之会虽各持己见，然老夫与子静兄弟终生互敬道义。子静登白鹿洞书院讲堂，讲君子喻于义小人喻于利，老夫率诸生肃听，喜极汗下，亲立讲义石碑以昭后学！",
                                 "choices": [
                                         {
@@ -486,8 +462,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_summary",
                                 "face": "face_encouraging",
-                                "blackboard": "鹅湖明辨 道统渊澄
-即物穷理 虚心涵泳",
+                                "blackboard": "鹅湖明辨 道统渊澄\n即物穷理 虚心涵泳",
                                 "text": "好！今日论辩鹅湖大旨，诸生切莫随人附和。学问贵在切己用功，博学审问慎思明辨，而后笃行之！",
                                 "choices": [
                                         {
@@ -511,8 +486,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_stand",
                                 "face": "face_calm",
-                                "blackboard": "未有天地之先 毕竟也先有此理
-理一分殊 月印万川",
+                                "blackboard": "未有天地之先 毕竟也先有此理\n理一分殊 月印万川",
                                 "text": "诸生且望窗外大王峰与玉女峰！万木森罗，溪流逶迤，禽鸟相鸣。老夫尝言：未有天地之先，毕竟是先有此理。天地万物，一草一木皆有其必然之理。仁兄请思，何谓理一分殊、月印万川？",
                                 "choices": [
                                         {
@@ -536,8 +510,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_explain_gesture",
                                 "face": "face_focused",
-                                "blackboard": "万物皆具一理 理具于万物
-物各付物 莫不由理",
+                                "blackboard": "万物皆具一理 理具于万物\n物各付物 莫不由理",
                                 "text": "善哉善问！上而天地之道，下而一草一木之微，皆有必然之理。比如这一几一案，有做几案的理；君之仁，臣之忠，有为君为臣的理。正如一月当空，千江之水各有一月。理本是一，散于万物则各具殊用！",
                                 "choices": [
                                         {
@@ -551,8 +524,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_point_focus",
                                 "face": "face_serious",
-                                "blackboard": "由浅入深 积久贯通
-今日格一件 明日格一件",
+                                "blackboard": "由浅入深 积久贯通\n今日格一件 明日格一件",
                                 "text": "老夫岂教诸生走马看花、茫无统绪地去穷万物？万事皆有条理。先从切近处穷起，先读圣贤之言，明夫伦常日用。理通一处，余处自可触类旁通。此即知行相须、积久自融之妙！",
                                 "choices": [
                                         {
@@ -566,8 +538,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_read_book",
                                 "face": "face_gentle",
-                                "blackboard": "即物穷理 切己体察
-知行并进 止于至善",
+                                "blackboard": "即物穷理 切己体察\n知行并进 止于至善",
                                 "text": "在武夷山中，一泉一石皆可穷格。看流水向下奔流，知水之理；看草木逢春发生，知仁之理。将万物之理收敛于自家身心，事事求其所当然与所以然，便是真知行！",
                                 "choices": [
                                         {
@@ -581,8 +552,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_summary",
                                 "face": "face_encouraging",
-                                "blackboard": "讲筵圆满 明理笃行
-考亭文公印可",
+                                "blackboard": "讲筵圆满 明理笃行\n考亭文公印可",
                                 "text": "好！今日诸生升筵对问，能于纲领节目层层致疑，颇有精进之机。为学正如造塔，今日打牢基址，明日方可步步登高。仁兄且将今日所悟书写于心，下座后切实涵养践履！",
                                 "choices": [
                                         {
@@ -606,8 +576,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_stand",
                                 "face": "face_calm",
-                                "blackboard": "琴书五十载 隐屏云雾深
-武夷精舍 聚徒传道",
+                                "blackboard": "琴书五十载 隐屏云雾深\n武夷精舍 聚徒传道",
                                 "text": "诸生进前！今日老夫在武夷山隐屏峰下武夷精舍开席。淳熙十年，老夫卜居于此，结构精舍数楹，题曰武夷精舍。诸生环顾窗外，隐屏森秀，天柱玉立，清溪抱门。老夫且问：何以老夫不爱繁华郡邑，偏来这岩壑深秀处开讲？",
                                 "choices": [
                                         {
@@ -631,8 +600,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_explain_gesture",
                                 "face": "face_focused",
-                                "blackboard": "收摄放心 主敬存诚
-静中涵养 动中省察",
+                                "blackboard": "收摄放心 主敬存诚\n静中涵养 动中省察",
                                 "text": "善哉善问！学者当知，闹市之中，人心最易随波逐流、气浮心粗。老夫结庐隐屏，正欲借山川清虚之气，使门人收摄放心，主敬存诚。于静中体认仁义礼智之天理，方有入圣之基！",
                                 "choices": [
                                         {
@@ -646,8 +614,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_read_book",
                                 "face": "face_gentle",
-                                "blackboard": "即景明理 诗以言志
-物我两忘 融通太虚",
+                                "blackboard": "即景明理 诗以言志\n物我两忘 融通太虚",
                                 "text": "诗家之游，不过娱情适意；理学之游，贵在即景悟道。老夫作精舍杂咏十二首，自仁智堂至隐求室，无一处不是理学工夫的寄托。山川有条理，正如吾心有准则！",
                                 "choices": [
                                         {
@@ -661,8 +628,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_point_focus",
                                 "face": "face_serious",
-                                "blackboard": "穷理 正心 修身
-不为虚名 务求实学",
+                                "blackboard": "穷理 正心 修身\n不为虚名 务求实学",
                                 "text": "精舍讲学之旨，首在穷理、正心、修身。每日黎明起坐，整肃衣冠，端坐默涵。不求浮华虚誉，务使身心日与圣贤之教相孚，方不负此山水灵秀！",
                                 "choices": [
                                         {
@@ -676,8 +642,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_summary",
                                 "face": "face_encouraging",
-                                "blackboard": "精舍开山 考亭宗风
-道贯古今 理润身心",
+                                "blackboard": "精舍开山 考亭宗风\n道贯古今 理润身心",
                                 "text": "好！今日诸生初入精舍，志向既立，根基渐固。下座之后，宜于隐屏石壁下端坐涵泳，将今日所论反复体省。仁兄且勉之！",
                                 "choices": [
                                         {
@@ -701,8 +666,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_stand",
                                 "face": "face_calm",
-                                "blackboard": "武夷山上有仙灵 山下寒流曲曲清
-欲识高人岑寂趣 且听棹歌三两声",
+                                "blackboard": "武夷山上有仙灵 山下寒流曲曲清\n欲识高人岑寂趣 且听棹歌三两声",
                                 "text": "诸生请听！老夫泛舟武夷九曲溪，信手写下武夷九曲棹歌十首。后人多道是山水奇绝之咏，却不知老夫乃是将平生求道寻源之精义，全数融铸于一曲至九曲之行舟之中！仁兄试思，何以老夫之舟是从一曲溯流而上至九曲，而非顺流而下？",
                                 "choices": [
                                         {
@@ -726,8 +690,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_explain_gesture",
                                 "face": "face_focused",
-                                "blackboard": "由下流溯至源头
-由器入道 由粗入精",
+                                "blackboard": "由下流溯至源头\n由器入道 由粗入精",
                                 "text": "善哉！学者读书为学，正如扁舟溯九曲而上。一曲二曲处，风浪湍急，两岸崖壁险峻，此初学者破除客尘、摸索门径之时；行至五曲六曲，隐屏精舍在望，云开日出；及至八曲九曲，桑麻平旷，源头活水汪洋自肆！",
                                 "choices": [
                                         {
@@ -741,8 +704,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_read_book",
                                 "face": "face_gentle",
-                                "blackboard": "即物明理 鸢飞鱼跃
-自然真趣 触目菩提",
+                                "blackboard": "即物明理 鸢飞鱼跃\n自然真趣 触目菩提",
                                 "text": "溪流之回旋，山岩之参差，皆有必然条理。老夫于棹歌之中，寄托鸢飞鱼跃之道体。诸生舟行溪中，目之所及、耳之所闻，若能体察得天理流行，则无处不是道场！",
                                 "choices": [
                                         {
@@ -756,8 +718,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_point_focus",
                                 "face": "face_serious",
-                                "blackboard": "半亩方塘一鉴开 天光云影共徘徊
-问渠那得清如许 为有源头活水来",
+                                "blackboard": "半亩方塘一鉴开 天光云影共徘徊\n问渠那得清如许 为有源头活水来",
                                 "text": "源头活水，乃吾心不竭之生机与圣人之道体！若无活水灌注，方塘顷刻便成死水污淖。学者每日读书致知，正是不断引入源头活水，荡涤身心渣滓！",
                                 "choices": [
                                         {
@@ -771,8 +732,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_summary",
                                 "face": "face_encouraging",
-                                "blackboard": "九曲溯源 棹歌理趣
-理水相融 考亭心印",
+                                "blackboard": "九曲溯源 棹歌理趣\n理水相融 考亭心印",
                                 "text": "好！今日论及棹歌理趣，诸生当知诗中有理、理中有境。下座后宜默诵棹歌，回思行舟溯源之志！",
                                 "choices": [
                                         {
@@ -796,8 +756,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_stand",
                                 "face": "face_calm",
-                                "blackboard": "客来莫道无供设 一盏清茶便当席
-清虚静泰 涵养本原",
+                                "blackboard": "客来莫道无供设 一盏清茶便当席\n清虚静泰 涵养本原",
                                 "text": "诸生进前，且啜一盏武夷岩茶！山中岩隙所孕灵芽，吸日月精华，经炭火烹瀹，清香内敛。老夫烹茶待客，常以茶道示门人：饮茶不可牛饮，须平心静气、细品其甘苦回甘。仁兄试道其理：茶道与吾儒主敬涵养，有何通感之处？",
                                 "choices": [
                                         {
@@ -821,8 +780,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_explain_gesture",
                                 "face": "face_focused",
-                                "blackboard": "主敬以直内 涤除客尘
-心若止水 清气自生",
+                                "blackboard": "主敬以直内 涤除客尘\n心若止水 清气自生",
                                 "text": "善哉！茗茶之妙，全在一清字。人心本来虚明洞达，只因私欲杂念侵袭，遂致浊气用事。煎水瀹茗之际，看白汽袅袅、茶汤澄澈，学者敛气端坐，心意专注，此即居敬持志之现成法门！",
                                 "choices": [
                                         {
@@ -836,8 +794,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_point_focus",
                                 "face": "face_serious",
-                                "blackboard": "苦尽甘来 纯粹至善
-坚韧笃行 方成大器",
+                                "blackboard": "苦尽甘来 纯粹至善\n坚韧笃行 方成大器",
                                 "text": "岩茶初入口，微苦而涩，旋即生津回甘，芳馨久留舌本。圣学亦然！初学格物致知、收摄心性，甚觉束缚辛苦；及至积习日久，理明心泰，浩然自得，其乐不可胜言！",
                                 "choices": [
                                         {
@@ -851,8 +808,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_read_book",
                                 "face": "face_gentle",
-                                "blackboard": "澹泊明志 俭以养德
-君子之交 淡若清泉",
+                                "blackboard": "澹泊明志 俭以养德\n君子之交 淡若清泉",
                                 "text": "一盏清茶待远客，不假膏梁酒馔之费，尽显君子澹泊之风。为官处事，亦当如茶汤一般清澈透明，一尘不染，方不负天理民心！",
                                 "choices": [
                                         {
@@ -866,8 +822,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_summary",
                                 "face": "face_encouraging",
-                                "blackboard": "岩壑瀹茗 理在茶中
-以敬直内 终日怡然",
+                                "blackboard": "岩壑瀹茗 理在茶中\n以敬直内 终日怡然",
                                 "text": "甚好！今日品茶明理，日后诸生提壶啜茗之时，当常思此‘清、敬、澹、远’四字。以此涵养身心，必有受用！",
                                 "choices": [
                                         {
@@ -891,8 +846,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_stand",
                                 "face": "face_calm",
-                                "blackboard": "社仓石碑 垂范万世
-实学笃行 理在民心",
+                                "blackboard": "社仓石碑 垂范万世\n实学笃行 理在民心",
                                 "text": "诸生严肃！世人多讥老夫理学为虚名空谈、不切世用，此乃不知老夫者之妄言！乾道四年，建宁大饥，老夫力请于府，创置崇安五夫社仓。老夫尝言：天下莫大之恶，莫过于慕虚名而害实事。仁兄今日知老夫立社仓，其法度规矩究竟妙在何处？",
                                 "choices": [
                                         {
@@ -916,8 +870,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_explain_gesture",
                                 "face": "face_focused",
-                                "blackboard": "利不可独专 名不可虚受
-仓规严明 公心为上",
+                                "blackboard": "利不可独专 名不可虚受\n仓规严明 公心为上",
                                 "text": "立制至为精密！老夫手订社仓规约，设仓官、仓正，由乡贤洁廉者公选充管。每次开仓出纳，明立簿籍，贷谷取息不过极低二分；若遇大歉岁，全免其息；连年大饥，并免本钱！官不经手而民享其利，此所以垂范久远！",
                                 "choices": [
                                         {
@@ -931,8 +884,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_point_focus",
                                 "face": "face_serious",
-                                "blackboard": "民胞物与 念兹在兹
-经世致用 理学归宿",
+                                "blackboard": "民胞物与 念兹在兹\n经世致用 理学归宿",
                                 "text": "横渠先生言民胞物与，非空谈也！天下百姓嗷嗷待哺，吾辈读书穷理，若不能设法活其性命、安其生业，虽口谈仁义万卷，与土木何异？理学正是要落实于济世安民之中！",
                                 "choices": [
                                         {
@@ -946,8 +898,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_read_book",
                                 "face": "face_gentle",
-                                "blackboard": "不耗官帑 不累闾阎
-自治自足 万世永赖",
+                                "blackboard": "不耗官帑 不累闾阎\n自治自足 万世永赖",
                                 "text": "五夫社仓历十四年而储谷达数万石，全活数郡生灵。后来宋孝宗闻之，诏令天下诸州通行五夫社仓法。儒者经世，贵在实事求是，深谋远虑，不可图一时侥幸！",
                                 "choices": [
                                         {
@@ -961,8 +912,7 @@ class GalGameEngine {
                                 "speaker": "考亭先生",
                                 "pose": "act_summary",
                                 "face": "face_encouraging",
-                                "blackboard": "五夫社仓 经世实学
-知行合一 王道根基",
+                                "blackboard": "五夫社仓 经世实学\n知行合一 王道根基",
                                 "text": "五夫社仓规约刻于石碑，至今犹存五夫里。仁兄切记：天下莫大之恶，莫过于慕虚名而害实事。今日学者读书，必当关切社稷民生，方不负此生顶天立地之身！",
                                 "choices": [
                                         {
@@ -1027,27 +977,27 @@ class GalGameEngine {
         const step = chapter.steps[stepIndex];
         if (!step) return;
 
-        // 动态根据武夷特色讲席主题平滑切换专属古典意境大图（多个场景图替换）
+        // 动态根据武夷特色讲席主题平滑切换专属古典意境大图【多个场景图替换】
         const bgImgEl = document.getElementById("galgame-bg-img");
         if (bgImgEl) {
             const chapterBgMap = {
-                "wuyi_jingshe": "/static/galgame_assets/classroom_pov_hd.png",
-                "jiuqu_zhaoge": "/static/banner_scenic_clean.png",
-                "wuyi_tea": "/static/banner_scenic_bg.png",
-                "wufu_shecang": "/static/galgame_assets/classroom_empty_hd.jpg",
-                "ehu_debate": "/static/galgame_assets/classroom_bg_empty.png",
-                "daxue_gewu": "/static/banner_scenic_clean2.png"
+                "wuyi_jingshe": "/static/scenery/wuyi_palace.jpg",
+                "jiuqu_zhaoge": "/static/scenery/jiuqu_stream.jpg",
+                "wuyi_tea": "/static/scenery/tianyou_peak.jpg",
+                "wufu_shecang": "/static/scenery/wufu_ziyanglou.jpg",
+                "ehu_debate": "/static/galgame_assets/classroom_empty_hd.jpg",
+                "daxue_gewu": "/static/scenery/kaoting_academy.jpg"
             };
-            const targetBg = chapter.bgImage || chapterBgMap[chapterId] || "/static/galgame_assets/classroom_pov_hd.png";
+            const targetBg = step.bgImage || chapter.bgImage || chapterBgMap[chapterId] || "/static/galgame_assets/classroom_empty_hd.jpg";
             const currentSrc = bgImgEl.getAttribute("src") || "";
             const targetFilename = targetBg.split("/").pop();
             if (!currentSrc.includes(targetFilename)) {
-                bgImgEl.style.transition = "opacity 0.3s ease";
-                bgImgEl.style.opacity = "0.35";
+                bgImgEl.style.transition = "opacity 0.4s ease";
+                bgImgEl.style.opacity = "0.3";
                 setTimeout(() => {
                     bgImgEl.src = targetBg;
                     bgImgEl.style.opacity = "1";
-                }, 150);
+                }, 200);
             }
         }
 
@@ -1319,9 +1269,64 @@ class GalGameEngine {
         }
     }
 
-    // 自主向先生当堂问难 · 实时连接知识库与认知智能体
-    async openFreeInquireModal() {
-        const query = prompt("【门生当堂请教】仁兄对先生方才所授经义有何创见或疑惑？直言道来：");
+    // 自主向先生当堂问难 · 实时连接知识库与认知智能体【杜绝单一死板，随学者需求应变】
+    openFreeInquireModal() {
+        const existing = document.getElementById("galgame-inquire-dialog");
+        if (existing) existing.remove();
+
+        const presetTopics = [
+            "如何克服求学生活中的浮躁与焦虑？",
+            "请先生讲讲当年武夷精舍的生活与弟子问答",
+            "如何理解‘未发之中’与‘已发之和’？",
+            "先生如何看待王安石变法与荆公新学？",
+            "知行如何相须并进？"
+        ];
+
+        const modal = document.createElement("div");
+        modal.id = "galgame-inquire-dialog";
+        modal.className = "galgame-inquire-modal";
+        modal.innerHTML = `
+            <div class="galgame-inquire-card">
+                <div class="inquire-card-header">
+                    <h3>💡 诸生当堂请益 · 点席问辩</h3>
+                    <button onclick="this.closest('.galgame-inquire-modal').remove()" style="background:none; border:none; font-size:18px; cursor:pointer; color:#78350f;">✕</button>
+                </div>
+                <p style="font-size:13px; color:#5c3a21; margin-top:0; margin-bottom:10px;">
+                    仁兄对先生方才所授经义有何创见或疑惑？亦或欲听先生讲述何种理学精义？可自拟论题或点击常研论题：
+                </p>
+                <div class="inquire-preset-topics">
+                    ${presetTopics.map(t => `<button class="preset-topic-btn" onclick="document.getElementById('inquire-custom-text').value='${t}'">${t}</button>`).join('')}
+                </div>
+                <textarea id="inquire-custom-text" class="inquire-textarea" placeholder="在此键入仁兄心境之惑、经史疑义或考亭史迹..."></textarea>
+                <div class="inquire-actions-row">
+                    <button class="action-pill-btn outline" onclick="this.closest('.galgame-inquire-modal').remove()">
+                        <span>暂且收回</span>
+                    </button>
+                    <button class="action-pill-btn gold" id="inquire-submit-btn">
+                        <span>呈请先生开示 ➔</span>
+                    </button>
+                </div>
+            </div>
+        `;
+
+        modal.querySelector("#inquire-submit-btn").onclick = () => {
+            const val = modal.querySelector("#inquire-custom-text").value.trim();
+            if (!val) {
+                alert("请先键入请教之论题！");
+                return;
+            }
+            modal.remove();
+            this.submitInquiry(val);
+        };
+
+        modal.addEventListener("click", (e) => {
+            if (e.target === modal) modal.remove();
+        });
+
+        document.body.appendChild(modal);
+    }
+
+    async submitInquiry(query) {
         if (!query || !query.trim()) return;
 
         const currentChap = this.chapters[this.currentChapterId] ? this.chapters[this.currentChapterId].title : "武夷讲筵";
@@ -1361,13 +1366,19 @@ class GalGameEngine {
                 speaker: "考亭先生",
                 pose: "act_explain_gesture",
                 face: "face_focused",
-                blackboard: `即席点拨：\n${query.slice(0, 14)}...`,
+                blackboard: `即席点拨：\n${query.slice(0, 12)}...`,
                 text: pureReply,
                 choices: [
                     { text: "学生受教铭心！愿随先生指引，重归正席研读。", nextStep: this.currentStepIndex, gainScore: 8 },
-                    { text: "请先生转入书斋，作更加万言透彻之大论！", nextAction: "nav_qa" }
+                    { text: "💡 弟子就此仍有进一层疑问，欲继续请益先生...", isCustom: true },
+                    { text: "请先生移步书斋，作更加万言透彻之大论！", nextAction: "nav_qa" }
                 ]
             });
+
+            // 实时语音开示
+            if (window.playVoiceByText) {
+                window.playVoiceByText(pureReply, "yunjian");
+            }
 
             if (this.studyRecords.length > 0) {
                 this.studyRecords[0].masterReply = pureReply.slice(0, 80) + "...";
@@ -1382,7 +1393,8 @@ class GalGameEngine {
                 blackboard: `即席点拨：\n${query.slice(0, 14)}...`,
                 text: `“善哉！仁兄能发此问：‘${query}’，足见未肯随人脚跟转！为学当即事穷理，学者且细加思量，此问本原何在？”`,
                 choices: [
-                    { text: "学生受教！愿随先生指引，重归正席研读。", nextStep: this.currentStepIndex, gainScore: 8 }
+                    { text: "学生受教！愿随先生指引，重归正席研读。", nextStep: this.currentStepIndex, gainScore: 8 },
+                    { text: "💡 另选议题向先生当堂请益", isCustom: true }
                 ]
             });
         }

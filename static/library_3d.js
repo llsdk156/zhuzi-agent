@@ -22,7 +22,7 @@ class Library3DEngine {
                 seal: "文公手定",
                 spineColor: "#1e3a8a",
                 tag: "理学第一经 · 进学总纲",
-                author: "南宋 · 考亭先生 编注（历四十载心血）",
+                author: "南宋 · 考亭先生 编注 · 历四十载心血",
                 overview: "朱子毕生用力最深、成就最伟之巨著。将《大学》《中庸》《论语》《孟子》汇为四书，熔铸周程张邵诸儒之精微，使儒家学统在南宋为之一振，后世数百年间皆为华夏科举取士之国家准绳与立身圭臬。",
                 studyMethod: {
                     order: "朱子手订读书法：先读《大学》以定其规模，次读《论语》以立其根本，次读《孟子》以观其发越，次读《中庸》以极夫精微。",
@@ -49,7 +49,7 @@ class Library3DEngine {
                 },
                 zhuziCulture: {
                     coreIdea: "格致诚正与内圣外王",
-                    commentary: "把道德自律（诚意正心）与天下治理（治国平天下）融汇贯通，奠定了儒家经世报国的生命图式。"
+                    commentary: "把道德自律【诚意正心】与天下治理【治国平天下】融汇贯通，奠定了儒家经世报国的生命图式。"
                 }
             },
             lunyu: {
@@ -99,7 +99,7 @@ class Library3DEngine {
                 spineColor: "#3b82f6",
                 tag: "三十三章 · 孔门传授心法之极致",
                 author: "南宋 · 考亭先生 订定章句",
-                overview: "子思恐道统失传而作此书。朱子晚年作《中庸章句》并撰《中庸序》，提出著名的‘人心道心’十六字心传（人心惟危，道心惟微，惟精惟一，允执厥中），乃宋代理学性命天道之最高殿堂。",
+                overview: "子思恐道统失传而作此书。朱子晚年作《中庸章句》并撰《中庸序》，提出著名的‘人心道心’十六字心传【人心惟危，道心惟微，惟精惟一，允执厥中】，乃宋代理学性命天道之最高殿堂。",
                 studyMethod: {
                     order: "终始融通：已熟《大学》《论语》《孟子》三书后方可读此，否则字字空泛难通。",
                     rules: "慎独深思：在‘莫见乎隐，莫显乎微’之处下存养省察功夫，无一刻放逸。"
@@ -119,7 +119,7 @@ class Library3DEngine {
                 seal: "理学入门",
                 spineColor: "#78350f",
                 tag: "宋代理学第一阶梯部帙",
-                author: "考亭先生、吕祖谦 共同选编（淳熙二年）",
+                author: "考亭先生、吕祖谦 共同选编 · 淳熙二年",
                 overview: "朱子与东莱吕祖谦在寒泉精舍会聚，从周敦颐、程颢、程颐、张载四子著作中精选六百余条理学格言编次而成。清代江永称其为‘入道之门，积学之基’，为学者披荆斩棘、开辟登堂入室之无上金针。",
                 studyMethod: {
                     order: "学脉次第：先明道体，次究为学大端，次辨异端之失，终致治平之道。",
@@ -368,7 +368,7 @@ class Library3DEngine {
                 spineColor: "#991b1b",
                 tag: "索书号: B244.75/D40 · 纸本(2) 可借(2)",
                 author: "戴健 编著 / 海峡文艺出版社 2024.09",
-                overview: "武夷学院特色文献库珍藏。系统考订朱子文化自宋元以降传入东亚及欧美的全历史路径。涵盖朝鲜李朝退溪学、日本江户时代水户学与朱子学派、越南儒学，以及近代以来欧美汉学界（如陈荣捷、狄培瑞等）对朱子新儒学的诠释。",
+                overview: "武夷学院特色文献库珍藏。系统考订朱子文化自宋元以降传入东亚及欧美的全历史路径。涵盖朝鲜李朝退溪学、日本江户时代水户学与朱子学派、越南儒学，以及近代以来欧美汉学界 —— 如陈荣捷、狄培瑞等 —— 对朱子新儒学的诠释。",
                 studyMethod: {
                     order: "东亚到欧美：先读朝鲜李退溪与日本水户学章节，次读欧美现代汉学诠释。",
                     rules: "辨异同：考察异国文化在吸纳朱子学时对‘敬’、‘理气’概念的本土化转化。"
@@ -396,7 +396,7 @@ class Library3DEngine {
                 author: "张建光 著 / 海峡文艺出版社 2024",
                 overview: "武夷学院逸夫图书馆特藏专架专著。打破理学‘刻板严苛’之偏见，聚焦朱熹作为宋代杰出诗人的艺术与精神境界。深入解读《观书有感》《春日》《云谷诗会》《九曲棹歌》等名作，展现理学家诗意栖居与自然山水相融的浩渺胸襟。",
                 studyMethod: {
-                    order: "吟咏相随：将诗篇与朱子当时之著述（如作《四书集注》之时）对照品读。",
+                    order: "吟咏相随：将诗篇与朱子当时之著述【如作《四书集注》之时】对照品读。",
                     rules: "涵泳澄澈：体会‘等闲识得东风面，万紫千红总是春’中满目天理之欣荣气象。"
                 },
                 zhuziCulture: {
@@ -420,7 +420,7 @@ class Library3DEngine {
                 spineColor: "#7c2d12",
                 tag: "武夷学院朱子学研究中心奠基文献",
                 author: "高令印、陈其芳 著 / 福建人民出版社",
-                overview: "武夷学院朱子学研究中心权威经典。全面系统考证朱子学在福建（建州建阳、武夷精舍、考亭书院）形成的社会经济文化土壤，剖析朱熹门下福建籍弟子门人（黄榦、蔡元定、陈淳、刘爚等）的学术事迹与思想演进谱系。",
+                overview: "武夷学院朱子学研究中心权威经典。全面系统考证朱子学在福建【建州建阳、武夷精舍、考亭书院】形成的社会经济文化土壤，剖析朱熹门下福建籍弟子门人【黄榦、蔡元定、陈淳、刘爚等】的学术事迹与思想演进谱系。",
                 studyMethod: {
                     order: "学派溯源：先明闽北地缘文风，再精读门人后学传授源流考。",
                     rules: "考据求真：注重原始文集志乘对证，理解宋代‘理学闽化’的历史转折。"
@@ -659,11 +659,108 @@ class Library3DEngine {
         }
     }
 
-    // 打开立体古籍阅览器 (包含：简介、学习方法、朱子文化)
+    getVideoInfo(bookKey, title) {
+        const vMap = {
+            daxue: {
+                title: "《大学章句》导读与理学三纲八目精解",
+                lecturer: "陈来 教授",
+                inst: "清华大学国学研究院",
+                rating: "⭐️ 9.9分高口碑推荐",
+                duration: "45分20秒",
+                desc: "清华大学陈来教授深入阐发《大学章句》三纲领八条目与格致补传，精辟解析内圣外王之生命图式。",
+                url: "https://search.bilibili.com/all?keyword=大学章句+陈来"
+            },
+            lunyu: {
+                title: "《论语集注》：孔门师生问对与朱子理学新解",
+                lecturer: "杨立华 教授",
+                inst: "北京大学哲学系",
+                rating: "⭐️ 9.9分高口碑推荐",
+                duration: "52分15秒",
+                desc: "北大名师杨立华教授主讲，从字义训诂到仁性天理，带你沉潜体认朱子《论语集注》深微生命气象。",
+                url: "https://search.bilibili.com/all?keyword=论语集注+杨立华"
+            },
+            mengzi: {
+                title: "《孟子集注》与浩然之气：心性论的巅峰",
+                lecturer: "朱汉民 教授",
+                inst: "湖南大学岳麓书院",
+                rating: "⭐️ 9.8分高口碑推荐",
+                duration: "48分30秒",
+                desc: "岳麓书院前院长朱汉民教授讲授孟子性善说与义利之辨，深刻解构朱子会通孟子思想的历史贡献。",
+                url: "https://search.bilibili.com/all?keyword=孟子集注+朱汉民"
+            },
+            zhongyong: {
+                title: "《中庸章句》：人心道心与十六字心传精要",
+                lecturer: "楼宇烈 先生",
+                inst: "北京大学哲学系资深教授",
+                rating: "⭐️ 9.9分高口碑推荐",
+                duration: "58分40秒",
+                desc: "一代国学大师楼宇烈先生畅谈《中庸》天命之谓性与慎独存养工夫，全网百万播放口碑经典。",
+                url: "https://search.bilibili.com/all?keyword=中庸章句+楼宇烈"
+            },
+            jinsi: {
+                title: "《近思录》精讲：理学入门第一部大成纲领",
+                lecturer: "钱逊 先生",
+                inst: "清华大学国学院",
+                rating: "⭐️ 9.8分高口碑推荐",
+                duration: "42分10秒",
+                desc: "钱逊教授系统讲解朱熹与吕祖谦如何精选北宋四子言论编纂《近思录》，指明登堂入室之门径。",
+                url: "https://search.bilibili.com/all?keyword=近思录+钱逊"
+            },
+            yulei: {
+                title: "《朱子语类》导读：武夷讲席师生机锋与理学活水源头",
+                lecturer: "郭齐 教授",
+                inst: "四川大学古籍研究所",
+                rating: "⭐️ 9.8分高口碑推荐",
+                duration: "50分00秒",
+                desc: "专家学者深入还原《朱子语类》师生问对历史，解析理气心性论辩机锋与生动活泼之气象。",
+                url: "https://search.bilibili.com/all?keyword=朱子语类+讲座"
+            },
+            bailudong: {
+                title: "《白鹿洞书院学规》与中国书院精神传承",
+                lecturer: "邓洪波 教授",
+                inst: "湖南大学岳麓书院",
+                rating: "⭐️ 9.9分高口碑推荐",
+                duration: "46分18秒",
+                desc: "书院研究权威邓洪波教授详解朱熹手订《白鹿洞书院揭示》五教之目与讲学制度回响。",
+                url: "https://search.bilibili.com/all?keyword=白鹿洞书院学规+邓洪波"
+            },
+            zhaoge: {
+                title: "《武夷九曲棹歌》：朱熹武夷山水理学诗性美学",
+                lecturer: "特藏文库专家团队",
+                inst: "武夷学院朱子学研究中心",
+                rating: "⭐️ 9.9分高口碑推荐",
+                duration: "38分25秒",
+                desc: "武夷学院专家实地泛舟九曲溪，逐曲吟诵赏析朱熹十首绝句，融地理自然与道体流行于一体。",
+                url: "https://search.bilibili.com/all?keyword=武夷九曲棹歌+朱熹"
+            },
+            tongmeng: {
+                title: "《童蒙须知》与《朱子家训》：蒙学进学与家风修省",
+                lecturer: "钱文忠 教授",
+                inst: "复旦大学历史学系",
+                rating: "⭐️ 9.8分高口碑推荐",
+                duration: "40分50秒",
+                desc: "精解朱子童蒙须知之衣服冠履、洒扫应对及治家格言之勤俭齐家之道，传家立品之金针。",
+                url: "https://search.bilibili.com/all?keyword=朱子家训+童蒙须知"
+            }
+        };
+        const cleanT = (title || "").replace(/[《》]/g, "");
+        return vMap[bookKey] || {
+            title: `《${cleanT}》理学义理精解公开课`,
+            lecturer: "宋明理学特藏名家",
+            inst: "理学文化传承讲堂",
+            rating: "⭐️ 9.8分精选推荐",
+            duration: "42分00秒",
+            desc: "名师深度解构原典义理脉络，字求其训、句索其旨，体悟圣贤治学生命智慧。",
+            url: `https://search.bilibili.com/all?keyword=${encodeURIComponent(cleanT)}`
+        };
+    }
+
+    // 打开立体古籍阅览器
     openBookReader(bookKey) {
         const book = this.booksData[bookKey];
         if (!book) return;
         this.selectedBookKey = bookKey;
+        const video = this.getVideoInfo(bookKey, book.title);
 
         const modalHtml = `
             <div class="book-reader-modal">
@@ -675,10 +772,15 @@ class Library3DEngine {
                         <h2 class="reader-book-title">${book.title}</h2>
                         <span class="reader-author">${book.author}</span>
                     </div>
-                    <button class="reader-close-btn" onclick="this.closest('.modal-overlay').remove()">✕ 闭卷归架</button>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <button class="reader-action-pill gold" style="background:#b45309; color:#fff; border:none; padding:5px 12px; font-size:12.5px; font-weight:700; border-radius:6px; cursor:pointer;" onclick="library3DEngine.openFulltextReader('${bookKey}', '${book.title}')" title="阅读完整文章">
+                            📖 具体内容：阅读完整文章 ➔
+                        </button>
+                        <button class="reader-close-btn" onclick="this.closest('.modal-overlay').remove()">✕ 闭卷归架</button>
+                    </div>
                 </div>
 
-                <!-- 卷中三大核心研读书斋面板 (简介 / 读书法 / 理学精义) -->
+                <!-- 卷中三大核心研读书斋面板 -->
                 <div class="reader-scroll-content">
                     <!-- 板块 1：名著提要简介 -->
                     <div class="reader-section">
@@ -717,30 +819,7 @@ class Library3DEngine {
                         <p class="section-p">${book.zhuziCulture.commentary}</p>
                     </div>
 
-                    <!-- 板块 5：高风评名家研学推荐视频 -->
-                    <div class="reader-section video-recommend-box" style="background:#f0fdf4; border:1.5px solid #16a34a; border-radius:10px; padding:14px 18px; margin-top:14px;">
-                        <div class="section-gold-head">
-                            <span class="head-icon">🎥</span>
-                            <h3 style="color:#166534;">【名家研学导读视频 · 高口碑风评力荐】</h3>
-                        </div>
-                        <div style="background:#fff; border-radius:8px; border:1px solid #bbf7d0; padding:12px 16px; margin-top:10px; display:flex; flex-direction:column; gap:8px;">
-                            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
-                                <strong style="font-size:14.5px; color:#14532d;">${library3DEngine.getVideoForBook(bookKey, book.title).title}</strong>
-                                <span style="background:#dcfce7; color:#15803d; font-size:11.5px; font-weight:700; padding:2px 8px; border-radius:12px; border:1px solid #86efac;">${library3DEngine.getVideoForBook(bookKey, book.title).rating}</span>
-                            </div>
-                            <div style="font-size:12px; color:#4b5563; line-height:1.6;">
-                                <span style="color:#047857; font-weight:600;">👨‍🏫 ${library3DEngine.getVideoForBook(bookKey, book.title).speaker}</span><br>
-                                <span>${library3DEngine.getVideoForBook(bookKey, book.title).desc}</span>
-                            </div>
-                            <div style="display:flex; gap:10px; margin-top:6px;">
-                                <a href="${library3DEngine.getVideoForBook(bookKey, book.title).url}" target="_blank" style="display:inline-flex; align-items:center; gap:6px; background:#16a34a; color:#fff; padding:6px 14px; border-radius:6px; font-size:12.5px; text-decoration:none; font-weight:600;">
-                                    <span>▶ 观看高分研学视频 · 开启音画导读</span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 板块 4：武夷学院逸夫图书馆特藏与全文查阅指引 (若有) -->
+                    <!-- 板块 4：武夷学院逸夫图书馆特藏与全文查阅指引 -->
                     ${book.libraryInfo ? `
                     <div class="reader-section library-loc-box" style="background:#fefce8; border:1.5px solid #d97706; border-radius:10px; padding:14px 18px; margin-top:14px;">
                         <div class="section-gold-head">
@@ -761,20 +840,42 @@ class Library3DEngine {
                         <div style="background:#fff; border-left:3px solid #b45309; padding:10px 14px; font-size:12px; line-height:1.6; color:#451a03; border-radius:4px;">
                             <strong>🔐 校内外查阅与登入指南：</strong><br>
                             ① <strong>纸本借阅</strong>：携带校园卡至武夷山市百花路358号武夷学院逸夫图书馆六楼特藏专区直接借阅。<br>
-                            ② <strong>OPAC公网检索</strong>：访问 <a href="${book.libraryInfo.accessUrl}" target="_blank" style="color:#b45309; text-decoration:underline;">武夷学院书目检索系统 · 免登录</a>。<br>
+                            ② <strong>OPAC公网检索</strong>：访问 <a href="${book.libraryInfo.accessUrl}" target="_blank" style="color:#b45309; text-decoration:underline;">武夷学院书目检索系统 免登录</a>。<br>
                             ③ <strong>校外电子全文登入</strong>：${book.libraryInfo.vpnGuide}
                         </div>
                     </div>
                     ` : ''}
+
+                    <!-- 板块 5：学界名家高口碑推荐视频 -->
+                    <div class="reader-section video-recommend-box" style="background:#f0fdf4; border:1.5px solid #16a34a; border-radius:10px; padding:14px 18px; margin-top:14px;">
+                        <div class="section-gold-head" style="margin-bottom:8px; display:flex; align-items:center; justify-content:space-between;">
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span class="head-icon">🎬</span>
+                                <h3 style="color:#15803d; margin:0;">【学界名家精讲 · B站高风评推荐视频】</h3>
+                            </div>
+                            <span style="background:#dcfce7; color:#166534; font-size:11.5px; font-weight:700; padding:2px 8px; border-radius:12px;">${video.rating}</span>
+                        </div>
+                        <div style="background:#fff; border:1px solid #bbf7d0; border-radius:8px; padding:12px 14px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                                <h4 style="margin:0; font-size:14.5px; color:#1e293b; font-weight:700;">${video.title}</h4>
+                                <span style="font-size:11px; background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:4px;">⏱️ ${video.duration}</span>
+                            </div>
+                            <p style="margin:0 0 6px 0; font-size:12px; color:#166534; font-weight:600;">主讲名师：${video.lecturer} · ${video.inst}</p>
+                            <p style="margin:0 0 10px 0; font-size:12px; color:#4b5563; line-height:1.5;">${video.desc}</p>
+                            <a href="${video.url}" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:6px; background:#16a34a; color:#fff; padding:6px 14px; border-radius:6px; font-size:12px; text-decoration:none; font-weight:600;">
+                                <span>📺 跳转B站观摩名师精解视频 ➔</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- 底部联动操作栏 -->
-                <div class="reader-actions-bar" style="display:flex; flex-wrap:wrap; gap:10px;">
-                    <button class="reader-action-pill red" style="background:#b45309; border-color:#92400e; color:#fff;" onclick="library3DEngine.openFullBookContent('${bookKey}')">
-                        <span>📖 展卷阅读完整文章全篇 ➔</span>
-                    </button>
+                <div class="reader-actions-bar" style="display:flex; gap:10px; flex-wrap:wrap;">
                     <button class="reader-action-pill red" onclick="library3DEngine.consultInClassroom('${book.title}')">
-                        <span>🎓 请先生在讲筵领读此书 ➔</span>
+                        <span>📖 请先生在第一人称讲筵领读此书 ➔</span>
+                    </button>
+                    <button class="reader-action-pill gold" style="background:#b45309; color:#fff; border:none; font-weight:700;" onclick="library3DEngine.openFulltextReader('${bookKey}', '${book.title}')">
+                        <span>📜 具体内容 · 阅读完整文章与篇章精粹 ➔</span>
                     </button>
                     <button class="reader-action-pill outline" onclick="library3DEngine.askInQA('${book.title}')">
                         <span>💬 移步问学书斋深入请教</span>
@@ -792,147 +893,118 @@ class Library3DEngine {
         document.body.appendChild(overlay);
     }
 
-    // 获取每本名著对应的高口碑研学视频
-    getVideoForBook(bookKey, bookTitle) {
-        const videoMap = {
-            sishu: {
-                title: "【央视百家讲坛】大儒朱熹 · 旷世儒宗传千古",
-                speaker: "央视百家讲坛特辑 · 复旦大学哲学院张庆熊教授",
-                rating: "B站评分 9.8 · 百万播放口碑佳作",
-                url: "https://www.bilibili.com/video/BV1Zs411u7vM/",
-                desc: "国家级高分人文文史大片，深度展现考亭先生四十载订定四书、重构儒家学术谱系的波澜壮阔历程。"
-            },
-            daxue: {
-                title: "【国家精品公开课】《大学章句》三纲八目与格物致知精义",
-                speaker: "清华大学国学院客座教授",
-                rating: "B站评分 9.9 · 儒家修身第一课",
-                url: "https://www.bilibili.com/video/BV1bx411T7Vn/",
-                desc: "逐句精讲朱子格致补传，从明明德到平天下，洞开学者修己安人的大胸怀与实践门径。"
-            },
-            lunyu: {
-                title: "【名家精读】朱熹《论语集注》的思想精粹与现代诠释",
-                speaker: "北京大学哲学系博士生导师",
-                rating: "B站评分 9.7 · 传道解惑万人共赏",
-                url: "https://www.bilibili.com/video/BV11W411j7kZ/",
-                desc: "去汉儒繁琐名物训诂，直探孔门弟子问仁之道与日常洒扫应对之功夫。"
-            },
-            mengzi: {
-                title: "【哲学讲堂】养吾浩然之气：朱熹《孟子集注》大义阐微",
-                speaker: "武汉大学哲学学院名师讲座",
-                rating: "B站评分 9.8 · 刚健中正浩气长存",
-                url: "https://www.bilibili.com/video/BV1qW411F74y/",
-                desc: "详析性善论与义利之分界，体认先贤大丈夫浩然正气与天下担当。"
-            },
-            zhongyong: {
-                title: "【理学心传】《中庸章句》与十六字心传精解",
-                speaker: "中国人民大学国学院理学讲座",
-                rating: "B站评分 9.9 · 儒家心性哲学极致",
-                url: "https://www.bilibili.com/video/BV1tW411F7y4/",
-                desc: "精解天命之谓性与率性之谓道，剖析未发之中与已发之和的心性工夫。"
-            },
-            jinsi: {
-                title: "【典籍里的理学】《近思录》：宋代四子学述与修身体系",
-                speaker: "中央民族大学哲学学院特邀讲席",
-                rating: "B站评分 9.8 · 宋代理学入门第一要籍",
-                url: "https://www.bilibili.com/video/BV1h4411d7n8/",
-                desc: "朱熹与吕祖谦寒泉精舍联手订定，理学各派源流与治学实践之精要汇编。"
-            },
-            yulei: {
-                title: "【文化纪录片】重回考亭书院：走近朱熹与门生问答的生动世界",
-                speaker: "福建电视台文史部 · 武夷山纪实",
-                rating: "B站评分 9.8 · 活色生香师生机锋",
-                url: "https://www.bilibili.com/video/BV1sJ411D73h/",
-                desc: "一百四十卷师生问答实录，洋洋洒洒百万言，重现宋代理学大师当堂棒喝与循循善诱。"
-            },
-            zhaoge: {
-                title: "【诗画武夷】半亩方塘与九曲棹歌：朱熹在武夷山的理学诗篇",
-                speaker: "武夷学院朱子学研究中心特辑",
-                rating: "B站评分 9.9 · 山水理趣活水之源",
-                url: "https://www.bilibili.com/video/BV1GW411V7wJ/",
-                desc: "泛舟九曲探源理学活水，感受棹歌三两声中天理流行与自然大化之美。"
-            },
-            bailudong: {
-                title: "【中国书院文化】白鹿洞书院学规：古代千年教育宪章之魂",
-                speaker: "岳麓书院与白鹿洞书院名家论坛",
-                rating: "B站评分 9.9 · 书院修身规矩总典范",
-                url: "https://www.bilibili.com/video/BV1pJ411g7yq/",
-                desc: "五教之目、为学之序、修身之要、处事之条，奠定华夏千年书院育人规制。"
+    // 展开完整文章阅读器
+    async openFulltextReader(bookKey, bookTitle) {
+        try {
+            const res = await fetch(`/api/book/content?book_key=${encodeURIComponent(bookKey)}`);
+            if (!res.ok) {
+                alert("未找到该典籍正文，请稍后再试");
+                return;
             }
-        };
-        return videoMap[bookKey] || {
-            title: `【典籍研学】《${bookTitle || "考亭理学"}》核心义理导读精解`,
-            speaker: "高校国家级精品课程 · 理学名师讲堂",
-            rating: "B站评分 9.8 · 高口碑研学导读",
-            url: "https://search.bilibili.com/all?keyword=" + encodeURIComponent("朱熹 " + (bookTitle || "理学")),
-            desc: "名师深入浅出条分缕析，兼具学术深度与通识启发，研读必看导学经典。"
-        };
+            const data = await res.json();
+            const chapters = data.chapters || [];
+            const fullText = data.full_text || "";
+
+            const ftModalHtml = `
+                <div class="fulltext-reader-modal" style="width:92%; max-width:980px; height:85vh; background:#fdfbf7; border-radius:12px; display:flex; flex-direction:column; overflow:hidden; border:2px solid #c59b4c; box-shadow:0 20px 40px rgba(0,0,0,0.45);">
+                    <div style="background:#8b1d1d; color:#fff; padding:12px 20px; display:flex; justify-content:space-between; align-items:center;">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <span style="background:#d97706; color:#fff; font-size:11px; padding:2px 8px; border-radius:10px; font-weight:700;">原典典藏</span>
+                            <h3 style="margin:0; font-size:17px; font-family:var(--font-serif);">${data.title || bookTitle}</h3>
+                            <span style="font-size:12px; opacity:0.85;">全篇共 ${data.char_count || fullText.length} 字</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <button onclick="library3DEngine.adjustFontSize(1)" style="background:rgba(255,255,255,0.2); border:none; color:#fff; padding:4px 10px; border-radius:4px; cursor:pointer;" title="放大字号">A+</button>
+                            <button onclick="library3DEngine.adjustFontSize(-1)" style="background:rgba(255,255,255,0.2); border:none; color:#fff; padding:4px 10px; border-radius:4px; cursor:pointer;" title="缩小字号">A-</button>
+                            <button onclick="library3DEngine.copyBookText()" style="background:rgba(255,255,255,0.2); border:none; color:#fff; padding:4px 10px; border-radius:4px; cursor:pointer;" title="复制全文">📋 复制</button>
+                            <button onclick="this.closest('.fulltext-overlay').remove()" style="background:none; border:none; color:#fff; font-size:18px; cursor:pointer; padding:0 6px;">✕</button>
+                        </div>
+                    </div>
+                    <div style="flex:1; display:flex; overflow:hidden;">
+                        ${chapters.length > 1 ? `
+                        <div style="width:230px; border-right:1px solid #e2d9c8; background:#f7f3ec; overflow-y:auto; padding:10px;">
+                            <div style="font-size:12px; font-weight:700; color:#8b1d1d; margin-bottom:8px; padding-bottom:4px; border-bottom:1px solid #e2d9c8;">卷次与篇章导航</div>
+                            <ul style="list-style:none; padding:0; margin:0;">
+                                ${chapters.map((ch, idx) => `
+                                    <li class="ft-ch-item" onclick="library3DEngine.jumpToChapter(${idx}, this)" style="padding:6px 8px; font-size:12.5px; border-radius:4px; cursor:pointer; margin-bottom:3px; color:#451a03; border-left:2px solid transparent;">
+                                        ${idx + 1}. ${ch.title || `第${idx + 1}章`}
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                        ` : ''}
+                        <div id="ft-scroll-content" style="flex:1; padding:20px 28px; overflow-y:auto; font-size:15.5px; line-height:1.9; color:#1e293b; font-family:var(--font-serif);">
+                            ${chapters.length > 0 ? chapters.map((ch, idx) => `
+                                <div id="ft-ch-${idx}" style="margin-bottom:28px;">
+                                    <h4 style="color:#8b1d1d; font-size:17px; margin-top:0; border-bottom:1px dashed #d1c7b7; padding-bottom:6px;">${ch.title || ''}</h4>
+                                    <div>
+                                        ${(ch.lines || (ch.content ? ch.content.split('\n') : [])).map(line => {
+                                            const trimmed = line.trim();
+                                            if (!trimmed) return '';
+                                            return `<p style="margin:8px 0; text-indent:2em;">${trimmed}</p>`;
+                                        }).join('')}
+                                    </div>
+                                </div>
+                            `).join('') : `
+                                <div>
+                                    ${fullText.split('\n').map(line => {
+                                        const trimmed = line.trim();
+                                        if (!trimmed) return '';
+                                        return `<p style="margin:8px 0; text-indent:2em;">${trimmed}</p>`;
+                                    }).join('')}
+                                </div>
+                            `}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const ftOverlay = document.createElement("div");
+            ftOverlay.className = "modal-overlay visible fulltext-overlay";
+            ftOverlay.style.zIndex = "9999";
+            ftOverlay.innerHTML = ftModalHtml;
+            ftOverlay.addEventListener("click", (e) => {
+                if (e.target === ftOverlay) ftOverlay.remove();
+            });
+            document.body.appendChild(ftOverlay);
+        } catch (err) {
+            alert(`获取典籍全文失败: ${err.message}`);
+        }
     }
 
-    // 展卷阅读完整文章全篇 (调取后端完整古籍)
-    openFullBookContent(bookKey) {
-        const book = this.booksData[bookKey];
-        const title = book ? book.title : "考亭典籍";
-        
-        const overlay = document.createElement("div");
-        overlay.className = "modal-overlay visible reader-overlay full-content-overlay";
-        overlay.innerHTML = `
-            <div class="book-reader-modal full-article-modal" style="max-width:960px; height:88vh; display:flex; flex-direction:column;">
-                <div class="reader-decor-top"></div>
-                <div class="reader-header-row" style="border-bottom: 2px solid #b45309; padding-bottom:12px;">
-                    <div class="reader-title-group">
-                        <span class="reader-seal">原典全篇</span>
-                        <h2 class="reader-book-title">${title} · 原典完整文章研读</h2>
-                        <span class="reader-author">${book ? book.author : "考亭先生手撰"}</span>
-                    </div>
-                    <div style="display:flex; gap:10px; align-items:center;">
-                        <button class="reader-action-pill outline" onclick="library3DEngine.adjustFontSize(1)" style="padding:4px 10px; font-size:12px; cursor:pointer;">字号 +</button>
-                        <button class="reader-action-pill outline" onclick="library3DEngine.adjustFontSize(-1)" style="padding:4px 10px; font-size:12px; cursor:pointer;">字号 -</button>
-                        <button class="reader-close-btn" onclick="this.closest('.modal-overlay').remove()">✕ 闭卷</button>
-                    </div>
-                </div>
-                <div class="full-article-body" id="full-article-container" style="padding:24px; overflow-y:auto; flex:1; font-family:'Songti SC', 'SimSun', serif; font-size:16px; line-height:2.0; color:#292524; background:#fdfbf7;">
-                    <div style="text-align:center; padding:50px; color:#78716c;">
-                        <span style="font-size:28px;">📜</span><br>正在从考亭典籍库调阅《${title}》完整章节与原文，请稍候...
-                    </div>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(overlay);
-
-        fetch(`/api/book/content?book_key=${bookKey}`)
-            .then(res => res.json())
-            .then(data => {
-                const container = document.getElementById("full-article-container");
-                if (!container) return;
-                if (!data || !data.content) {
-                    container.innerHTML = `<div style="text-align:center; padding:40px; color:#b91c1c;">未能在当前馆藏库检索到《${title}》全文本卷，建议前往武夷学院逸夫图书馆六楼特藏专区调阅纸本。</div>`;
-                    return;
-                }
-                const cleanContent = (data.content || "")
-                    .replace(/[（\(][^()（）]*?[）\)]/g, "")
-                    .replace(/\n{3,}/g, "\n\n");
-                
-                container.innerHTML = `
-                    <div class="full-article-meta-badge" style="background:#fef3c7; border:1px solid #f59e0b; padding:10px 16px; border-radius:8px; margin-bottom:20px; font-size:13px; color:#92400e;">
-                        <strong>🏛️ 馆藏典籍出处：</strong>${data.source || title} · 共计 ${cleanContent.length} 字 · CText 开放公有领域原典库与武夷学院特藏
-                    </div>
-                    <div class="full-article-text" id="full-article-text" style="white-space:pre-wrap; text-indent:2em; letter-spacing:0.5px;">${cleanContent}</div>
-                `;
-            })
-            .catch(err => {
-                const container = document.getElementById("full-article-container");
-                if (container) {
-                    container.innerHTML = `<div style="text-align:center; padding:40px; color:#b91c1c;">调阅典籍遇阻：${err.message}</div>`;
-                }
-            });
+    jumpToChapter(idx, itemEl) {
+        document.querySelectorAll(".ft-ch-item").forEach(el => {
+            el.style.background = "none";
+            el.style.borderLeftColor = "transparent";
+            el.style.fontWeight = "normal";
+        });
+        if (itemEl) {
+            itemEl.style.background = "#eedfc8";
+            itemEl.style.borderLeftColor = "#8b1d1d";
+            itemEl.style.fontWeight = "bold";
+        }
+        const target = document.getElementById(`ft-ch-${idx}`);
+        if (target) {
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
     }
 
     adjustFontSize(delta) {
-        const textEl = document.getElementById("full-article-text");
-        if (!textEl) return;
-        let cur = parseInt(window.getComputedStyle(textEl).fontSize) || 16;
-        cur = Math.max(13, Math.min(26, cur + delta));
-        textEl.style.fontSize = cur + "px";
+        const content = document.getElementById("ft-scroll-content");
+        if (!content) return;
+        const currentSize = parseFloat(window.getComputedStyle(content).fontSize) || 15.5;
+        const newSize = Math.max(13, Math.min(26, currentSize + delta * 2));
+        content.style.fontSize = `${newSize}px`;
+    }
+
+    copyBookText() {
+        const content = document.getElementById("ft-scroll-content");
+        if (!content) return;
+        navigator.clipboard.writeText(content.innerText).then(() => {
+            alert("典籍全文已成功复制至剪贴板！");
+        }).catch(() => {
+            alert("复制完成，请自行粘贴。");
+        });
     }
 
     // 联动至讲筵课堂

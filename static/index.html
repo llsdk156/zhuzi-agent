@@ -145,10 +145,9 @@
                         <span class="pill-icon">📜</span>
                         <span class="pill-label">每日晨策</span>
                     </button>
-                    <button class="win-btn" id="tts-audio-btn" onclick="toggleAutoTTS()" title="自动文人配音开关 当前已开启实时出声 点击静音">
-                        <span id="tts-icon">🔊</span>
+                    <button class="win-btn" id="tts-audio-btn" onclick="toggleAutoTTS()" title="自动文人配音开关 当前已静音 点击开启">
+                        <span id="tts-icon">🔇</span>
                     </button>
-
                     <button class="win-btn" onclick="toggleFullScreen()" title="全屏沉浸研学">
                         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
@@ -353,18 +352,74 @@
                                 </div>
                             </div>
 
-                            <!-- 右侧：完整独立的对答区域  · 快捷词、消息流、停止按钮与底栏输入 -->
+                            <!-- 右侧：完整独立的对答区域  · 任务流、快捷词、消息流、停止按钮与底栏输入 -->
                             <div class="qa-dialogue-pane">
-                                <!-- 考亭专项任务流工作条 -->
-                                <div class="active-taskflow-bar" id="active-taskflow-bar" style="display:none;">
-                                    <div class="taskflow-bar-info">
-                                        <span class="taskflow-bar-icon" id="taskflow-bar-icon">🎓</span>
-                                        <span class="taskflow-bar-title" id="taskflow-bar-title">当前专修：论文研撰指导工作流</span>
+                                <!-- 考亭先生四大互动任务流专修导航栏 · 位于对话框正上方 -->
+                                <div class="taskflow-capsule-bar" id="taskflow-capsule-bar">
+                                    <div class="taskflow-bar-header">
+                                        <div class="taskflow-bar-title-row">
+                                            <span class="taskflow-badge">📖 考亭专修任务流</span>
+                                            <span class="taskflow-hint">点击开启沉浸式专修向导 · 全程启发互动 · 实时语音出声</span>
+                                        </div>
                                     </div>
-                                    <div class="taskflow-bar-actions">
-                                        <button class="taskflow-exit-btn" onclick="exitTaskFlow()">退出专修</button>
+                                    <div class="taskflow-capsules-grid">
+                                        <div class="taskflow-capsule-item flow-thesis" onclick="startTaskFlow('thesis')">
+                                            <div class="flow-item-left">
+                                                <span class="flow-emoji">🎓</span>
+                                                <div class="flow-text-group">
+                                                    <strong class="flow-main-title">论文写作指导</strong>
+                                                    <span class="flow-sub-desc">自选方向 · 提纲指引 · 典籍索书号</span>
+                                                </div>
+                                            </div>
+                                            <span class="flow-btn-enter">研撰 ➔</span>
+                                        </div>
+                                        <div class="taskflow-capsule-item flow-poetry" onclick="startTaskFlow('poetry')">
+                                            <div class="flow-item-left">
+                                                <span class="flow-emoji">📜</span>
+                                                <div class="flow-text-group">
+                                                    <strong class="flow-main-title">古诗析理鉴赏</strong>
+                                                    <span class="flow-sub-desc">拍照传图或诗句对答 · 理学生意</span>
+                                                </div>
+                                            </div>
+                                            <span class="flow-btn-enter">析理 ➔</span>
+                                        </div>
+                                        <div class="taskflow-capsule-item flow-scenery" onclick="startTaskFlow('scenery')">
+                                            <div class="flow-item-left">
+                                                <span class="flow-emoji">🏞️</span>
+                                                <div class="flow-text-group">
+                                                    <strong class="flow-main-title">武夷胜景揽胜</strong>
+                                                    <span class="flow-sub-desc">武夷学院与九曲胜景 · 图文亲历自述</span>
+                                                </div>
+                                            </div>
+                                            <span class="flow-btn-enter">揽胜 ➔</span>
+                                        </div>
+                                        <div class="taskflow-capsule-item flow-life" onclick="startTaskFlow('life')">
+                                            <div class="flow-item-left">
+                                                <span class="flow-emoji">⏳</span>
+                                                <div class="flow-text-group">
+                                                    <strong class="flow-main-title">朱子人生经历</strong>
+                                                    <span class="flow-sub-desc">六大求道阶段 · 实时问对研讨</span>
+                                                </div>
+                                            </div>
+                                            <span class="flow-btn-enter">亲历 ➔</span>
+                                        </div>
                                     </div>
                                 </div>
+
+                                <!-- 任务流活跃指示条：在执行任务流时展示当前专修与退出按钮 -->
+                                <div class="active-taskflow-bar" id="active-taskflow-bar" style="display:none;">
+                                    <div class="active-taskflow-left">
+                                        <span class="active-flow-dot"></span>
+                                        <span class="active-flow-icon" id="active-flow-icon">🎓</span>
+                                        <span class="active-flow-title" id="active-flow-title">当前专修：论文写作指导</span>
+                                    </div>
+                                    <div class="active-taskflow-right">
+                                        <button class="exit-flow-btn" onclick="exitTaskFlow()" title="退出当前专修任务流，恢复常规问学">
+                                            <span>退出专修 ✕</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- 任务流快捷选项容器 -->
                                 <div class="taskflow-quick-chips" id="taskflow-quick-chips" style="display:none;"></div>
 
                                 <!-- 快捷理学主题词栏 -->
@@ -381,7 +436,6 @@
                                     <button class="chip-item" onclick="sendQuery('qa', '敢问先生：后世有人认为“格物致知”就是近世西洋之观察万物做科学实验，此说是否契合先生原意？二者究竟有何异同？')">理学思辨·格物致知辨</button>
                                     <button class="chip-item" onclick="sendQuery('qa', '后世多有人讥评“存天理灭人欲”乃是灭绝人性之酷论，先生有何辩驳？')">理学思辨·存天理灭人欲辨</button>
                                 </div>
-
 
                                 <!-- 独立对答消息流 -->
                                 <div class="chat-messages-scroll" id="qa-messages">
@@ -429,7 +483,7 @@
                                     <div class="input-pill-container">
                                         <input type="text" id="qa-user-input" class="user-text-input" placeholder="向先生请教理学经义、治学修身、世务困惑..." onkeydown="if(event.key==='Enter') sendQuery('qa')">
                                         <div class="input-actions-right">
-                                            <button class="action-clip-btn" onclick="openUploadModal()" title="挂载文献资料与专修任务流">
+                                            <button class="action-clip-btn" onclick="openUploadModal()" title="挂载文献资料">
                                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2">
                                                     <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
                                                 </svg>
@@ -441,8 +495,11 @@
                                                 </svg>
                                             </button>
                                             <input type="file" id="poetry-file-input" accept="image/*" style="display:none;" onchange="handlePoetryImageFile(this)">
+                                            <button class="action-tts-toggle-btn active" id="qa-tts-toggle-btn" type="button" onclick="toggleInstantTTS()" title="实时语音开示开关">
+                                                <span class="tts-status-icon">🔊</span>
+                                                <span class="tts-status-label">实时语音: 开</span>
+                                            </button>
                                             <button class="action-mic-btn" id="qa-mic-btn" type="button" onclick="toggleVoiceInput('qa')" title="语音输入问对">
-
                                                 <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                     <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
                                                     <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
@@ -485,6 +542,9 @@
                                     <span class="score-split">|</span>
                                     <span class="score-item" title="学者居敬持守、收敛身心之敬意">🌸 持敬: <strong>70</strong></span>
                                 </div>
+                                <button class="action-pill-btn gold" onclick="galGameEngine.openFreeInquireModal()" title="诸生当堂点席请益，根据需求定制讲筵">
+                                    <span>💡 诸生当堂点席请益</span>
+                                </button>
                                 <button class="action-pill-btn amber" onclick="galGameEngine.loadChapter(galGameEngine.currentChapterId, 0)" title="重新开始本章研习">
                                     <span>↻ 重启本篇研读</span>
                                 </button>
@@ -520,7 +580,7 @@
                                         </div>
                                     </div>
 
-                                    <!-- 3. 先生当堂授课实体角色立绘 · 站立于讲堂前方 -->
+                                    <!-- 3. 先生当堂授课实体角色立绘 · 站立于讲堂前方非背景 -->
                                     <div class="galgame-sprite-stage" id="galgame-sprite-stage">
                                         <img src="/static/galgame_assets/act_stand.png" alt="考亭先生" class="galgame-master-sprite" id="galgame-char-img">
                                     </div>
@@ -923,86 +983,19 @@
                 <button class="modal-close-btn" onclick="closeUploadModal()">✕</button>
             </div>
             <div class="modal-body">
-                <!-- 模式 A：即物穷理深度剖析  · 支持 txt, md, docx, pdf -->
+                <!-- 模式 A：即物穷理深度剖析  · 支持文档与古诗书画图片 -->
                 <div class="upload-panel active" id="panel-upload-analyze">
                     <p class="modal-hint">
-                        <strong>即物穷理 · 四维剖析：</strong>支持上传 <code>.txt</code>、<code>.md</code>、<code>.docx</code>、<code>.pdf</code> 文献资料。先生将以纯第一人称自述，从理气之辨、存养省察、格物致知、知行相须四大维度进行深度条分缕析并赐朱砂手批。
+                        <strong>即物穷理 · 四维剖析：</strong>支持上传 <code>.txt</code>、<code>.md</code>、<code>.docx</code>、<code>.pdf</code> 经卷文献，以及 <code>.png</code>、<code>.jpg</code>、<code>.webp</code> 古诗墨宝书画图片。先生将以纯第一人称自述，从理气之辨、存养省察、格物致知、知行相须四大维度进行深度条分缕析并赐朱砂手批。
                     </p>
                     <div class="drop-zone highlight-drop" onclick="document.getElementById('analysis-file-input').click()">
                         <div class="drop-icon">📜</div>
-                        <p class="drop-main-text">点击选择文献或拖拽至此即刻剖析</p>
-                        <p class="drop-sub-text">支持 TXT / MD / DOCX / PDF 格式</p>
-                        <input type="file" id="analysis-file-input" accept=".txt,.md,.docx,.pdf" style="display:none;" onchange="handleDocumentAnalysis(this)">
+                        <p class="drop-main-text">点击选择文献、古诗墨宝图片或拖拽至此即刻剖析</p>
+                        <p class="drop-sub-text">支持 TXT / MD / DOCX / PDF 文档与 PNG / JPG / WEBP 图像</p>
+                        <input type="file" id="analysis-file-input" accept=".txt,.md,.docx,.pdf,.png,.jpg,.jpeg,.webp" style="display:none;" onchange="handleDocumentAnalysis(this)">
                     </div>
                     <div id="analysis-upload-status" class="status-msg"></div>
-
-                    <!-- 考亭书院 · 先生四大专修任务流 -->
-                    <div class="taskflow-container">
-                        <div class="taskflow-section-header">
-                            <div class="taskflow-badge">考亭道统 · 研习专修</div>
-                            <h4 class="taskflow-title">考亭先生四大研学任务流</h4>
-                            <p class="taskflow-sub">依循朱子读书法与理学工夫，自选专修门径，先生全程启发指引，语音实时开示</p>
-                        </div>
-                        <div class="taskflow-grid">
-                            <!-- 任务流 1：论文写作 -->
-                            <div class="taskflow-card" onclick="startTaskFlow('thesis')">
-                                <div class="taskflow-card-head">
-                                    <span class="taskflow-card-icon">🎓</span>
-                                    <span class="taskflow-card-badge">学术研撰</span>
-                                </div>
-                                <h5>论文研撰指导</h5>
-                                <p>精选理学核心论题方向，先生系统启发论证脉络，精准开具武夷学院特藏珍本文献与OPAC索书号，全程研讨直至满意。</p>
-                                <div class="taskflow-card-footer">
-                                    <span>循序渐进 · 虚心涵泳</span>
-                                    <span class="taskflow-btn-arrow">开启研撰 →</span>
-                                </div>
-                            </div>
-
-                            <!-- 任务流 2：古诗分析 -->
-                            <div class="taskflow-card" onclick="startTaskFlow('poetry')">
-                                <div class="taskflow-card-head">
-                                    <span class="taskflow-card-icon">📜</span>
-                                    <span class="taskflow-card-badge">诗性哲学</span>
-                                </div>
-                                <h5>朱子古诗析理</h5>
-                                <p>支持拍照上传古诗墨宝图片或直接输入诗句，先生由诗入道，从格物感物、天道流行与武夷诗性哲学深入解构。</p>
-                                <div class="taskflow-card-footer">
-                                    <span>由诗入道 · 活水清明</span>
-                                    <span class="taskflow-btn-arrow">由诗析理 →</span>
-                                </div>
-                            </div>
-
-                            <!-- 任务流 3：浏览风景 -->
-                            <div class="taskflow-card" onclick="startTaskFlow('scenery')">
-                                <div class="taskflow-card-head">
-                                    <span class="taskflow-card-icon">🏞️</span>
-                                    <span class="taskflow-card-badge">山水揽胜</span>
-                                </div>
-                                <h5>武夷揽胜寄情</h5>
-                                <p>精选武夷学院朱子书院与武夷山九曲清溪、考亭书院名胜。先生呈递真景画卷，结合《九曲棹歌》与典籍深情话当年。</p>
-                                <div class="taskflow-card-footer">
-                                    <span>山川胜概 · 亲历自述</span>
-                                    <span class="taskflow-btn-arrow">云游山水 →</span>
-                                </div>
-                            </div>
-
-                            <!-- 任务流 4：人生经历 -->
-                            <div class="taskflow-card" onclick="startTaskFlow('life')">
-                                <div class="taskflow-card-head">
-                                    <span class="taskflow-card-icon">⏳</span>
-                                    <span class="taskflow-card-badge">求道岁月</span>
-                                </div>
-                                <h5>朱子生平履历</h5>
-                                <p>六大人生关键抉择与沧桑历程，纯第一人称娓娓道来，支持学者实时提问研讨，直至尽晓圣贤一生求道风骨。</p>
-                                <div class="taskflow-card-footer">
-                                    <span>六大阶段 · 实时问辩</span>
-                                    <span class="taskflow-btn-arrow">探寻生平 →</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
-
 
                 <!-- 模式 B：并入典籍知识库  · 支持 txt, md -->
                 <div class="upload-panel" id="panel-upload-corpus" style="display:none;">

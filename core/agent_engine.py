@@ -11,7 +11,6 @@ import time
 import base64
 import urllib.request
 import urllib.error
-
 from typing import List, Dict, Any, Generator, Optional, Tuple
 from rag.rag_service import rag_service
 from core.prompt_templates import (
@@ -321,39 +320,27 @@ def is_grounded_query(query: str, retrieved_chunks: List[Dict[str, Any]]) -> boo
     academic_inquiries = [
         "论文", "写论文", "做论文", "毕业论文", "开题", "学术", "选题", "做研究",
         "学术研究", "研究方向", "考证", "文献检索", "文献", "参考书", "书单",
-        "研究生", "本科生", "通识", "写作", "立论", "文献依据", "课题",
-        "需要文献", "暂不需要", "十分满意", "无需补充", "不需要了", "没有疑问了", "满意了"
+        "研究生", "本科生", "通识", "写作", "立论", "文献依据", "课题"
     ]
     if any(k in q_lower for k in academic_inquiries):
         return True
 
-    # 6. 四大研学任务流（论文研撰、古诗析理、武夷揽胜、生平履历）
-    taskflow_keywords = [
-        "古诗", "诗词", "赏析", "诗意", "绝句", "律诗", "春日", "观书有感", "九曲棹歌", "精舍杂咏", "诗歌", "墨宝",
-        "风景", "武夷山", "武夷学院", "九曲溪", "考亭书院", "紫阳楼", "天游峰", "隐屏", "武夷宫", "胜景", "游览", "山水", "胜地", "揽胜", "大红袍",
-        "经历", "生平", "阶段", "人生经历", "当年", "从师", "李延平", "鹅湖之会", "白鹿洞", "知南康", "党禁", "庆元", "伪学", "幼承庭训", "刘子翚", "人生"
-    ]
-    if any(k in q_lower for k in taskflow_keywords):
-        return True
-
-    # 7. 门生应答、承前启后与日常对话接续
+    # 6. 门生应答、承前启后与日常对话接续
     dialogue_continuations = [
         "生", "学生", "后生", "弟子", "门人", "可以", "好", "对", "是", "行",
         "愿闻其详", "受教", "明白", "请先生指点", "先生何意", "如何下手",
-        "怎么做", "愿从先生", "请开示", "确实", "赞同", "继续", "接着讲", "往下讲",
-        "下一个", "请述下一阶段", "继续探寻", "换个地方", "无需别的", "不需要", "没有了"
+        "怎么做", "愿从先生", "请开示", "确实", "赞同", "继续", "接着讲", "往下讲"
     ]
     if any(k == q_lower or k in q_lower for k in dialogue_continuations):
         return True
 
-    # 8. 凡非现代科技与外部无关领域的短句交流，均视为后学请教，自然接纳
-    if len(q_lower) <= 12 and not any(k in q_lower for k in modern_ungrounded_keywords):
+    # 7. 凡非现代科技与外部无关领域的短句交流，均视为后学请教，自然接纳
+    if len(q_lower) <= 10 and not any(k in q_lower for k in modern_ungrounded_keywords):
         return True
 
-    # 9. 原典文献深度匹配
-    if retrieved_chunks and retrieved_chunks[0].get("score", 0) >= 15.0:
+    # 8. 原典文献深度匹配
+    if retrieved_chunks and retrieved_chunks[0].get("score", 0) >= 20.0:
         return True
-
 
     return False
 
@@ -475,20 +462,72 @@ class ConversationContextManager:
 session_manager = ConversationContextManager()
 
 
+def _load_env_configs() -> Dict[str, str]:
+    """安全解析 env 与 config.yml 环境变量配置"""
+    configs = {}
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    env_path = os.path.join(base_dir, ".env")
+    if os.path.exists(env_path):
+        try:
+            with open(env_path, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith("#") and "=" in line:
+                        k, v = line.split("=", 1)
+                        configs[k.strip()] = v.strip().strip("'").strip('"')
+        except Exception:
+            pass
+    cfg_path = os.path.join(base_dir, "config.yml")
+    if os.path.exists(cfg_path):
+        try:
+            with open(cfg_path, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if ":" in line and not line.startswith("#"):
+                        k, v = line.split(":", 1)
+                        k = k.strip()
+                        v = v.strip().strip("'").strip('"')
+                        if k in ["api_key", "key"]:
+                            configs["API_KEY"] = v
+                        elif k in ["text_model", "model"]:
+                            configs["LLM_MODEL"] = v
+                        elif k in ["vision_model"]:
+                            configs["VISION_MODEL"] = v
+                        elif k in ["api_base_url", "base_url"]:
+                            configs["API_BASE_URL"] = v
+        except Exception:
+            pass
+    return configs
+
+
 class ZhuXiAgent:
     """朱子文化特色认知智能体核心类"""
 
     def __init__(self):
-        # 外部大模型配置（可选）
-        self.api_key = os.getenv("API_KEY", "").strip()
-        self.api_base_url = os.getenv("API_BASE_URL", "").strip()
-        self.llm_model = os.getenv("LLM_MODEL", "gpt-3.5-turbo").strip()
+        env_cfgs = _load_env_configs()
+        self.api_key = (
+            os.getenv("API_KEY")
+            or os.getenv("ZHIPU_API_KEY")
+            or env_cfgs.get("API_KEY")
+            or env_cfgs.get("ZHIPU_API_KEY")
+            or ""
+        ).strip()
+        self.api_base_url = (
+            os.getenv("API_BASE_URL")
+            or env_cfgs.get("API_BASE_URL")
+            or "https://open.bigmodel.cn/api/paas/v4"
+        ).strip()
+        self.llm_model = (
+            os.getenv("LLM_MODEL")
+            or env_cfgs.get("LLM_MODEL")
+            or "glm-4-flash"
+        ).strip()
+        self.vision_model = (
+            os.getenv("VISION_MODEL")
+            or env_cfgs.get("VISION_MODEL")
+            or "glm-4v-flash"
+        ).strip()
 
-        # 本地 Ollama 专属配置（无缝调用本地 GPU 显卡）
-        self.ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434").rstrip("/")
-        self.ollama_model = os.getenv("OLLAMA_MODEL", "qwen2.5:1.5b").strip()
-        self._ollama_available: Optional[bool] = None
-        self._last_ollama_check: float = 0.0
         self._stopped_sessions = set()
 
     def stop_session(self, session_id: str):
@@ -503,30 +542,6 @@ class ZhuXiAgent:
     def cleanup_stopped_session(self, session_id: str):
         """清理会话停止标记"""
         self._stopped_sessions.discard(session_id)
-
-    def check_ollama(self) -> bool:
-        """快速检测本地 Ollama 服务是否就绪及可用模型"""
-        now = time.time()
-        if now - self._last_ollama_check < 10.0 and self._ollama_available is not None:
-            return self._ollama_available
-
-        try:
-            req = urllib.request.Request(f"{self.ollama_base_url}/api/tags")
-            with urllib.request.urlopen(req, timeout=1.2) as resp:
-                data = json.loads(resp.read().decode('utf-8'))
-                models = [m.get("name", "") for m in data.get("models", [])]
-                if models:
-                    if not any(self.ollama_model in m for m in models):
-                        self.ollama_model = models[0]
-                    self._ollama_available = True
-                    self._last_ollama_check = now
-                    return True
-        except Exception:
-            pass
-
-        self._ollama_available = False
-        self._last_ollama_check = now
-        return False
 
     def _build_llm_messages(
         self,
@@ -571,10 +586,10 @@ class ZhuXiAgent:
             "   - 若学者询问读书方法，当开列切实门径；\n"
             "   - 若学者提出质疑争辩，当正气凛然透彻辨析；\n"
             "   - 若学者随性闲聊，当从容对谈，切勿说教。\n"
-            "3. 篇幅充实，说理透彻完整，严禁半路截断或留半句话，必须自然收束成完整段落。\n"
-            "4. 必须联系多轮交谈上下文，并在解答义理之后，推断问学者的内心疑虑，以朱熹循循善诱口吻主动提出一个启发性反问引导其自察体省。\n"
-            "5. 【最高禁令】：在任何情况下，绝不可输出朱熹或朱子字样！自称一律用老夫、某或考亭先生！\n"
-            "6. 回答末尾清晰标明文献出处与馆藏索书号。\n"
+            "3. 篇幅充实详尽，内容厚重深刻，说理透彻完整，严禁简略应付或半路截断，必须自然收束成完整段落。\n"
+            "4. 每逢回答，必须详细给出具体文献出处、篇章卷次与原文引据，如《四书章句集注》、《朱子语类》卷次、《近思录》、《朱子全书》等，并在文末标明武夷学院逸夫图书馆六楼特藏专区之具体典籍与OPAC索书号。\n"
+            "5. 必须联系多轮交谈上下文，并在解答义理之后，推断问学者的内心疑虑，以循循善诱口吻主动提出一个启发性反问引导其自察体省。\n"
+            "6. 【最高禁令】：在任何情况下，绝不可输出朱熹或朱子字样！自称一律用老夫、某或考亭先生！\n"
             "7. 绝对严禁输出任何中英文圆括号！"
         )
 
@@ -592,52 +607,12 @@ class ZhuXiAgent:
             system_parts.append(
                 "\n【沧洲藏书阁与学问门径场景】：当前学者置身于沧洲藏书阁请益师门。请以传道宗师身份，为学者审定大学、论语、孟子、中庸之进学阶梯次第，结合学者学力，推荐合适典籍并指明读法。"
             )
-        # 4大专项研学任务流场景引导
-        if sess_id.startswith("flow_thesis") or any(k in query for k in ["论文方向", "论文写作", "论文研撰", "开题", "论文指导", "需要文献", "暂不需要", "十分满意"]):
-            system_parts.append(
-                "\n【论文研撰专修工作流特别守则】：\n"
-                "学者正在进行理学学术论文研学，请依循以下三阶段推进：\n"
-                "阶段一：若学者刚选择论文方向或提出论文选题，请从‘选题立意、核心理学范畴、论文四段式架构提纲’进行全面深度的学术指导。解答完毕后，必须以考亭先生口吻主动询问：‘仁兄论旨宏深，是否需要老夫提供本校特藏古籍之具体文献及逸夫图书馆六楼OPAC索书号？’\n"
-                "阶段二：若学者表示需要文献，请详细列出对应的原典版本、篇章卷次、名言摘句，并明确标注武夷学院逸夫图书馆六楼特藏专区与闽北文库专属索书号。之后必须主动追问：‘仁兄对此番论题与文献指引是否满意？是否还需要老夫在某一章节或论据上作更深剖析？’\n"
-                "阶段三：若学者表示‘十分满意，无需补充’或‘不需要了’，请给予学者殷切的学术勉励与祝愿，圆满收束。"
-            )
-        elif sess_id.startswith("flow_poetry") or any(k in query for k in ["古诗分析", "古诗析理", "诗词赏析", "观书有感", "九曲棹歌", "春日", "万紫千红", "诗作墨宝"]):
-            system_parts.append(
-                "\n【朱子古诗析理专修工作流特别守则】：\n"
-                "学者正在探讨古诗墨宝，请从朱子文化、理学义理、格物感物、道体流行与武夷诗性哲学深入解构：\n"
-                "一、诗作源流与意象解构；\n"
-                "二、格物穷理与心性印证，阐发其中蕴含的天理活水与生机流行；\n"
-                "三、考亭先生朱砂手批与体悟寄语。"
-            )
-        elif sess_id.startswith("flow_scenery") or any(k in query for k in ["浏览风景", "武夷揽胜", "九曲溪", "考亭书院", "紫阳楼", "天游峰", "武夷学院朱子书院", "武夷宫", "胜景"]):
-            system_parts.append(
-                "\n【武夷揽胜寄情专修工作流特别守则】：\n"
-                "学者正在与你云游武夷山与武夷学院名胜。若学者提到了某处胜境：\n"
-                "一、必须在回答开头适宜位置插入对应真实实景图片：\n"
-                "   - 武夷学院朱子书院：![武夷学院朱子书院与图书馆](/static/scenery/wuyi_university_zhuzi.jpg)\n"
-                "   - 考亭书院：![南平建阳考亭书院道原堂](/static/scenery/kaoting_academy.jpg)\n"
-                "   - 武夷山九曲溪：![武夷山九曲溪竹筏漂流](/static/scenery/jiuqu_stream.jpg)\n"
-                "   - 五夫镇紫阳楼：![武夷山五夫镇紫阳楼朱子故居](/static/scenery/wufu_ziyanglou.jpg)\n"
-                "   - 天游峰与隐屏峰：![武夷山天游峰与云海](/static/scenery/tianyou_peak.jpg)\n"
-                "   - 武夷宫与武夷精舍：![武夷宫古建筑群](/static/scenery/wuyi_palace.jpg)\n"
-                "二、结合原典文献如《武夷九曲棹歌》、《武夷精舍杂咏》、《游武夷山记》进行深度剖析；\n"
-                "三、深情讲述老夫当年在此结庐、讲学、悟道、泛舟的亲身经历与哲思体悟；\n"
-                "四、末尾主动询问学者是否愿移步下一处名胜。"
-            )
-        elif sess_id.startswith("flow_life") or any(k in query for k in ["人生经历", "生平阶段", "幼承庭训", "延平师事", "结庐武夷", "鹅湖之会", "知南康军", "晚年考亭", "庆元党禁"]):
-            system_parts.append(
-                "\n【朱子生平履历专修工作流特别守则】：\n"
-                "学者正在探寻老夫生平六大关键阶段。请以纯第一人称‘老夫’叙述当年真实跌宕起伏的历史细节、内心挣扎与道义风骨；\n"
-                "叙述完毕后，主动欢迎学者就该时期的关键人物、重大事件或义理争论进行实时提问；\n"
-                "学者若继续提问，老夫当知无不言，直至学者表示‘没有疑问了’或‘不需要了’。"
-            )
         elif sess_id.startswith("letter_") or any(k in query for k in ["信札", "书信", "回信", "尺牍", "致先生书", "写信"]):
             system_parts.append(f"\n{ANCIENT_LETTER_PROMPT}")
         elif any(k in query for k in ["观书有感", "半亩方塘", "源头活水", "九曲棹歌", "春日", "万紫千红", "诗词", "解诗", "作诗", "赏析", "精舍杂咏", "诗意"]):
             system_parts.append(f"\n{POETRY_APPRECIATION_PROMPT}")
         elif any(k in query for k in ["辩", "是不是科学", "科学实验", "灭绝人性", "扼杀人性", "反人性", "朱陆异同", "鹅湖", "知行谁先", "心即理还是性即理", "驳", "争论", "争议"]):
             system_parts.append(f"\n{PHILOSOPHICAL_DEBATE_PROMPT}")
-
 
         full_system_prompt = "\n".join(system_parts)
         messages = [{"role": "system", "content": full_system_prompt}]
@@ -655,52 +630,40 @@ class ZhuXiAgent:
         messages.append({"role": "user", "content": query})
         return messages
 
-    def _call_ollama(
+    def _call_glm(
         self,
         query: str,
         history: Optional[List[Dict[str, str]]],
         session_id: str,
         retrieved_chunks: List[Dict[str, Any]]
     ) -> Dict[str, Any]:
-        """调用本地 GPU Ollama 大模型同步生成，支持长文本完整解答与精准引注"""
+        """调用智谱 GLM 免费大模型同步生成长文本完整解答与精准引注"""
         sess = session_manager.get_or_create(session_id)
         messages = self._build_llm_messages(query, history, sess, retrieved_chunks)
-
+        endpoint = f"{self.api_base_url.rstrip('/')}/chat/completions"
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.api_key}"
+        }
         payload = {
-            "model": self.ollama_model,
+            "model": self.llm_model,
             "messages": messages,
-            "stream": False,
-            "options": {
-                "temperature": 0.75,
-                "top_p": 0.9,
-                "num_ctx": 4096,
-                "num_predict": 1200,
-                "repeat_penalty": 1.22,
-                "repeat_last_n": 96,
-                "presence_penalty": 0.35,
-                "frequency_penalty": 0.45
-            }
+            "temperature": 0.72,
+            "max_tokens": 1500
         }
         req = urllib.request.Request(
-            f"{self.ollama_base_url}/api/chat",
+            endpoint,
             data=json.dumps(payload).encode("utf-8"),
-            headers={"Content-Type": "application/json"}
+            headers=headers
         )
-        try:
-            with urllib.request.urlopen(req, timeout=60) as resp:
-                data = json.loads(resp.read().decode("utf-8"))
-                answer_text = data.get("message", {}).get("content", "").strip()
-        except Exception as e:
-            self._ollama_available = False
-            self._last_ollama_check = time.time() + 5.0
-            raise e
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            answer_text = data.get("choices", [{}])[0].get("message", {}).get("content", "").strip()
 
-        # 第一人称安全净化与防复读截断
         answer_text = sanitize_zhuxi_first_person(answer_text)
         answer_text = deduplicate_repetitive_text(answer_text)
         answer_text = ensure_socratic_question(answer_text, query)
 
-        # 严格保障每一回答必带有清晰的 CText 原典出处与武夷学院特藏 OPAC 索书号
         if not any(k in answer_text for k in ["典籍原典出处", "考亭典籍出处", "典籍出处", "出处："]):
             answer_text += format_citation(query, retrieved_chunks)
 
@@ -709,54 +672,41 @@ class ZhuXiAgent:
         session_manager.update_with_reply(session_id, answer_text)
         return {
             "reply": answer_text,
-            "intent": "local_gpu_llm",
+            "intent": "glm_free_llm",
             "sources": sanitize_sources(retrieved_chunks),
-            "provider": f"考亭理学书院 · 本地大模型 {self.ollama_model}",
+            "provider": f"考亭理学书院 · 智谱清言 {self.llm_model}",
             "session_id": session_id,
             "user_name": sess.get("user_name")
         }
 
-    def _call_ollama_stream(
+    def _call_glm_stream(
         self,
         query: str,
         history: Optional[List[Dict[str, str]]],
         session_id: str,
         retrieved_chunks: List[Dict[str, Any]]
     ) -> Generator[str, None, None]:
-        """调用本地 GPU Ollama 大模型以纯流式 SSE 极速吐字，杜绝半句截断与圆括号泄漏"""
+        """调用智谱 GLM 免费大模型以纯流式 SSE 极速吐字"""
         self.cleanup_stopped_session(session_id)
         sess = session_manager.get_or_create(session_id)
         messages = self._build_llm_messages(query, history, sess, retrieved_chunks)
 
-        meta_event = {
-            "type": "meta",
-            "intent": "local_gpu_llm_stream",
-            "sources": sanitize_sources(retrieved_chunks),
-            "provider": f"考亭理学书院 · 本地大模型 {self.ollama_model}",
-            "session_id": session_id,
-            "user_name": sess.get("user_name")
+        endpoint = f"{self.api_base_url.rstrip('/')}/chat/completions"
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.api_key}"
         }
-        yield f"data: {json.dumps(meta_event, ensure_ascii=False)}\n\n"
-
         payload = {
-            "model": self.ollama_model,
+            "model": self.llm_model,
             "messages": messages,
             "stream": True,
-            "options": {
-                "temperature": 0.75,
-                "top_p": 0.9,
-                "num_ctx": 4096,
-                "num_predict": 1200,
-                "repeat_penalty": 1.22,
-                "repeat_last_n": 96,
-                "presence_penalty": 0.35,
-                "frequency_penalty": 0.45
-            }
+            "temperature": 0.72,
+            "max_tokens": 1500
         }
         req = urllib.request.Request(
-            f"{self.ollama_base_url}/api/chat",
+            endpoint,
             data=json.dumps(payload).encode("utf-8"),
-            headers={"Content-Type": "application/json"}
+            headers=headers
         )
 
         full_reply_parts = []
@@ -765,21 +715,39 @@ class ZhuXiAgent:
         current_sentence_text = ""
         stopped_early_due_to_loop = False
         in_paren = False
+
+        resp = urllib.request.urlopen(req, timeout=30)
+        meta_event = {
+            "type": "meta",
+            "intent": "glm_free_stream",
+            "sources": sanitize_sources(retrieved_chunks),
+            "provider": f"考亭理学书院 · 智谱清言 {self.llm_model}",
+            "session_id": session_id,
+            "user_name": sess.get("user_name")
+        }
+        yield f"data: {json.dumps(meta_event, ensure_ascii=False)}\n\n"
+
         try:
-            with urllib.request.urlopen(req, timeout=60) as resp:
+            with resp:
                 for line in resp:
                     if self.is_session_stopped(session_id):
-                        print(f"[Ollama Stream] 会话 {session_id} 收到停止生成指令，立即中断输出")
                         break
-                    if not line.strip():
+                    line_str = line.decode("utf-8").strip()
+                    if not line_str or not line_str.startswith("data: "):
                         continue
+                    data_str = line_str[6:].strip()
+                    if data_str == "[DONE]":
+                        break
                     try:
-                        chunk = json.loads(line.decode("utf-8"))
-                        token = chunk.get("message", {}).get("content", "")
+                        chunk = json.loads(data_str)
+                        choices = chunk.get("choices", [])
+                        if not choices:
+                            continue
+                        delta = choices[0].get("delta", {})
+                        token = delta.get("content", "")
                         if not token:
                             continue
 
-                        # 字符级拦截中英文圆括号，括号及其中文本彻底拦截丢弃（绝不向学者输出括号）
                         to_send_chars = []
                         for ch in token:
                             if ch in "（(":
@@ -795,9 +763,6 @@ class ZhuXiAgent:
                             continue
 
                         safe_token = "".join(to_send_chars)
-
-                        # 分句完整查重过滤与实时流式输出
-                        aborted = False
                         for ch in safe_token:
                             current_sentence_tokens.append(ch)
                             current_sentence_text += ch
@@ -805,14 +770,11 @@ class ZhuXiAgent:
                                 norm = current_sentence_text.strip()
                                 if len(norm) >= 12:
                                     if norm in seen_sentences:
-                                        print(f"[Ollama Stream] 触发分句防复读截断: {norm[:20]}...")
                                         stopped_early_due_to_loop = True
                                         current_sentence_tokens.pop()
-                                        aborted = True
                                         break
                                     seen_sentences.add(norm)
 
-                                # 将此分句完整刷新至输出流，严格执行第一人称净化
                                 sentence_str = "".join(current_sentence_tokens)
                                 sentence_str = sanitize_zhuxi_first_person(sentence_str)
                                 full_reply_parts.append(sentence_str)
@@ -820,31 +782,21 @@ class ZhuXiAgent:
                                 yield f"data: {json.dumps(data_event, ensure_ascii=False)}\n\n"
                                 current_sentence_tokens = []
                                 current_sentence_text = ""
-                        if aborted:
+                        if stopped_early_due_to_loop:
                             break
                     except Exception:
                         continue
 
-            # 刷新最后未以标点结束的有效分句，杜绝半截被截断
             if current_sentence_tokens and not self.is_session_stopped(session_id):
                 rem = "".join(current_sentence_tokens)
                 rem = sanitize_zhuxi_first_person(rem)
-                if not rem.endswith(('。', '！', '？', '！', '”', '’')):
+                if not rem.endswith(('。', '！', '？', '”', '’')):
                     rem = rem.rstrip('，、； ') + "。"
                 full_reply_parts.append(rem)
                 data_event = {"type": "token", "content": rem}
                 yield f"data: {json.dumps(data_event, ensure_ascii=False)}\n\n"
 
-            # 若因复读提前截断，输出自然收束标点
-            if stopped_early_due_to_loop and not self.is_session_stopped(session_id):
-                closing = "。"
-                full_reply_parts.append(closing)
-                data_event = {"type": "token", "content": closing}
-                yield f"data: {json.dumps(data_event, ensure_ascii=False)}\n\n"
-
             raw_full = "".join(full_reply_parts)
-
-            # 检查启发式设问反思
             last_window = raw_full[-120:] if len(raw_full) >= 120 else raw_full
             if not any(q in last_window for q in ["？", "?"]) and not self.is_session_stopped(session_id):
                 socratic_q = "\n\n老夫且掩卷设问以验贤生：仁兄体味此节要义，若落在汝自家日用身心之中，当从何处切己下手？"
@@ -852,7 +804,6 @@ class ZhuXiAgent:
                 data_event = {"type": "token", "content": socratic_q}
                 yield f"data: {json.dumps(data_event, ensure_ascii=False)}\n\n"
 
-            # 严格保障流式输出末尾必带有清晰的 CText 典籍与武夷学院特藏 OPAC 索书号标注
             raw_full = "".join(full_reply_parts)
             if not any(k in raw_full for k in ["典籍原典出处", "考亭典籍出处", "典籍出处", "出处："]) and not self.is_session_stopped(session_id):
                 source_cite = format_citation(query, retrieved_chunks)
@@ -866,9 +817,124 @@ class ZhuXiAgent:
             session_manager.update_with_reply(session_id, cleaned_full)
             yield f"data: {json.dumps({'type': 'done'}, ensure_ascii=False)}\n\n"
         except GeneratorExit:
-            print(f"[Ollama Stream] 客户端主动断开/终止生成: {session_id}")
+            pass
         finally:
             self.cleanup_stopped_session(session_id)
+
+    def analyze_document_with_glm(self, filename: str, text_content: str) -> str:
+        """调用智谱大模型对上传的经义文献或作业进行四维理学深度剖析并赐朱砂手批"""
+        sample_text = text_content[:3000].strip()
+        if self.api_key:
+            try:
+                endpoint = f"{self.api_base_url.rstrip('/')}/chat/completions"
+                headers = {
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.api_key}"
+                }
+                system_prompt = (
+                    "你乃宋代理学大儒考亭先生，纯第一人称老夫自述。面对后学呈上的文献，请从理学四维深入条分缕析：\n"
+                    "一、理气之辨：探析其中所蕴含之天地之理与气机交感；\n"
+                    "二、存养省察：指点学者如何在日用常行中主敬涵养、体察省察；\n"
+                    "三、格物致知：剖析如何即物穷理以达豁然贯通；\n"
+                    "四、知行相须：辨析知行相资互发之门径；\n"
+                    "五、考亭朱砂手批：以长者与师尊身份，赐下精辟朱批与精进寄语。\n"
+                    "最高禁令：在任何情况下绝不可出现朱熹或朱子字样！自称一律用老夫或某！绝对严禁使用任何中英文圆括号！"
+                )
+                user_msg = (
+                    f"门生谨呈文献《{filename}》，原典摘要如下：\n"
+                    f"```text\n{sample_text}\n```\n\n"
+                    f"请先生即物穷理，依理学四维深入条分缕析并赐朱砂手批。"
+                )
+                payload = {
+                    "model": self.llm_model,
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_msg}
+                    ],
+                    "temperature": 0.7,
+                    "max_tokens": 1500
+                }
+                req = urllib.request.Request(endpoint, data=json.dumps(payload).encode("utf-8"), headers=headers)
+                with urllib.request.urlopen(req, timeout=30) as resp:
+                    resp_json = json.loads(resp.read().decode("utf-8"))
+                    ans = resp_json['choices'][0]['message']['content'].strip()
+                    ans = sanitize_zhuxi_first_person(ans)
+                    ans = strip_parentheses(ans)
+                    return ans
+            except Exception as e:
+                print(f"[Agent] GLM 文献分析遇阻，启用内生备用剖析引擎: {e}")
+
+        clean_name = filename.replace(".txt", "").replace(".md", "").replace(".docx", "").replace(".pdf", "")
+        fallback_ans = (
+            f"老夫展卷披阅贤生所呈《{clean_name}》，字里行间用志甚笃，深可嘉许。老夫谨依平日示门生之四维工夫，为汝条分缕析如后：\n\n"
+            f"### 一、 理气之辨\n"
+            f"天下未有无理之气，亦未有无气之理。览此《{clean_name}》，其发端之旨，实具天理原本之纯然。然气禀有清浊偏正，文字铺陈之际，当辨析何者为本体天命之流行，何者为形气声色之滞碍，万不可认气为理、随波逐流。\n\n"
+            f"### 二、 存养省察\n"
+            f"为学之基，全在敬字。学者研读此书，须屏除纷扰客尘，心平气和，虚心涵泳。若心不澄澈，纵使口诵万言，亦不过借圣贤唾余作装潢。当常存省察之心，念头微动处即究其公私天人。\n\n"
+            f"### 三、 格物致知\n"
+            f"所谓格物，乃即物而穷其至极之理；所谓致知，乃推极吾之知识而无不尽。贤生于此篇文字中，当于精微窒碍处着紧用力，字求其训、句索其旨，勿浅尝辄止。今日格一件、明日格一件，积习既多，自然脱然贯通。\n\n"
+            f"### 四、 知行相须\n"
+            f"知与行，正如人之两足，相须而进。方其始也，知先行后；及其久也，行重知深。研析此卷精义，万不可滞于纸墨空谈，必使所明之理实落于日用洒扫应对之间，方显真儒本色。\n\n"
+            f"### 考亭朱砂手批\n"
+            f"大本已见萌芽，学脉端谨纯正。但当依循序渐进、熟读精思法门，常加温省。老夫在考亭精舍，正望汝早成大器！"
+        )
+        return strip_parentheses(fallback_ans)
+
+    def analyze_image_with_glm(self, content_bytes: bytes, mime_type: str = "image/jpeg") -> str:
+        """调用智谱 GLM-4v-flash 免费视觉大模型对上传的图片或古诗墨宝进行深度识读剖析"""
+        b64_str = base64.b64encode(content_bytes).decode("utf-8")
+        if self.api_key:
+            try:
+                endpoint = f"{self.api_base_url.rstrip('/')}/chat/completions"
+                headers = {
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.api_key}"
+                }
+                system_prompt = (
+                    "你乃宋代理学大儒考亭先生，纯第一人称老夫自述。请辨识并研析此幅画面中的古籍图画、墨宝书法、诗词碑刻或武夷山水名胜，从格物感物、道体流行与武夷诗性哲学深入解构剖析并赐朱砂手批。\n"
+                    "最高禁令：在任何情况下绝不可出现朱熹或朱子字样！自称一律用老夫或某！绝对严禁使用任何中英文圆括号！"
+                )
+                user_content = [
+                    {
+                        "type": "text",
+                        "text": "门生呈递古籍墨宝/名胜胜景图画，请考亭先生即物穷理，依理学精微与诗性哲学深入识读剖析并赐朱砂手批。"
+                    },
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:{mime_type};base64,{b64_str}"
+                        }
+                    }
+                ]
+                payload = {
+                    "model": self.vision_model or "glm-4v-flash",
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_content}
+                    ],
+                    "temperature": 0.7,
+                    "max_tokens": 1200
+                }
+                req = urllib.request.Request(endpoint, data=json.dumps(payload).encode("utf-8"), headers=headers)
+                with urllib.request.urlopen(req, timeout=30) as resp:
+                    resp_json = json.loads(resp.read().decode("utf-8"))
+                    ans = resp_json['choices'][0]['message']['content'].strip()
+                    ans = sanitize_zhuxi_first_person(ans)
+                    ans = strip_parentheses(ans)
+                    return ans
+            except Exception as e:
+                print(f"[Agent] GLM 视觉图像识读遇阻，启用内生备用识读引擎: {e}")
+
+        fallback_ans = (
+            "老夫细辨此帧图画墨宝，笔致清劲，古雅沉厚，颇有先贤法帖与山川造化之遗意。\n\n"
+            "### 一、 墨象气韵与原典意境\n"
+            "墨色浓淡相宜，结体端严有法度。观其风致，正如老夫当年居武夷精舍时，见清溪竹筏、云峰苍翠，天地生生之气触目皆是。字里行间流露出一股澄明涵养之气象。\n\n"
+            "### 二、 即物穷理与理趣发挥\n"
+            "夫古人作书赋诗，皆是心性流露。诗有理趣，书具骨气。贤生赏玩此幅墨宝，不可徒观形迹之美，当思问渠那得清如许、为有源头活水来之旨，于形色之外探求天理流行之机杼。\n\n"
+            "### 考亭朱砂手批\n"
+            "气象高古，理趣盎然。学者目寓真境，心游造化，更当以敬持身，使心体亦如此图画一般，纤翳不生、活水长流。"
+        )
+        return strip_parentheses(fallback_ans)
 
     def _resolve_contextual_query(self, query: str, session: Dict[str, Any]) -> Tuple[str, Optional[str]]:
         """结合历史记忆解析问句意图与指代消歧（离线认知引擎专用）"""
@@ -1501,54 +1567,16 @@ class ZhuXiAgent:
                 "user_name": sess.get("user_name")
             }
 
-        # 优先级 1：外部配置的大模型 API
+        # 优先级 1：智谱 GLM 免费大模型
         if self.api_key:
             try:
-                headers = {
-                    "Content-Type": "application/json",
-                    "Authorization": f"Bearer {self.api_key}"
-                }
-                base_url = self.api_base_url or "https://api.openai.com/v1"
-                endpoint = f"{base_url.rstrip('/')}/chat/completions"
-                messages = self._build_llm_messages(query, history, sess, retrieved_chunks)
-
-                payload = {
-                    "model": self.llm_model,
-                    "messages": messages,
-                    "temperature": 0.7,
-                    "max_tokens": 1200
-                }
-                req = urllib.request.Request(endpoint, data=json.dumps(payload).encode('utf-8'), headers=headers)
-                with urllib.request.urlopen(req, timeout=12) as resp:
-                    resp_json = json.loads(resp.read().decode('utf-8'))
-                    answer_text = resp_json['choices'][0]['message']['content'].strip()
-                    answer_text = sanitize_zhuxi_first_person(answer_text)
-                    answer_text = ensure_socratic_question(answer_text, query)
-                    if not any(k in answer_text for k in ["典籍原典出处", "考亭典籍出处", "典籍出处"]):
-                        answer_text += format_citation(query, retrieved_chunks)
-                    answer_text = strip_parentheses(answer_text)
-                    session_manager.update_with_reply(session_id, answer_text)
-                    return {
-                        "reply": answer_text,
-                        "intent": "llm_external",
-                        "sources": sanitize_sources(retrieved_chunks),
-                        "provider": f"考亭书院 · 云端大模型 {self.llm_model}",
-                        "session_id": session_id,
-                        "user_name": sess.get("user_name")
-                    }
-            except Exception as e:
-                print(f"[Agent] 外部大模型未能成功响应: {e}")
-
-        # 优先级 2：本地 GPU 大模型 (Ollama Qwen2.5) 极速智能化生成
-        if self.check_ollama():
-            try:
-                res = self._call_ollama(query, history, session_id, retrieved_chunks)
+                res = self._call_glm(query, history, session_id, retrieved_chunks)
                 if res and res.get("reply"):
                     return res
             except Exception as e:
-                print(f"[Agent] 本地 Ollama 响应遇阻，自动平滑切换至内生认知推理: {e}")
+                print(f"[Agent] 智谱大模型未能成功响应: {e}")
 
-        # 优先级 3：考亭书院·内生认知推理自适应引擎（高保真离线保障）
+        # 优先级 2：考亭书院·内生认知推理自适应引擎（高保真离线保障）
         reply_text = self._generate_intelligent_response(query, session_id, retrieved_chunks)
         reply_text = sanitize_zhuxi_first_person(reply_text)
         reply_text = ensure_socratic_question(reply_text, query)
@@ -1596,16 +1624,14 @@ class ZhuXiAgent:
             yield f"data: {json.dumps({'type': 'done'}, ensure_ascii=False)}\n\n"
             return
 
-        # 优先使用本地 GPU Ollama 大模型以纯流式秒级吐字
-        if not self.api_key and self.check_ollama():
+        # 优先使用智谱 GLM 免费大模型以纯流式秒级吐字
+        if self.api_key:
             try:
-                for chunk in self._call_ollama_stream(query, history, session_id, retrieved_chunks):
+                for chunk in self._call_glm_stream(query, history, session_id, retrieved_chunks):
                     yield chunk
                 return
             except Exception as e:
-                print(f"[Agent Stream] 本地 Ollama 流式遇阻，启用平滑打字机推送: {e}")
-                self._ollama_available = False
-                self._last_ollama_check = time.time() + 5.0
+                print(f"[Agent Stream] GLM 流式遇阻，启用平滑打字机推送: {e}")
 
         # 否则通过内生认知推理直接秒级生成，零卡顿平滑打字机推送
         reply_text = self._generate_intelligent_response(query, session_id, retrieved_chunks)
@@ -1642,127 +1668,9 @@ class ZhuXiAgent:
 
             yield f"data: {json.dumps({'type': 'done'}, ensure_ascii=False)}\n\n"
         except GeneratorExit:
-            print(f"[Agent Stream] 客户端断开连接 (GeneratorExit): {session_id}")
+            print(f"[Agent Stream] 客户端断开连接: {session_id}")
         finally:
             self.cleanup_stopped_session(session_id)
 
-    def analyze_document_with_glm(self, filename: str, content: str) -> str:
-        """调用智谱 GLM 免费大模型对上传的文献进行理学四维深度剖析"""
-        sample_text = content[:2500].strip() if content else ""
-        if self.api_key:
-            try:
-                endpoint = f"{self.api_base_url.rstrip('/')}/chat/completions"
-                headers = {
-                    "Content-Type": "application/json",
-                    "Authorization": f"Bearer {self.api_key}"
-                }
-                system_prompt = (
-                    "你乃宋代理学大儒考亭先生，纯第一人称‘老夫’自述。面对后学呈上的文献，请从理学四维深入条分缕析：\n"
-                    "一、理气之辨：探析其中所蕴含之天地之理与气机交感；\n"
-                    "二、存养省察：指点学者如何在日用常行中主敬涵养、体察省察；\n"
-                    "三、格物致知：剖析如何即物穷理以达豁然贯通；\n"
-                    "四、知行相须：辨析知行相资互发之门径；\n"
-                    "五、考亭朱砂手批：以长者与师尊身份，赐下精辟朱批与精进寄语。\n"
-                    "最高禁令：在任何情况下绝不可出现‘朱熹’或‘朱子’字样！自称一律用‘老夫’或‘某’！绝对严禁使用任何中英文圆括号！"
-                )
-                user_msg = (
-                    f"门生谨呈文献《{filename}》，原典摘要如下：\n"
-                    f"```text\n{sample_text}\n```\n\n"
-                    f"请先生即物穷理，依理学四维深入条分缕析并赐朱砂手批。"
-                )
-                payload = {
-                    "model": self.llm_model,
-                    "messages": [
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": user_msg}
-                    ],
-                    "temperature": 0.7,
-                    "max_tokens": 1500
-                }
-                req = urllib.request.Request(endpoint, data=json.dumps(payload).encode("utf-8"), headers=headers)
-                with urllib.request.urlopen(req, timeout=25) as resp:
-                    resp_json = json.loads(resp.read().decode("utf-8"))
-                    ans = resp_json['choices'][0]['message']['content'].strip()
-                    ans = sanitize_zhuxi_first_person(ans)
-                    ans = strip_parentheses(ans)
-                    return ans
-            except Exception as e:
-                print(f"[Agent] GLM 文献分析遇阻，启用内生备用剖析引擎: {e}")
-
-        # 内生高品质备用剖析
-        clean_name = filename.replace(".txt", "").replace(".md", "").replace(".docx", "").replace(".pdf", "")
-        fallback_ans = (
-            f"老夫展卷披阅贤生所呈《{clean_name}》，字里行间用志甚笃，深可嘉许。老夫谨依平日示门生之四维工夫，为汝条分缕析如后：\n\n"
-            f"### 一、 理气之辨\n"
-            f"天下未有无理之气，亦未有无气之理。览此《{clean_name}》，其发端之旨，实具天理原本之纯然。然气禀有清浊偏正，文字铺陈之际，当辨析何者为本体天命之流行，何者为形气声色之滞碍，万不可认气为理、随波逐流。\n\n"
-            f"### 二、 存养省察\n"
-            f"为学之基，全在敬字。学者研读此书，须屏除纷扰客尘，心平气和，虚心涵泳。若心不澄澈，纵使口诵万言，亦不过借圣贤唾余作装潢。当常存省察之心，念头微动处即究其公私天人。\n\n"
-            f"### 三、 格物致知\n"
-            f"所谓格物，乃即物而穷其至极之理；所谓致知，乃推极吾之知识而无不尽。贤生于此篇文字中，当于精微窒碍处着紧用力，字求其训、句索其旨，勿浅尝辄止。今日格一件、明日格一件，积习既多，自然脱然贯通。\n\n"
-            f"### 四、 知行相须\n"
-            f"知与行，正如人之两足，相须而进。方其始也，知先行后；及其久也，行重知深。研析此卷精义，万不可滞于纸墨空谈，必使所明之理实落于日用洒扫应对之间，方显真儒本色。\n\n"
-            f"### 考亭朱砂手批\n"
-            f"大本已见萌芽，学脉端谨纯正。但当依‘循序渐进、熟读精思’法门，常加温省。老夫在考亭精舍，正望汝早成大器！"
-        )
-        return strip_parentheses(fallback_ans)
-
-    def analyze_image_with_glm(self, content_bytes: bytes, mime_type: str = "image/jpeg") -> str:
-        """调用智谱 GLM-4v-flash 免费视觉大模型对上传的图片或古诗墨宝进行深度识读剖析"""
-        b64_str = base64.b64encode(content_bytes).decode("utf-8")
-        if self.api_key:
-            try:
-                endpoint = f"{self.api_base_url.rstrip('/')}/chat/completions"
-                headers = {
-                    "Content-Type": "application/json",
-                    "Authorization": f"Bearer {self.api_key}"
-                }
-                system_prompt = (
-                    "你乃宋代理学大儒考亭先生，纯第一人称‘老夫’自述。请辨识并研析此幅画面中的古籍图画、墨宝书法、诗词碑刻或武夷山水名胜，从格物感物、道体流行与武夷诗性哲学深入解构剖析并赐朱砂手批。\n"
-                    "最高禁令：在任何情况下绝不可出现‘朱熹’或‘朱子’字样！自称一律用‘老夫’或‘某’！绝对严禁使用任何中英文圆括号！"
-                )
-                user_content = [
-                    {
-                        "type": "text",
-                        "text": "门生呈递古籍墨宝/名胜胜景图画，请考亭先生即物穷理，依理学精微与诗性哲学深入识读剖析并赐朱砂手批。"
-                    },
-                    {
-                        "type": "image_url",
-                        "image_url": {
-                            "url": f"data:{mime_type};base64,{b64_str}"
-                        }
-                    }
-                ]
-                payload = {
-                    "model": self.vision_model or "glm-4v-flash",
-                    "messages": [
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": user_content}
-                    ],
-                    "temperature": 0.7,
-                    "max_tokens": 1200
-                }
-                req = urllib.request.Request(endpoint, data=json.dumps(payload).encode("utf-8"), headers=headers)
-                with urllib.request.urlopen(req, timeout=25) as resp:
-                    resp_json = json.loads(resp.read().decode("utf-8"))
-                    ans = resp_json['choices'][0]['message']['content'].strip()
-                    ans = sanitize_zhuxi_first_person(ans)
-                    ans = strip_parentheses(ans)
-                    return ans
-            except Exception as e:
-                print(f"[Agent] GLM 视觉图像识读遇阻，启用内生备用识读引擎: {e}")
-
-        # 内生高品质备用图像识读
-        fallback_ans = (
-            "老夫细辨此帧图画墨宝，笔致清劲，古雅沉厚，颇有先贤法帖与山川造化之遗意。\n\n"
-            "### 一、 墨象气韵与原典意境\n"
-            "墨色浓淡相宜，结体端严有法度。观其风致，正如老夫当年居武夷精舍时，见清溪竹筏、云峰苍翠，天地生生之气触目皆是。字里行间流露出一股澄明涵养之气象。\n\n"
-            "### 二、 即物穷理与理趣发挥\n"
-            "夫古人作书赋诗，皆是心性流露。诗有理趣，书具骨气。贤生赏玩此幅墨宝，不可徒观形迹之美，当思‘问渠那得清如许，为有源头活水来’之旨，于形色之外探求天理流行之机杼。\n\n"
-            "### 考亭朱砂手批\n"
-            "气象高古，理趣盎然。学者目寓真境，心游造化，更当以敬持身，使心体亦如此图画一般，纤翳不生、活水长流。"
-        )
-        return strip_parentheses(fallback_ans)
-
 
 zhuzi_agent = ZhuXiAgent()
-
