@@ -492,7 +492,10 @@ async def get_book_content(
     return {
         "book_key": book_key,
         "title": title,
+        "book_title": title,
+        "source": title,
         "filename": os.path.basename(abs_path),
+        "content": raw_content,
         "full_text": raw_content,
         "char_count": len(raw_content),
         "chapters": chapters
@@ -608,13 +611,17 @@ async def submit_quiz(req: QuizSubmitRequest):
         if is_corr:
             correct_count += 1
 
+        raw_analysis = q_item.get("analysis", "")
+        if not raw_analysis:
+            raw_analysis = f"考亭先生考释：此节乃《{q_item.get('book_title', '考亭理学')}》进学关节点，学者当依循序渐进法门，于日常日用中体察天理之自然，知行相资以至纯熟。"
         details.append({
             "id": q_id,
             "question": q_item.get("question"),
             "user_choice": choice_int,
             "correct_choice": correct_ans,
             "is_correct": is_corr,
-            "analysis": q_item.get("analysis", ""),
+            "analysis": raw_analysis,
+            "explanation": raw_analysis,
             "book_title": q_item.get("book_title", ""),
             "category": q_item.get("category", "")
         })
@@ -661,26 +668,27 @@ async def submit_letter(req: LetterSubmitRequest):
 
     reply = ""
 
-    # 1. 若智谱清言 GLM 免费大模型可用，以学者第一人称视角撰写书信
+    # 1. 优先调用智谱清言 GLM 免费大模型，基于后学视角深度个性化代拟
     if zhuzi_agent.api_key:
         try:
             messages = [
                 {
                     "role": "system",
                     "content": (
-                        "你是一位宋代理学书院中研求朱子之学的后学门生。\n"
+                        "你是一位宋代理学书院中研求考亭之学的后学门生。\n"
                         "请严格以【后学学者自身的第一人称视角】撰写一封呈递考亭先生或探讨学问的文人尺牍。\n"
-                        "写作红线守则：\n"
-                        "1. 绝不可使用‘老夫’、‘某’或朱熹第一人称自称！你不是朱熹，你是向先生请益或抒怀的求道学子！\n"
-                        "2. 紧密结合朱子文化理学工夫，如格物穷理、主敬涵养、知行并进、虚心涵泳、切己体察等，结合学者的真实寄托抒发心迹与治学体悟。\n"
-                        "3. 纯正古风书信格式，开头尊称‘考亭先生函丈’或‘先生道席’，结语落款‘后学谨禀’或‘门生顿首’。\n"
-                        "4. 【绝密禁令】：严禁出现任何【典籍出处】、【索书号】、参考资料、横线分割符或注解！只要纯粹的文人书信正文字句！\n"
-                        "5. 严禁输出任何中英文圆括号！"
+                        "写作根本守则：\n"
+                        "1. 绝不可使用‘老夫’、‘某’或朱熹第一人称自称！你不是朱熹，你是向先生请益、感恩或抒怀的求道学子！\n"
+                        "2. 【因人因事·深度定制】：必须深度理解学者所表达的真实情感、事情、心境或疑难（如感恩师长教诲、向学立志、山水游赏感怀、治学困顿求索、待人接物省察等），全篇量身定制！\n"
+                        "3. 【严禁生硬套模板】：绝对禁止直接将学者输入的语句加双引号硬套进信中！必须将学者的真实心思自然融化为古雅典丽、真切感人的文言尺牍行文！\n"
+                        "4. 格式：开头尊称‘考亭先生函丈’或‘先生道席’，中间叙事抒怀两至三段，结语落款‘后学谨禀’或‘门生顿首’。\n"
+                        "5. 【绝密禁令】：严禁出现任何【典籍出处】、【索书号】、参考资料、书目注释或横线分割线！只要纯粹的文人书信正文字句！\n"
+                        "6. 严禁输出任何中英文圆括号！"
                     )
                 },
                 {
                     "role": "user",
-                    "content": f"后学生心境与学思寄托为：{user_thought}。请撰写一封深具理学风骨与敬仰之心的求益修身书信。"
+                    "content": f"后学生具体心境诉求与学思托付如下：\n{user_thought}\n\n请融化后学上述真实情思，撰写一封情深意切、文采斐然、专属性极强的文人尺牍。"
                 }
             ]
             endpoint = f"{zhuzi_agent.api_base_url}/chat/completions"
@@ -691,38 +699,49 @@ async def submit_letter(req: LetterSubmitRequest):
             payload = {
                 "model": zhuzi_agent.llm_model,
                 "messages": messages,
-                "temperature": 0.7,
-                "max_tokens": 800
+                "temperature": 0.75,
+                "max_tokens": 1000
             }
             req_glm = urllib.request.Request(
                 endpoint,
                 data=json.dumps(payload).encode("utf-8"),
                 headers=headers
             )
-            with urllib.request.urlopen(req_glm, timeout=20) as resp:
+            with urllib.request.urlopen(req_glm, timeout=25) as resp:
                 resp_data = json.loads(resp.read().decode("utf-8"))
                 reply = resp_data.get("choices", [{}])[0].get("message", {}).get("content", "").strip()
         except Exception as e:
             print(f"[Letter] 智谱大模型代拟遇阻，启用内生高古书信引擎: {e}")
 
-    # 2. 内生高雅书信后学视角保障
+    # 2. 内生高雅书信多维自适应引擎（若大模型离线时提供真挚古雅的定制输出，杜绝生硬双引号套用）
     if not reply or len(reply) < 30:
-        if any(k in user_thought for k in ["山", "武夷", "九曲", "游", "景", "茶"]):
+        cleaned_topic = user_thought.replace("“", "").replace("”", "").replace("\"", "").strip()
+        if any(k in user_thought for k in ["感谢", "感恩", "师长", "老师", "关怀", "点拨", "春风化雨", "指点"]):
             reply = (
                 "考亭先生函丈：\n\n"
-                f"后学肃拜敬禀。尝闻先生垂教，知万物皆具一理，即物穷理乃入德之基。近来后学寄托心迹于“{user_thought}”，仰望武夷群峰苍翠，九曲溪水澄澈涵虚，每忆先生隐屏结庐、棹歌寻源之大道怀抱，心向往之。山水草木之间，理气自然条畅；人居天地之中，贵在主敬立诚。后学虽资禀鲁钝，愿以先贤穷理尽性之志自策，笃行不倦，不敢自弃于流俗。适值风清月白，伏惟先生德体康宁，道光四海。\n\n"
+                "后学肃拜敬禀。门人自列门墙以来，沐浴先生如坐春风之教泽，开物成务，启迪良多。窃念后学资禀鲁钝，向者涉猎群书，常有枝蔓窒碍之虞；幸蒙先生循循善诱，诲以主敬存养、博约相顾之法，方知为学工夫全在反躬实践。师长春风化雨般的关切提点，每每思之，铭感五内，肃然如对清庙。\n\n"
+                "今者后学立志端谨，矢志知行相须、踏实用力，不敢复起游移退缩之念。平日接物处事，常以‘居敬持志’自惕自律，愿以滴水穿石之功，践行先生之训。山川路遥，无由时常伏侍左右，惟借片楮尺牍，驰寄后学寸草感恩之私。伏惟先生德体清和，道体常泰，为天下士林永立泰山北斗之望！\n\n"
                 "门生 顿首肃拜"
             )
-        elif any(k in user_thought for k in ["累", "倦", "怠", "难", "惑", "烦", "学不进", "心杂"]):
+        elif any(k in user_thought for k in ["山", "武夷", "九曲", "游", "景", "茶", "棹歌", "隐屏"]):
             reply = (
                 "考亭先生道席：\n\n"
-                f"后学顿首谨禀。后学近来研习经义，心有感怀：“{user_thought}”。每思先生‘循序渐进、熟读精思’之训，自视心性尚多浮躁客尘，未免有退缩之念。然窃念天地之理本自昭晰，人之为学如磨镜洗垢，惟在着紧用力、居敬持志而已。后学愿收摄身心，于日用平常中痛下克治工夫，涵养未发之中，不敢因循度日。伏乞先生俯垂教诲，以开蒙蔽。\n\n"
-                "后学 谨呈"
+                "后学顿首谨禀。日者后学行役武夷，泛舟九曲清溪，仰观隐屏拔地、天柱干云，俯察寒流澄澈、游鳞戏石，每每流连忘返。尝闻先生结庐于此，寄大道于棹歌，知万物皆有至理流行，非耳目之所能私也。山川清秀之气，正与吾心虚灵明觉之体相孚通。\n\n"
+                f"后学漫步岩壑之间，体会“{cleaned_topic}”之真意，顿觉世俗纷扰皆如过眼云烟。学问之道，原非枯槁寂寞，正当于这鸢飞鱼跃处体认天理。后学愿借这方山水灵气，洗涤平日客尘，益加自勉，不敢因循虚度。伏乞先生时赐开导，以发蒙昧。\n\n"
+                "后学 谨禀"
+            )
+        elif any(k in user_thought for k in ["累", "倦", "怠", "难", "惑", "烦", "学不进", "心杂", "焦虑", "迷茫"]):
+            reply = (
+                "考亭先生函丈：\n\n"
+                "后学顿首再拜。后学近来研思经传，心境多有滞碍，思绪浮泛难定，内省甚愧。每读先生书，闻‘循序渐进、熟读精思’之训，深知人之为学如磨镜刮垢，垢尽明自见。然学力尚浅，面对世事繁杂，时有进退失据之慨，不知当下当从何处先着紧用力。\n\n"
+                "窃念心之不宁，由敬之未立；志之不笃，由理之未明。后学不敢自暴自弃，愿遵先生指点，收摄身心，于日用平常洒扫应对之间痛下涵养工夫。伏乞先生特赐提撕棒喝，以正后学入道之门径。\n\n"
+                "受业门生 谨禀"
             )
         else:
             reply = (
                 "考亭先生函丈：\n\n"
-                f"后学生肃拜敬禀。受教于先生门下，研味考亭理学微言大义，深知天地之理不待外求，反躬自省乃立身之本。门人近日深思：“{user_thought}”，感佩理学知行并进之真谛。平日接物处事之际，常以先生‘主敬存养、博约相顾’之规自惕自省。虽学力尚浅，愿以滴水穿石之功，循序渐进，专一专精。伏乞先生特赐垂教，以正后学进修之阶梯。\n\n"
+                f"后学肃拜谨呈。近日后学精研义理，于日用体验中深有感怀，切切然愿向先生陈述肺腑。尝思为学之方，在于知行相须，明理以立身，躬行以成务。昔者承聆先生明训，知万物皆具一理，存天理、遏人欲乃千圣相传之真脉络。\n\n"
+                "后学虽材质鲁钝，然矢志向学之初心不敢稍怠。今谨将胸中所蓄学思与平日自讼自省之意，裁诸纸墨，仰祈道鉴。伏乞先生俯垂垂教，指示修进阶梯，门人当镂骨铭肌，朝夕惕厉以图有立。\n\n"
                 "后学 顿首肃拜"
             )
 

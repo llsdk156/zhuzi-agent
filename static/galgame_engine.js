@@ -1027,6 +1027,30 @@ class GalGameEngine {
         const step = chapter.steps[stepIndex];
         if (!step) return;
 
+        // 动态根据武夷特色讲席主题平滑切换专属古典意境大图（多个场景图替换）
+        const bgImgEl = document.getElementById("galgame-bg-img");
+        if (bgImgEl) {
+            const chapterBgMap = {
+                "wuyi_jingshe": "/static/galgame_assets/classroom_pov_hd.png",
+                "jiuqu_zhaoge": "/static/banner_scenic_clean.png",
+                "wuyi_tea": "/static/banner_scenic_bg.png",
+                "wufu_shecang": "/static/galgame_assets/classroom_empty_hd.jpg",
+                "ehu_debate": "/static/galgame_assets/classroom_bg_empty.png",
+                "daxue_gewu": "/static/banner_scenic_clean2.png"
+            };
+            const targetBg = chapter.bgImage || chapterBgMap[chapterId] || "/static/galgame_assets/classroom_pov_hd.png";
+            const currentSrc = bgImgEl.getAttribute("src") || "";
+            const targetFilename = targetBg.split("/").pop();
+            if (!currentSrc.includes(targetFilename)) {
+                bgImgEl.style.transition = "opacity 0.3s ease";
+                bgImgEl.style.opacity = "0.35";
+                setTimeout(() => {
+                    bgImgEl.src = targetBg;
+                    bgImgEl.style.opacity = "1";
+                }, 150);
+            }
+        }
+
         this.renderStep(step);
         this.updateStudyStats();
     }

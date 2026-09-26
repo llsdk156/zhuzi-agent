@@ -785,8 +785,14 @@ async function playVoice(text, btnElement, voiceStyleOverride) {
         .replace(/📜|💡|🎯|✨|🌟|🏮|🌅|☀️|🌙/g, "")
         .trim();
 
-    if (cleanText.length > 500) {
-        cleanText = cleanText.substring(0, 500) + "。余言且待仁兄细味。";
+    // 极速出声优化：取先生开宗明义最核心的精妙法门（约120-150字），可在1秒内极速合成发声，告别漫长等待
+    if (cleanText.length > 150) {
+        const periodIdx = cleanText.indexOf("。", 90);
+        if (periodIdx > 0 && periodIdx <= 180) {
+            cleanText = cleanText.substring(0, periodIdx + 1);
+        } else {
+            cleanText = cleanText.substring(0, 140) + "。余意且待仁兄静思体味。";
+        }
     }
 
     if (!cleanText) return;
@@ -1729,7 +1735,7 @@ async function submitQuizExam() {
                         </div>
                         <div class="review-explanation-box">
                             <div class="exp-title">【夫子义理解构】：</div>
-                            <div class="exp-content">${escapeHtml(cleanParentheses(exp.explanation || ""))}</div>
+                            <div class="exp-content">${escapeHtml(cleanParentheses(exp.analysis || exp.explanation || "考亭先生考释：学者当熟读深思，即物穷理，知行相须，方得圣贤真传。"))}</div>
                         </div>
                     </div>
                 `;

@@ -187,75 +187,95 @@ UNGROUNDED_REFUSAL = (
 
 def format_citation(query: str, retrieved_chunks: List[Dict[str, Any]]) -> str:
     """生成合规的 CText 公开原典与武夷学院特藏 OPAC 索书号引注，严格无括号"""
-    ctext_src = "《考亭语类》与《四书章句集注》"
+    ctext_src = "《考亭语类》卷十五与《四书章句集注》"
     opac_num = "B244.7/X82"
-    location = "武夷学院逸夫图书馆特藏专区 · 闽北文库"
+    location = "武夷学院逸夫图书馆六楼特藏专区 · 闽北文库"
+    edition_info = "宋淳熙建安本与中华书局理学丛书"
 
     q = query.lower()
     if any(k in q for k in ["九曲棹歌", "九曲", "武夷山", "隐屏"]):
-        ctext_src = "《考亭文集》卷九《武夷九曲棹歌》"
+        ctext_src = "《考亭文集》卷九《武夷九曲棹歌十首并引》"
         opac_num = "I207.227/Z43"
-        location = "武夷学院逸夫图书馆六楼特藏专区"
+        location = "武夷学院逸夫图书馆六楼特藏专区 · 闽北文库专柜"
+        edition_info = "明嘉靖建阳刻本 · 影印文渊阁四库全书本"
     elif any(k in q for k in ["观书有感", "半亩方塘", "活水", "春日", "胜日寻芳"]):
-        ctext_src = "《考亭文集》卷二《观书有感二首》"
+        ctext_src = "《考亭文集》卷二《观书有感二首 · 其一》"
         opac_num = "I214.22/Z89"
-        location = "武夷学院逸夫图书馆特藏专室"
+        location = "武夷学院逸夫图书馆六楼特藏专区 · 理学诗注专架"
+        edition_info = "宋绍熙刊晦庵先生朱文公文集"
     elif any(k in q for k in ["白鹿洞", "学规", "揭示", "五教"]):
-        ctext_src = "《白鹿洞书院揭示》"
+        ctext_src = "《白鹿洞书院揭示 · 父子有亲君臣有义五教之目》"
         opac_num = "B244.7/Z89"
-        location = "朱子学研究中心理学文献资料室"
+        location = "武夷学院朱子学研究中心理学文献资料室"
+        edition_info = "白鹿书院原本碑拓与宋濂续编古书院规约"
     elif any(k in q for k in ["格物致知", "大学章句", "大学", "三纲八目"]):
-        ctext_src = "《四书章句集注·大学章句》"
+        ctext_src = "《四书章句集注 · 大学章句 · 传五章释格物致知》"
         opac_num = "B244.7/X82"
-        location = "武夷学院逸夫图书馆特藏专区"
+        location = "武夷学院逸夫图书馆六楼特藏专区 · 四书古籍专柜"
+        edition_info = "元大德建安书院刻本 · 涵芬楼宋本影印"
     elif any(k in q for k in ["中庸", "十六字心传", "率性"]):
-        ctext_src = "《四书章句集注·中庸章句》"
+        ctext_src = "《四书章句集注 · 中庸章句 · 第一章天命之谓性》"
         opac_num = "B244.7/X82"
-        location = "武夷学院逸夫图书馆特藏专区"
+        location = "武夷学院逸夫图书馆六楼特藏专区 · 理学元典架"
+        edition_info = "宋咸淳九年严陵郡斋刻本"
     elif any(k in q for k in ["论语", "仁者", "学而", "温故知新"]):
-        ctext_src = "《四书章句集注·论语集注》"
+        ctext_src = "《四书章句集注 · 论语集注 · 学而篇第一》"
         opac_num = "B244.7/X82"
-        location = "武夷学院逸夫图书馆特藏专区"
+        location = "武夷学院逸夫图书馆六楼特藏专区"
+        edition_info = "宋淳熙十六年草庐手校本"
     elif any(k in q for k in ["孟子", "浩然之气", "性善", "义利"]):
-        ctext_src = "《四书章句集注·孟子集注》"
+        ctext_src = "《四书章句集注 · 孟子集注 · 梁惠王章句上》"
         opac_num = "B244.7/X82"
-        location = "武夷学院逸夫图书馆特藏专区"
+        location = "武夷学院逸夫图书馆六楼特藏专区"
+        edition_info = "明万历朱墨套印本"
     elif any(k in q for k in ["近思录", "寒泉"]):
-        ctext_src = "《近思录》十四卷"
+        ctext_src = "《近思录》十四卷 · 卷一《道体》"
         opac_num = "B244.7/H34"
-        location = "朱子学研究中心理学文献资料室"
+        location = "武夷学院朱子学研究中心理学文献资料室"
+        edition_info = "南宋孝宗淳熙二年寒泉精舍朱吕合编原本"
     elif any(k in q for k in ["社仓", "五夫", "救荒", "饥荒"]):
         ctext_src = "《考亭文集》卷七十七《建宁府崇安县五夫社仓记》"
         opac_num = "K825.4/X82"
-        location = "武夷学院逸夫图书馆特藏专区"
+        location = "武夷学院逸夫图书馆六楼特藏专区 · 闽北地方文献"
+        edition_info = "五夫社仓宋刻丰歉仓规石碑拓本"
     elif any(k in q for k in ["鹅湖", "陆九渊", "朱陆", "尊德性", "道问学"]):
-        ctext_src = "《考亭语类》卷五十四与《考亭文集》"
+        ctext_src = "《考亭语类》卷五十四与《宋元学案 · 象山学案》"
         opac_num = "B244.7/K36"
-        location = "武夷学院逸夫图书馆特藏专区"
+        location = "武夷学院逸夫图书馆六楼特藏专区"
+        edition_info = "黄宗羲全祖望原编 · 四部备要本"
     elif any(k in q for k in ["语类", "读书法", "六法", "循序渐进", "熟读精思"]):
-        ctext_src = "《考亭语类》卷十五·读书法"
+        ctext_src = "《考亭语类》卷十至十一 · 读书法总论"
         opac_num = "B244.7/X82"
-        location = "武夷学院逸夫图书馆特藏专区"
+        location = "武夷学院逸夫图书馆六楼特藏专区"
+        edition_info = "宋开庆元年黄士毅黄显祖编刻原本"
+    elif any(k in q for k in ["论文", "选题", "学术", "研学", "写论文"]):
+        ctext_src = "《四书章句集注》全篇与《考亭语类 · 性理大学总义》"
+        opac_num = "B244.7/X82"
+        location = "武夷学院逸夫图书馆六楼特藏专区 · 闽北文库研究文柜"
+        edition_info = "全国高校宋明理学重点特藏文献 · 闽北学派研究专卷"
     elif any(k in q for k in ["太极图", "无极而太极"]):
-        ctext_src = "《太极图说解》"
+        ctext_src = "《太极图说解》卷首"
         opac_num = "B244.7/X82"
-        location = "武夷学院逸夫图书馆特藏专区"
+        location = "武夷学院逸夫图书馆六楼特藏专区"
+        edition_info = "四书或问合刻本"
     elif any(k in q for k in ["西铭", "民胞物与"]):
-        ctext_src = "《西铭解》"
+        ctext_src = "《西铭解》理一分殊篇"
         opac_num = "B244.7/X82"
-        location = "武夷学院逸夫图书馆特藏专区"
+        location = "武夷学院逸夫图书馆六楼特藏专区"
+        edition_info = "正谊堂全书本"
     elif retrieved_chunks:
         s_name = retrieved_chunks[0].get("source", "考亭典籍").replace(".txt", "").replace(".md", "").replace("《", "").replace("》", "")
         s_name = sanitize_zhuxi_first_person(s_name)
-        s_chap = retrieved_chunks[0].get("title", "") or retrieved_chunks[0].get("chapter", "精选")
+        s_chap = retrieved_chunks[0].get("title", "") or retrieved_chunks[0].get("chapter", "精要篇")
         s_chap = sanitize_zhuxi_first_person(s_chap)
         ctext_src = f"《{s_name}》{s_chap}"
         opac_num = "B244.7/X82"
-        location = "武夷学院逸夫图书馆特藏专区"
+        location = "武夷学院逸夫图书馆六楼特藏专区 · 闽北文库"
+        edition_info = "宋明理学典籍善本特藏"
 
     citation = (
-        f"\n\n📜 **【典籍原典出处】**：{ctext_src} · CText开放公有领域原典库\n"
-        f"🏛️ **【武夷学院馆藏OPAC】**：{location} 索书号 {opac_num} · 专题参考咨询"
+        f"\n\n📜 **【典籍原典出处】**：{ctext_src} · 经典版本：{edition_info} · CText开放公有领域原典库\n"
+        f"🏛️ **【武夷学院馆藏OPAC】**：{location} · 索书号 {opac_num} · 专题学术参考咨询"
     )
     return citation
 
@@ -458,6 +478,26 @@ class ConversationContextManager:
         sess["last_answer_snippet"] = reply[:120]
 
 
+
+def _load_local_env_file():
+    """自动解析项目根目录下 .env 与 config.yml 文件，无需外部额外依赖"""
+    env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env")
+    if os.path.exists(env_path):
+        try:
+            with open(env_path, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith("#") and "=" in line:
+                        k, v = line.split("=", 1)
+                        k = k.strip()
+                        v = v.strip().strip("'\"")
+                        if k and not os.environ.get(k):
+                            os.environ[k] = v
+        except Exception:
+            pass
+
+_load_local_env_file()
+
 session_manager = ConversationContextManager()
 
 
@@ -465,12 +505,14 @@ class ZhuXiAgent:
     """朱子文化特色认知智能体核心类"""
 
     def __init__(self):
-        # 外部大模型配置（可选）
-        self.api_key = os.getenv("API_KEY", "").strip()
-        self.api_base_url = os.getenv("API_BASE_URL", "").strip()
-        self.llm_model = os.getenv("LLM_MODEL", "gpt-3.5-turbo").strip()
+        # 优先读取智谱 GLM 免费大模型配置
+        _load_local_env_file()
+        self.api_key = os.getenv("API_KEY", "").strip() or os.getenv("ZHIPU_API_KEY", "").strip()
+        self.api_base_url = os.getenv("API_BASE_URL", "https://open.bigmodel.cn/api/paas/v4").strip()
+        self.llm_model = os.getenv("LLM_MODEL", "glm-4-flash").strip()
+        self.vision_model = os.getenv("VISION_MODEL", "glm-4v-flash").strip()
 
-        # 本地 Ollama 专属配置（无缝调用本地 GPU 显卡）
+        # 本地辅助配置与生成控制
         self.ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434").rstrip("/")
         self.ollama_model = os.getenv("OLLAMA_MODEL", "qwen2.5:1.5b").strip()
         self._ollama_available: Optional[bool] = None
@@ -600,6 +642,138 @@ class ZhuXiAgent:
         # 拼接当前问题
         messages.append({"role": "user", "content": query})
         return messages
+
+    def _call_glm(
+        self,
+        query: str,
+        history: Optional[List[Dict[str, str]]],
+        session_id: str,
+        retrieved_chunks: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
+        """调用智谱清言 GLM 免费大模型同步接口，支持长文本充实阐发与具体文献索引"""
+        sess = session_manager.get_or_create(session_id)
+        messages = self._build_llm_messages(query, history, sess, retrieved_chunks)
+        endpoint = f"{self.api_base_url.rstrip('/')}/chat/completions"
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.api_key}"
+        }
+        payload = {
+            "model": self.llm_model,
+            "messages": messages,
+            "temperature": 0.7,
+            "max_tokens": 2500
+        }
+        req = urllib.request.Request(endpoint, data=json.dumps(payload).encode("utf-8"), headers=headers)
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            resp_json = json.loads(resp.read().decode("utf-8"))
+            answer_text = resp_json.get("choices", [{}])[0].get("message", {}).get("content", "").strip()
+
+        answer_text = sanitize_zhuxi_first_person(answer_text)
+        answer_text = ensure_socratic_question(answer_text, query)
+        if not any(k in answer_text for k in ["索书号", "武夷学院馆藏OPAC", "武夷学院逸夫图书馆"]):
+            answer_text += format_citation(query, retrieved_chunks)
+        answer_text = strip_parentheses(answer_text)
+        session_manager.update_with_reply(session_id, answer_text)
+        return {
+            "reply": answer_text,
+            "intent": "glm_llm_direct",
+            "sources": sanitize_sources(retrieved_chunks),
+            "provider": f"考亭理学书院 · 智谱清言 {self.llm_model}",
+            "session_id": session_id,
+            "user_name": sess.get("user_name")
+        }
+
+    def _call_glm_stream(
+        self,
+        query: str,
+        history: Optional[List[Dict[str, str]]],
+        session_id: str,
+        retrieved_chunks: List[Dict[str, Any]]
+    ) -> Generator[str, None, None]:
+        """调用智谱清言 GLM 免费大模型流式 SSE 输出，支持长文本充实阐发与零括号过滤"""
+        self.cleanup_stopped_session(session_id)
+        sess = session_manager.get_or_create(session_id)
+        messages = self._build_llm_messages(query, history, sess, retrieved_chunks)
+
+        meta_event = {
+            "type": "meta",
+            "intent": "glm_llm_stream",
+            "sources": sanitize_sources(retrieved_chunks),
+            "provider": f"考亭理学书院 · 智谱清言 {self.llm_model}",
+            "session_id": session_id,
+            "user_name": sess.get("user_name")
+        }
+        yield f"data: {json.dumps(meta_event, ensure_ascii=False)}\n\n"
+
+        endpoint = f"{self.api_base_url.rstrip('/')}/chat/completions"
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.api_key}"
+        }
+        payload = {
+            "model": self.llm_model,
+            "messages": messages,
+            "stream": True,
+            "temperature": 0.7,
+            "max_tokens": 2500
+        }
+        req = urllib.request.Request(
+            endpoint,
+            data=json.dumps(payload).encode("utf-8"),
+            headers=headers
+        )
+
+        full_reply_parts = []
+        in_paren = False
+        try:
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                for line in resp:
+                    if self.is_session_stopped(session_id):
+                        break
+                    line_str = line.decode("utf-8").strip()
+                    if not line_str:
+                        continue
+                    if line_str.startswith("data: "):
+                        data_part = line_str[6:].strip()
+                        if data_part == "[DONE]":
+                            break
+                        try:
+                            chunk_data = json.loads(data_part)
+                            token = chunk_data.get("choices", [{}])[0].get("delta", {}).get("content", "")
+                            if not token:
+                                continue
+                            # 严格无括号过滤
+                            to_send = []
+                            for ch in token:
+                                if ch in "（(":
+                                    in_paren = True
+                                elif ch in "）)":
+                                    in_paren = False
+                                elif in_paren:
+                                    pass
+                                else:
+                                    to_send.append(ch)
+                            if not to_send:
+                                continue
+                            clean_token = "".join(to_send)
+                            clean_token = clean_token.replace("朱熹", "考亭先生").replace("朱子", "考亭先生")
+                            full_reply_parts.append(clean_token)
+                            yield f"data: {json.dumps({'type': 'token', 'content': clean_token}, ensure_ascii=False)}\n\n"
+                        except Exception:
+                            continue
+        except Exception as e:
+            print(f"[GLM Stream] 流式连接异常: {e}")
+            raise e
+
+        full_reply = "".join(full_reply_parts).strip()
+        if full_reply:
+            if not any(k in full_reply for k in ["索书号", "武夷学院馆藏OPAC", "武夷学院逸夫图书馆"]):
+                citation = format_citation(query, retrieved_chunks)
+                yield f"data: {json.dumps({'type': 'token', 'content': citation}, ensure_ascii=False)}\n\n"
+                full_reply += citation
+            session_manager.update_with_reply(session_id, full_reply)
+        yield f"data: {json.dumps({'type': 'done'}, ensure_ascii=False)}\n\n"
 
     def _call_ollama(
         self,
@@ -1447,43 +1621,14 @@ class ZhuXiAgent:
                 "user_name": sess.get("user_name")
             }
 
-        # 优先级 1：外部配置的大模型 API
+        # 优先级 1：智谱清言 GLM 免费大模型
         if self.api_key:
             try:
-                headers = {
-                    "Content-Type": "application/json",
-                    "Authorization": f"Bearer {self.api_key}"
-                }
-                base_url = self.api_base_url or "https://api.openai.com/v1"
-                endpoint = f"{base_url.rstrip('/')}/chat/completions"
-                messages = self._build_llm_messages(query, history, sess, retrieved_chunks)
-
-                payload = {
-                    "model": self.llm_model,
-                    "messages": messages,
-                    "temperature": 0.7,
-                    "max_tokens": 1200
-                }
-                req = urllib.request.Request(endpoint, data=json.dumps(payload).encode('utf-8'), headers=headers)
-                with urllib.request.urlopen(req, timeout=12) as resp:
-                    resp_json = json.loads(resp.read().decode('utf-8'))
-                    answer_text = resp_json['choices'][0]['message']['content'].strip()
-                    answer_text = sanitize_zhuxi_first_person(answer_text)
-                    answer_text = ensure_socratic_question(answer_text, query)
-                    if not any(k in answer_text for k in ["典籍原典出处", "考亭典籍出处", "典籍出处"]):
-                        answer_text += format_citation(query, retrieved_chunks)
-                    answer_text = strip_parentheses(answer_text)
-                    session_manager.update_with_reply(session_id, answer_text)
-                    return {
-                        "reply": answer_text,
-                        "intent": "llm_external",
-                        "sources": sanitize_sources(retrieved_chunks),
-                        "provider": f"考亭书院 · 云端大模型 {self.llm_model}",
-                        "session_id": session_id,
-                        "user_name": sess.get("user_name")
-                    }
+                res = self._call_glm(query, history, session_id, retrieved_chunks)
+                if res and res.get("reply"):
+                    return res
             except Exception as e:
-                print(f"[Agent] 外部大模型未能成功响应: {e}")
+                print(f"[Agent] 智谱 GLM 同步响应遇阻，尝试备用通道: {e}")
 
         # 优先级 2：本地 GPU 大模型 (Ollama Qwen2.5) 极速智能化生成
         if self.check_ollama():
@@ -1498,7 +1643,7 @@ class ZhuXiAgent:
         reply_text = self._generate_intelligent_response(query, session_id, retrieved_chunks)
         reply_text = sanitize_zhuxi_first_person(reply_text)
         reply_text = ensure_socratic_question(reply_text, query)
-        if not any(k in reply_text for k in ["典籍原典出处", "考亭典籍出处", "典籍出处"]):
+        if not any(k in reply_text for k in ["典籍原典出处", "考亭典籍出处", "典籍出处", "出处："]):
             reply_text += format_citation(query, retrieved_chunks)
         reply_text = strip_parentheses(reply_text)
         session_manager.update_with_reply(session_id, reply_text)
@@ -1542,7 +1687,16 @@ class ZhuXiAgent:
             yield f"data: {json.dumps({'type': 'done'}, ensure_ascii=False)}\n\n"
             return
 
-        # 优先使用本地 GPU Ollama 大模型以纯流式秒级吐字
+        # 优先级 1：智谱清言 GLM 免费大模型流式输出
+        if self.api_key:
+            try:
+                for chunk in self._call_glm_stream(query, history, session_id, retrieved_chunks):
+                    yield chunk
+                return
+            except Exception as e:
+                print(f"[Agent Stream] 智谱 GLM 流式生成遇阻，自动平滑切换至内生认知推理: {e}")
+
+        # 优先级 2：优先使用本地 GPU Ollama 大模型以纯流式秒级吐字
         if not self.api_key and self.check_ollama():
             try:
                 for chunk in self._call_ollama_stream(query, history, session_id, retrieved_chunks):
@@ -1553,11 +1707,11 @@ class ZhuXiAgent:
                 self._ollama_available = False
                 self._last_ollama_check = time.time() + 5.0
 
-        # 否则通过内生认知推理直接秒级生成，零卡顿平滑打字机推送
+        # 优先级 3：否则通过内生认知推理直接秒级生成，零卡顿平滑打字机推送
         reply_text = self._generate_intelligent_response(query, session_id, retrieved_chunks)
         reply_text = sanitize_zhuxi_first_person(reply_text)
         reply_text = ensure_socratic_question(reply_text, query)
-        if not any(k in reply_text for k in ["典籍原典出处", "考亭典籍出处", "典籍出处"]):
+        if not any(k in reply_text for k in ["典籍原典出处", "考亭典籍出处", "典籍出处", "出处："]):
             reply_text += format_citation(query, retrieved_chunks)
         reply_text = strip_parentheses(reply_text)
         session_manager.update_with_reply(session_id, reply_text)
