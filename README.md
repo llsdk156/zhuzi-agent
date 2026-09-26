@@ -1,3 +1,13 @@
+---
+title: 考亭理学书院 · 朱子文化特色智能体
+emoji: 📜
+colorFrom: indigo
+colorTo: amber
+sdk: docker
+app_port: 7860
+pinned: false
+---
+
 # 考亭理学书院 · 朱子文化特色智能体
 
 > “字求其训，句索其旨；未得乎前，不敢求乎后。” —— 朱熹《朱子读书法》

@@ -277,6 +277,88 @@ async def upload_custom_corpus(file: UploadFile = File(...)):
     }
 
 
+@app.post("/api/document/analyze", summary="文献与图片深度识读剖析接口")
+async def analyze_document_or_image(file: UploadFile = File(...)):
+    """接收用户上传的文本、文档或图片，自动调用智谱 GLM 免费大模型进行深度义理手批或图像识读"""
+    fn = file.filename.lower()
+    content_bytes = await file.read()
+
+    # 1. 图片格式识别：PNG, JPG, JPEG, WEBP, BMP
+    image_exts = (".png", ".jpg", ".jpeg", ".webp", ".bmp")
+    if fn.endswith(image_exts):
+        ext = fn.rsplit(".", 1)[-1]
+        mime_type = "image/png" if ext == "png" else "image/webp" if ext == "webp" else "image/jpeg"
+        analysis = zhuzi_agent.analyze_image_with_glm(content_bytes, mime_type=mime_type)
+        return {
+            "code": 200,
+            "filename": file.filename,
+            "type": "image",
+            "prompt": f"弟子呈上古籍图画墨宝《{file.filename}》，请先生朱砂手批考释：\n\n{analysis}",
+            "analysis": analysis
+        }
+
+    # 2. 文本与文档格式提取：TXT, MD, DOCX, PDF
+    text_content = ""
+    if fn.endswith((".txt", ".md")):
+        try:
+            text_content = content_bytes.decode("utf-8")
+        except UnicodeDecodeError:
+            try:
+                text_content = content_bytes.decode("gbk")
+            except Exception:
+                text_content = content_bytes.decode("utf-8", errors="ignore")
+    elif fn.endswith(".docx"):
+        import io
+        import zipfile
+        import xml.etree.ElementTree as ET
+        try:
+            with zipfile.ZipFile(io.BytesIO(content_bytes)) as zf:
+                xml_content = zf.read("word/document.xml")
+                root = ET.fromstring(xml_content)
+                texts = [elem.text for elem in root.iter() if elem.text]
+                text_content = "\n".join(texts)
+        except Exception as e:
+            text_content = f"文档解析提示：{e}"
+    elif fn.endswith(".pdf"):
+        raw_str = content_bytes.decode("latin-1", errors="ignore")
+        pdf_texts = re.findall(r"Tj\s*([^\n\r]+)", raw_str)
+        if pdf_texts:
+            text_content = "\n".join(pdf_texts)
+        else:
+            text_content = content_bytes.decode("utf-8", errors="ignore")
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail="目前支持格式：TXT、MD、DOCX、PDF 文档以及 PNG、JPG、WEBP 图像"
+        )
+
+    if not text_content.strip():
+        text_content = f"文献《{file.filename}》内容为空或暂无法提取文本。"
+
+    analysis = zhuzi_agent.analyze_document_with_glm(file.filename, text_content)
+    return {
+        "code": 200,
+        "filename": file.filename,
+        "type": "document",
+        "prompt": f"弟子呈上文献《{file.filename}》，请先生朱砂手批指点：\n\n{analysis}",
+        "analysis": analysis
+    }
+
+
+@app.get("/api/model/status", summary="当前大模型驱动状态")
+async def get_model_status():
+    """返回当前大模型驱动引擎与可用状态"""
+    has_key = bool(zhuzi_agent.api_key)
+    return {
+        "provider": "智谱清言 GLM 官方免费模型",
+        "has_api_key": has_key,
+        "text_model": zhuzi_agent.llm_model,
+        "vision_model": zhuzi_agent.vision_model,
+        "api_base_url": zhuzi_agent.api_base_url,
+        "is_cloud_free": True
+    }
+
+
 @app.post("/api/knowledge/reload", summary="全量重载并更新朱子典籍知识库")
 async def reload_knowledge_base():
     """
@@ -579,8 +661,8 @@ async def submit_letter(req: LetterSubmitRequest):
 
     reply = ""
 
-    # 1. 若本地 GPU 大模型可用，以学者第一人称视角撰写书信
-    if zhuzi_agent.check_ollama():
+    # 1. 若智谱清言 GLM 免费大模型可用，以学者第一人称视角撰写书信
+    if zhuzi_agent.api_key:
         try:
             messages = [
                 {
@@ -601,25 +683,27 @@ async def submit_letter(req: LetterSubmitRequest):
                     "content": f"后学生心境与学思寄托为：{user_thought}。请撰写一封深具理学风骨与敬仰之心的求益修身书信。"
                 }
             ]
-            payload = {
-                "model": zhuzi_agent.ollama_model,
-                "messages": messages,
-                "stream": False,
-                "options": {
-                    "temperature": 0.7,
-                    "num_predict": 600
-                }
+            endpoint = f"{zhuzi_agent.api_base_url}/chat/completions"
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {zhuzi_agent.api_key}"
             }
-            req_ollama = urllib.request.Request(
-                f"{zhuzi_agent.ollama_base_url}/api/chat",
+            payload = {
+                "model": zhuzi_agent.llm_model,
+                "messages": messages,
+                "temperature": 0.7,
+                "max_tokens": 800
+            }
+            req_glm = urllib.request.Request(
+                endpoint,
                 data=json.dumps(payload).encode("utf-8"),
-                headers={"Content-Type": "application/json"}
+                headers=headers
             )
-            with urllib.request.urlopen(req_ollama, timeout=12) as resp:
+            with urllib.request.urlopen(req_glm, timeout=20) as resp:
                 resp_data = json.loads(resp.read().decode("utf-8"))
-                reply = resp_data.get("message", {}).get("content", "").strip()
+                reply = resp_data.get("choices", [{}])[0].get("message", {}).get("content", "").strip()
         except Exception as e:
-            print(f"[Letter] 大模型代拟遇阻，启用内生高古书信引擎: {e}")
+            print(f"[Letter] 智谱大模型代拟遇阻，启用内生高古书信引擎: {e}")
 
     # 2. 内生高雅书信后学视角保障
     if not reply or len(reply) < 30:

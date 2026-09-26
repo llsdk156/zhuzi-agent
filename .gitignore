@@ -29,5 +29,7 @@ test_tts.mp3
 Thumbs.db
 .agent/
 
-# 日志
+# 日志与私密环境配置
 *.log
+.env
+.env.*

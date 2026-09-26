@@ -38,12 +38,10 @@ def print_banner(host: str, port: int):
     print(f"[*] 已切块理学知识切片: {stats.get('total_chunks', 0)} 个")
 
     from core.agent_engine import zhuzi_agent
-    if zhuzi_agent.check_ollama():
-        print(f"[*] 智能驱动引擎: 本地显卡 GPU 大模型 (Ollama · {zhuzi_agent.ollama_model})")
-    elif zhuzi_agent.api_key:
-        print(f"[*] 智能驱动引擎: 云端大模型 ({zhuzi_agent.llm_model})")
+    if zhuzi_agent.api_key:
+        print(f"[*] 智能驱动引擎: 智谱清言 GLM 免费大模型 文本:{zhuzi_agent.llm_model} 识图:{zhuzi_agent.vision_model}")
     else:
-        print("[*] 智能驱动引擎: 考亭书院·原生自适应认知引擎 (零依赖·全离线·人人可用)")
+        print("[*] 智能驱动引擎: 考亭书院·原生自适应认知引擎 零依赖 全离线 人人可用")
 
     print("-" * 66)
     print(f"[+] 本机电脑访问地址:        http://127.0.0.1:{port}/")
