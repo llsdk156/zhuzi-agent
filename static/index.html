@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>云起武夷·活水传理 -- 考亭理学研习</title>
+    <link rel="stylesheet" href="/static/style.css?v=8.0.0">
+</head>
+<body class="app-body">
+    <div class="window-frame">
+        <!-- ==============================================
+             左侧导航侧边栏 · 雅致宣纸微质感 + 1:1 书法印章
+             ============================================== -->
+        <aside class="app-sidebar" id="app-sidebar">
+            <!-- 顶部头像与智能体标题 -->
+            <div class="sidebar-header" onclick="switchNav('home')" title="点击返回首页研习总览">
+                <div class="avatar-ring">
+                    <img src="/static/avatar_ref_hd.png" alt="考亭夫子" class="scholar-avatar-img">
+                </div>
+                <div class="sidebar-brand-text">
+                    <span class="brand-name" title="云起武夷·活水传理 -- 考亭理学研习">云起武夷·活水传理</span>
+                    <span class="brand-subtag">考亭理学研习</span>
+                </div>
+            </div>
+
+            <!-- 主导航菜单项 -->
+            <nav class="sidebar-nav">
+                <div class="nav-item active" id="nav-home" onclick="switchNav('home')">
+                    <span class="nav-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                        </svg>
+                    </span>
+                    <span class="nav-title">首页总览</span>
+                    <span class="nav-badge">研习</span>
+                </div>
+                <div class="nav-item" id="nav-qa" onclick="switchNav('qa')">
+                    <span class="nav-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                    </span>
+                    <span class="nav-title">考亭答疑</span>
+                    <span class="nav-badge blue">问学</span>
+                </div>
+                <div class="nav-item" id="nav-class" onclick="switchNav('class')">
+                    <span class="nav-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                        </svg>
+                    </span>
+                    <span class="nav-title">考亭讲筵</span>
+                    <span class="nav-badge amber">讲堂</span>
+                </div>
+                <div class="nav-item" id="nav-recommend" onclick="switchNav('recommend')">
+                    <span class="nav-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                    </span>
+                    <span class="nav-title">沧洲藏书</span>
+                    <span class="nav-badge red">藏书</span>
+                </div>
+                <div class="nav-item" id="nav-quiz" onclick="openQuizModal()">
+                    <span class="nav-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                        </svg>
+                    </span>
+                    <span class="nav-title">研学考校</span>
+                    <span class="nav-badge gold">答卷</span>
+                </div>
+                <div class="nav-item" id="nav-corpus" onclick="openCorpusSearchModal()">
+                    <span class="nav-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </span>
+                    <span class="nav-title">典籍考据</span>
+                    <span class="nav-badge blue">原典</span>
+                </div>
+                <div class="nav-item" id="nav-letter" onclick="openLetterModal()">
+                    <span class="nav-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                    </span>
+                    <span class="nav-title">考亭尺牍</span>
+                    <span class="nav-badge amber">书信</span>
+                </div>
+
+                <div class="nav-divider"></div>
+
+                <div class="nav-item" onclick="openHistoryModal()">
+                    <span class="nav-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </span>
+                    <span class="nav-title">论道历史</span>
+                </div>
+                <div class="nav-item" onclick="openFavoriteModal()">
+                    <span class="nav-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                    </span>
+                    <span class="nav-title">精选语录</span>
+                </div>
+                <div class="nav-item" onclick="openSettingsModal()">
+                    <span class="nav-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                        </svg>
+                    </span>
+                    <span class="nav-title">风骨设置</span>
+                </div>
+            </nav>
+
+            <!-- 侧边栏底部：高雅水墨远山与立本对联  · 无缝填满左侧栏 -->
+            <div class="sidebar-footer-ink">
+                <img src="/static/sidebar_bottom_fill.png" alt="问学于考亭 修身以立本" class="sidebar-bottom-art-img">
+            </div>
+        </aside>
+
+        <!-- ==============================================
+             右侧主界面 · 多视窗动态切换容器
+             ============================================== -->
+        <main class="app-main-content">
+            <!-- 顶部控制条 -->
+            <header class="window-topbar">
+                <div class="topbar-status-tip">
+                    <span class="dot-online"></span> 武夷精舍 · 考亭理学认知引擎
+                </div>
+                <div class="window-controls">
+                    <button class="topbar-action-pill" onclick="openWisdomModal()" title="考亭晨策 · 每日求取先生修身箴规">
+                        <span class="pill-icon">📜</span>
+                        <span class="pill-label">每日晨策</span>
+                    </button>
+                    <button class="win-btn" id="tts-audio-btn" onclick="toggleAutoTTS()" title="自动文人配音开关 当前已静音 点击开启">
+                        <span id="tts-icon">🔇</span>
+                    </button>
+                    <button class="win-btn" onclick="toggleFullScreen()" title="全屏沉浸研学">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- 主视窗滚动包裹 -->
+            <div class="content-scroll-wrap" id="main-scroll-wrap">
+
+                <!-- ==============================================
+                     【视图 1】首页总览研习台 · 1:1 配色复刻 + 雅致升华
+                     ============================================== -->
+                <section class="page-view active" id="view-home">
+                    <div class="home-scroll-body">
+                    <!-- 1. 顶部大横幅 Banner  · 高精度水墨山水画卷 + 亭台楼阁 + 题辞印章 -->
+                    <div class="hero-banner-card">
+                        <!-- 横幅左侧：考亭水墨圆章徽标与立言标题 -->
+                        <div class="banner-left-content">
+                            <div class="portrait-badge-wrap">
+                                <div class="portrait-circle">
+                                    <img src="/static/avatar_ref_hd.png" alt="考亭夫子" class="zhuxi-banner-img">
+                                </div>
+                            </div>
+
+                            <div class="banner-text-group">
+                                <h1 class="banner-title">云起武夷·活水传理 -- 考亭理学研习</h1>
+                                <h2 class="banner-subtitle">问道考亭 · 传承智慧</h2>
+                                <p class="banner-desc">与先生对话，汲取千年智慧，在学习、生活与成长中找到方向。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. 四大核心功能卡片  · 点击进入专属独立界面与独立对话 -->
+                    <!-- 考亭先生首页迎客与引路大席 -->
+                    <div class="home-master-welcome-banner" id="home-master-stage">
+                        <div class="master-figure-avatar-box">
+                            <img src="/static/avatar_standalone/master_standing.png" alt="考亭先生" class="home-master-img" onclick="if(window.avatarEngine) avatarEngine.interactClick()">
+                        </div>
+                        <div class="master-welcome-speech">
+                            <div class="welcome-speech-header">
+                                <span class="live-dot-pulse"></span>
+                                <span class="welcome-title">考亭先生 · 迎客引席</span>
+                                <span class="welcome-seal">武夷活水</span>
+                            </div>
+                            <p class="welcome-speech-text">
+                                “诸生后学请了！武夷活水，源远流长。今日欲往何处研理修身？点击下方任一书院讲席，老夫自当拂袖引路，带汝登堂入室！”
+                            </p>
+                            <div class="welcome-chips-row">
+                                <span class="welcome-hint-pill" onclick="guideToModule('qa')">💬 考亭答疑：请益疑窦</span>
+                                <span class="welcome-hint-pill" onclick="guideToModule('class')">📖 考亭讲筵：第一人称研学</span>
+                                <span class="welcome-hint-pill" onclick="guideToModule('recommend')">⭐ 沧洲藏书：真实藏书阁</span>
+                                <span class="welcome-hint-pill gold" onclick="openQuizModal()">📝 研学考校：随堂答卷</span>
+                                <span class="welcome-hint-pill blue" onclick="openCorpusSearchModal()">🔍 典籍考据：原文速查</span>
+                                <span class="welcome-hint-pill amber" onclick="openLetterModal()">✉️ 考亭尺牍：叩呈信函</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. 核心功能入口卡片矩阵  · 四大书院场景 -->
+                    <div class="feature-cards-grid">
+                        <!-- 卡片 1：考亭答疑  · 蓝色系 #3b82f6 -->
+                        <div class="feature-card card-blue" onclick="guideToModule('qa')">
+                            <div class="card-corner-ribbon">专属书斋</div>
+                            <div class="card-icon-bubble bubble-blue">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                    <circle cx="8" cy="10" r="1" fill="currentColor"></circle>
+                                    <circle cx="12" cy="10" r="1" fill="currentColor"></circle>
+                                    <circle cx="16" cy="10" r="1" fill="currentColor"></circle>
+                                </svg>
+                            </div>
+                            <h3 class="card-title title-blue">考亭答疑</h3>
+                            <p class="card-desc">独立问学书斋。涵盖经义阐发、心性理气、为人涉世与治学疑窦，随时开辟新对答。</p>
+                            <button class="card-action-btn btn-blue" onclick="event.stopPropagation(); guideToModule('qa')">
+                                <span>随先生进入答疑书斋</span> <span class="arrow-right">➔</span>
+                            </button>
+                        </div>
+
+                        <!-- 卡片 2：考亭讲筵  · 琥珀金橙色系 #d97706 -->
+                        <div class="feature-card card-amber" onclick="guideToModule('class')">
+                            <div class="card-corner-ribbon">第一人称研学</div>
+                            <div class="card-icon-bubble bubble-amber">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                    <line x1="9" y1="7" x2="15" y2="7"></line>
+                                    <line x1="9" y1="11" x2="15" y2="11"></line>
+                                </svg>
+                            </div>
+                            <h3 class="card-title title-amber">考亭讲筵</h3>
+                            <p class="card-desc">第一人称 GalGame 书院沉浸讲筵。先生层层启发设问、动态板书教化、分支悟道决策。</p>
+                            <button class="card-action-btn btn-amber" onclick="event.stopPropagation(); guideToModule('class')">
+                                <span>随先生进入第一人称讲筵</span> <span class="arrow-right">➔</span>
+                            </button>
+                        </div>
+
+                        <!-- 卡片 3：研学考校  · 翠绿青绿系 #16a34a -->
+                        <div class="feature-card card-green" onclick="openQuizModal()">
+                            <div class="card-corner-ribbon">随堂考校</div>
+                            <div class="card-icon-bubble bubble-green">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                </svg>
+                            </div>
+                            <h3 class="card-title title-green">研学考校</h3>
+                            <p class="card-desc">武夷理学研学小课堂。精选题随堂测评、先生当堂评定点拨，签发宋制结业文牒。</p>
+                            <button class="card-action-btn btn-green" onclick="event.stopPropagation(); openQuizModal()">
+                                <span>随先生进入研学考校堂</span> <span class="arrow-right">➔</span>
+                            </button>
+                        </div>
+
+                        <!-- 卡片 4：沧洲藏书  · 朱红砖红系 #dc2626 -->
+                        <div class="feature-card card-red" onclick="guideToModule('recommend')">
+                            <div class="card-corner-ribbon">真实图书馆</div>
+                            <div class="card-icon-bubble bubble-red">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                </svg>
+                            </div>
+                            <h3 class="card-title title-red">沧洲藏书</h3>
+                            <p class="card-desc">真实古典藏书阁空间。实木书架立体翻阅六大传世典籍，细绎提要、读书法与理学精义。</p>
+                            <button class="card-action-btn btn-red" onclick="event.stopPropagation(); guideToModule('recommend')">
+                                <span>随先生进入真实藏书阁</span> <span class="arrow-right">➔</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    </div><!-- end .home-scroll-body -->
+                </section>
+
+                <!-- ==============================================
+                     【视图 2】考亭答疑 · 独立问学书斋界面  · 专属新对话 + 动态数字人讲席
+                     ============================================== -->
+                <section class="page-view" id="view-qa">
+                    <div class="dedicated-view-container">
+                        <!-- 专属顶栏 -->
+                        <div class="dedicated-header-bar">
+                            <div class="header-left">
+                                <button class="back-home-pill" onclick="switchNav('home')">‹ 首页总览</button>
+                                <div class="header-title-group">
+                                    <h2>💬 考亭答疑 · 问学书斋</h2>
+                                    <span class="header-desc">四书疑义 · 理气心性探微 · 治学为人解惑</span>
+                                </div>
+                            </div>
+                            <div class="header-right-actions">
+                                <button class="action-pill-btn gold" onclick="startNewChat('qa')" title="开启全新的答疑会话">
+                                    <span>➕ 新建问学对答</span>
+                                </button>
+                                <button class="action-pill-btn outline" onclick="clearCurrentMessages('qa')" title="清空当前消息">
+                                    <span>🧹 清空问对</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 问学讲席工作区：左侧动态数字人舞台 + 右侧对答流 -->
+                        <div class="qa-stage-workspace">
+                            <!-- 左侧：考亭先生专属数字人讲席卡框  · 白底典雅卡框 · 全场景连贯视频 · 随问智能应答动效 -->
+                            <div class="avatar-stage-pane white-card-box" id="qa-avatar-stage" onclick="avatarEngine.expandIfCollapsed()">
+                                <!-- 卡框顶栏：实时情境动效指示与收起按钮 -->
+                                <div class="avatar-box-header">
+                                    <div class="avatar-status-indicator">
+                                        <span class="live-dot-pulse" id="avatar-live-dot"></span>
+                                        <span class="live-action-text" id="avatar-action-text">待机候教</span>
+                                    </div>
+                                    <div class="box-header-actions">
+                                        <span class="box-hd-badge">4K 写实</span>
+                                        <button class="standalone-collapse-btn" id="avatar-toggle-collapse-btn" onclick="event.stopPropagation(); avatarEngine.toggleCollapse()" title="收起/展开数字人">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- 浮动水墨开示气泡  · 随对话与互动轻盈呈现 -->
+                                <div class="avatar-speech-bubble" id="avatar-speech-bubble">“诸生后学请了！凡有经义疑思，尽直道来。”</div>
+
+                                <!-- 核心数字人舞台区 · 高清静止立像 · 大儒风骨庄严静美 -->
+                                <div class="standalone-figure-box state-idle" id="avatar-stage-box" onclick="avatarEngine.interactClick()" title="考亭先生 庄严立像">
+                                    <div class="figure-3d-wrapper" id="figure-3d-wrapper" style="transform:none !important;">
+                                        <div class="avatar-video-stage" id="avatar-video-stage">
+                                            <img src="/static/avatar_standalone/master_standing.png" 
+                                                 alt="考亭先生 庄严立像" 
+                                                 class="standalone-avatar-img active-master-avatar visible" 
+                                                 id="avatar-main-img" 
+                                                 draggable="false">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 底部：尊号名帖与互动微标签 -->
+                                <div class="standalone-nameplate" onclick="event.stopPropagation(); avatarEngine.interactClick()">
+                                    <span class="nameplate-orb" id="avatar-status-orb"></span>
+                                    <span class="nameplate-name">考亭先生</span>
+                                    <span class="avatar-mood-pill" id="avatar-mood-pill">候教</span>
+                                </div>
+                            </div>
+
+                            <!-- 右侧：完整独立的对答区域  · 快捷词、消息流、停止按钮与底栏输入 -->
+                            <div class="qa-dialogue-pane">
+                                <!-- 快捷理学主题词栏 -->
+                                <div class="theme-chips-bar">
+                                    <span class="chips-label">常研论题：</span>
+                                    <button class="chip-item" onclick="sendQuery('qa', '理与气何者在先？如何理解“理在先，气在后”？')">理气之辨</button>
+                                    <button class="chip-item" onclick="sendQuery('qa', '请先生详尽阐发“格物致知”与“即物穷理”的真义。')">格物致知</button>
+                                    <button class="chip-item" onclick="sendQuery('qa', '如何理解“心统性情”以及天命之性与气质之性的区别？')">心统性情</button>
+                                    <button class="chip-item" onclick="sendQuery('qa', '请问先生，如何切实做到“居敬持志”与“涵养用敬”？')">涵养用敬</button>
+                                    <button class="chip-item" onclick="sendQuery('qa', '知与行如何统一？何以说“知行常相须，如目无足不行，足无目不见”？')">知行相须</button>
+                                    <button class="chip-item" onclick="sendQuery('qa', '初学儒学者当以何种次第研读经史？')">读书次第</button>
+                                    <button class="chip-item" onclick="sendQuery('qa', '请先生以作者本怀，亲自赏析《观书有感》其一“半亩方塘一鉴开，天光云影共徘徊。问渠那得清如许？为有源头活水来”之诗境与理学寄托。')">诗词赏析·观书有感</button>
+                                    <button class="chip-item" onclick="sendQuery('qa', '请先生赏析《九曲棹歌》中武夷山水景致与寄托之道。')">诗词赏析·九曲棹歌</button>
+                                    <button class="chip-item" onclick="sendQuery('qa', '敢问先生：后世有人认为“格物致知”就是近世西洋之观察万物做科学实验，此说是否契合先生原意？二者究竟有何异同？')">理学思辨·格物致知辨</button>
+                                    <button class="chip-item" onclick="sendQuery('qa', '后世多有人讥评“存天理灭人欲”乃是灭绝人性之酷论，先生有何辩驳？')">理学思辨·存天理灭人欲辨</button>
+                                </div>
+
+                                <!-- 独立对答消息流 -->
+                                <div class="chat-messages-scroll" id="qa-messages">
+                                    <!-- 默认欢迎信笺 -->
+                                    <div class="message-row assistant">
+                                        <div class="message-avatar">
+                                            <img src="/static/avatar_ref_hd.png" alt="先生" class="msg-avatar-img">
+                                        </div>
+                                        <div class="message-bubble parchment-bubble">
+                                            <div class="bubble-top-row">
+                                                <span class="speaker-label">考亭先生 · 问学亲授</span>
+                                                <button class="tts-play-btn" onclick="playVoiceFromBubble(this)">
+                                                    <span class="tts-icon">🔊</span> <span class="tts-text">聆听先生讲学</span>
+                                                </button>
+                                            </div>
+                                            <div class="message-text">诸生后学请了！老夫字元晦，号晦庵，晚号考亭先生。今日仁兄步入此间问学精舍，凡经传章句疑义、理气心性奥旨，或日常修身立德之惑，皆可直言道来。老夫当与诸生即物穷理、博约相顾，共究大道！</div>
+                                            <div class="bubble-seal-mark">文公手定</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 答疑专属底部输入栏 -->
+                                <div class="view-bottom-input-bar">
+                                    <div class="stop-generating-dock" id="qa-stop-dock" style="display:none;">
+                                        <button class="stop-generating-pill" onclick="stopGenerating('qa')" title="停止输出 Esc">
+                                            <span class="stop-icon">■</span>
+                                            <span class="stop-label">停止生成</span>
+                                            <span class="stop-shortcut">Esc</span>
+                                        </button>
+                                    </div>
+                                    <div class="voice-listening-dock" id="qa-voice-dock" style="display:none;">
+                                        <div class="voice-wave-anim">
+                                            <span class="vwave-bar"></span>
+                                            <span class="vwave-bar"></span>
+                                            <span class="vwave-bar"></span>
+                                            <span class="vwave-bar"></span>
+                                            <span class="vwave-bar"></span>
+                                        </div>
+                                        <span class="voice-dock-label" id="qa-voice-label">正在聆听仁兄问学 请开口道来...</span>
+                                        <button type="button" class="voice-dock-finish-btn" onclick="stopVoiceInput('qa', true)">
+                                            <span>完成并发送 ↵</span>
+                                        </button>
+                                        <button type="button" class="voice-dock-cancel-btn" onclick="stopVoiceInput('qa', false)" title="取消语音输入">✕</button>
+                                    </div>
+                                    <div class="input-pill-container">
+                                        <input type="text" id="qa-user-input" class="user-text-input" placeholder="向先生请教理学经义、治学修身、世务困惑..." onkeydown="if(event.key==='Enter') sendQuery('qa')">
+                                        <div class="input-actions-right">
+                                            <button class="action-clip-btn" onclick="openUploadModal()" title="挂载文献资料">
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2">
+                                                    <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+                                                </svg>
+                                            </button>
+                                            <button class="action-mic-btn" id="qa-mic-btn" type="button" onclick="toggleVoiceInput('qa')" title="语音输入问对">
+                                                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                                                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                                                    <line x1="12" y1="19" x2="12" y2="23"></line>
+                                                    <line x1="8" y1="23" x2="16" y2="23"></line>
+                                                </svg>
+                                            </button>
+                                            <button class="action-send-btn" id="qa-send-btn" onclick="handleSendOrStop('qa')" title="发送问对">
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5">
+                                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                                                    <polygon points="22 2 15 22 11 13 2 9 22 2" fill="#3b82f6"></polygon>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==============================================
+                     【视图 3】考亭讲筵 · 第一人称书院研学  · GalGame 讲堂
+                     ============================================== -->
+                <section class="page-view" id="view-class">
+                    <div class="dedicated-view-container galgame-page-container">
+                        <!-- 专属顶栏 -->
+                        <div class="dedicated-header-bar">
+                            <div class="header-left">
+                                <button class="back-home-pill" onclick="switchNav('home')">‹ 首页总览</button>
+                                <div class="header-title-group">
+                                    <h2>📖 考亭讲筵 · 第一人称书院研学</h2>
+                                    <span class="header-desc">门生席位视角 · 先生启发设问 · 动态板书教化 · 分支抉择悟道</span>
+                                </div>
+                            </div>
+                            <div class="header-right-actions">
+                                <!-- 悟性与持敬指标 -->
+                                <div class="galgame-score-pill" id="galgame-score-display">
+                                    <span class="score-item" title="学者领悟理学精微之悟境">⭐ 悟性: <strong>60</strong></span>
+                                    <span class="score-split">|</span>
+                                    <span class="score-item" title="学者居敬持守、收敛身心之敬意">🌸 持敬: <strong>70</strong></span>
+                                </div>
+                                <button class="action-pill-btn amber" onclick="galGameEngine.loadChapter(galGameEngine.currentChapterId, 0)" title="重新开始本章研习">
+                                    <span>↻ 重启本篇研读</span>
+                                </button>
+                                <button class="action-pill-btn outline" onclick="toggleGalGameSyllabusDrawer()" id="galgame-mode-toggle-btn" title="查看经卷讲义提要">
+                                    <span>📜 经卷讲义提要</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 讲筵章节导航条 · 武夷特色考亭讲筵 -->
+                        <div class="galgame-chapter-bar">
+                            <span class="chapter-bar-label">武夷特色讲筵：</span>
+                            <button class="chapter-tab-pill active" onclick="switchGalGameChapter('wuyi_jingshe', this)">① 隐屏结庐 · 武夷精舍</button>
+                            <button class="chapter-tab-pill" onclick="switchGalGameChapter('jiuqu_zhaoge', this)">② 九曲寻源 · 棹歌理趣</button>
+                            <button class="chapter-tab-pill" onclick="switchGalGameChapter('wuyi_tea', this)">③ 岩壑瀹茗 · 武夷茶理</button>
+                            <button class="chapter-tab-pill" onclick="switchGalGameChapter('wufu_shecang', this)">④ 崇安赈恤 · 五夫社仓</button>
+                            <button class="chapter-tab-pill" onclick="switchGalGameChapter('ehu_debate', this)">⑤ 铅山相逢 · 鹅湖论道</button>
+                            <button class="chapter-tab-pill" onclick="switchGalGameChapter('daxue_gewu', this)">⑥ 万物条理 · 武夷山川</button>
+                        </div>
+
+                        <!-- GalGame 核心工作区  · 第一人称学生视角屏幕 + 可折叠经义抽屉 -->
+                        <div class="galgame-workspace-split">
+                            <!-- 主视窗：第一人称学生座席案头与先生讲台 -->
+                            <div class="galgame-screen-pane">
+                                <div class="galgame-screen-wrap" id="galgame-screen-wrap">
+                                    <!-- 1. 背景第一人称教室画卷  · 学生书案在前，讲席黑板在后 -->
+                                    <img src="/static/galgame_assets/classroom_pov_hd.png" alt="书院讲堂第一人称视角" class="galgame-bg-layer" id="galgame-bg-img">
+
+                                    <!-- 2. 动态黑板板书 -->
+                                    <div class="galgame-blackboard-overlay">
+                                        <div class="blackboard-chalk-inner">
+                                            <div class="chalk-text-body" id="galgame-blackboard-text">大学之道 在明明德 在止于至善</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 3. 规避画面人物重叠，隐去中央重复人物图层 -->
+                                    <div class="galgame-sprite-stage" style="display:none !important;">
+                                        <img src="/static/galgame_assets/act_stand.png" alt="考亭先生" class="galgame-master-sprite" id="galgame-char-img">
+                                    </div>
+
+                                    <!-- 4. 启发式分支选择支停靠区  · A/B/C/弟子当堂请教 -->
+                                    <div class="galgame-choices-overlay" id="galgame-choices-dock">
+                                        <!-- 由 galgame_engine.js 动态渲染 -->
+                                    </div>
+
+                                    <!-- 5. 底部经典 GalGame 对话视窗 -->
+                                    <div class="galgame-dialogue-window" onclick="galGameEngine.fastForwardTyping()" title="点击可跳过打字机直接显示全句">
+                                        <div class="dialogue-header-strip">
+                                            <div class="speaker-tag-box">
+                                                <div class="speaker-face-thumb">
+                                                    <img src="/static/galgame_assets/face_calm.png" alt="神态" id="galgame-face-thumb">
+                                                </div>
+                                                <span class="speaker-title-name" id="galgame-speaker-name">考亭先生</span>
+                                                <span class="speaker-honor-tag">当堂讲授</span>
+                                            </div>
+                                            <div class="dialogue-tools-right">
+                                                <button class="dialogue-tool-pill" id="galgame-tts-btn" onclick="event.stopPropagation(); galGameEngine.playCurrentVoice()" title="聆听先生苍劲风骨配音">
+                                                    <span class="tool-icon">🔊</span> <span>先生讲学</span>
+                                                </button>
+                                                <button class="dialogue-tool-pill" onclick="event.stopPropagation(); galGameEngine.nextStep()" title="听下一句">
+                                                    <span>▶ 下一步</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="dialogue-content-scroll">
+                                            <p class="dialogue-typing-paragraph" id="galgame-dialogue-text">诸生后学端坐！老夫今日升堂讲授《大学》。子程子尝言：《大学》，孔氏之遗书，而初学入德之门也...</p>
+                                        </div>
+                                        <div class="dialogue-footer-hint">
+                                            <span>▼ 点击对话框可快进文本 · 点击上方选项推进研学 · 亦可自主呈请先生辨析</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 侧边研学履历记录与经传讲义辅助看板 -->
+                            <div class="galgame-syllabus-drawer" id="galgame-syllabus-drawer">
+                                <div class="drawer-header-row">
+                                    <div class="drawer-tabs-group">
+                                        <button class="drawer-tab-btn active" id="galgame-tab-log" onclick="galGameEngine.switchRightTab('log')">📜 研学履历记录</button>
+                                        <button class="drawer-tab-btn" id="galgame-tab-text" onclick="galGameEngine.switchRightTab('text')">📖 本篇原典讲义</button>
+                                    </div>
+                                    <button class="drawer-close-btn" onclick="toggleGalGameSyllabusDrawer()" title="折叠/展开看板">✕</button>
+                                </div>
+
+                                <!-- 标签 1：研学履历与问难记录  · 默认展示 -->
+                                <div class="drawer-scroll-body" id="panel-study-log">
+                                    <div class="study-stats-card">
+                                        <div class="stats-card-row">
+                                            <span class="stats-label">当前章程：</span>
+                                            <strong class="stats-val" id="record-current-chapter">《大学章句》三纲八目</strong>
+                                        </div>
+                                        <div class="stats-card-row">
+                                            <span class="stats-label">当前讲次：</span>
+                                            <span class="stats-badge" id="record-current-step">第一节 · 升堂定纲</span>
+                                        </div>
+                                        <div class="stats-meter-row">
+                                            <div class="meter-col">
+                                                <span class="meter-title">⭐ 悟性得分</span>
+                                                <strong class="meter-num" id="record-enlightenment-val">60</strong>
+                                            </div>
+                                            <div class="meter-col">
+                                                <span class="meter-title">🌸 居敬持操</span>
+                                                <strong class="meter-num" id="record-reverence-val">70</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="study-timeline-header">
+                                        <h4>研学与问难抉择实录 <span id="record-count-num">0</span></h4>
+                                        <button class="timeline-clear-btn" onclick="galGameEngine.clearStudyRecords()" title="清空当堂记录">清空</button>
+                                    </div>
+                                    <div class="study-timeline-list" id="galgame-study-log-list">
+                                        <!-- 动态实时追加研学卡片 -->
+                                    </div>
+                                </div>
+
+                                <!-- 标签 2：本篇原典章句与考亭注 -->
+                                <div class="drawer-scroll-body" id="panel-study-text" style="display:none;">
+                                    <div class="scroll-reading-box" id="syllabus-content">
+                                        <div class="scroll-header">
+                                            <span class="scroll-badge" id="course-badge">初学入德</span>
+                                            <h3 class="scroll-title" id="course-title">《大学章句》三纲八目</h3>
+                                            <p class="scroll-summary" id="course-summary">宋代理学立学之总纲领，为学与成己之蓝图。</p>
+                                        </div>
+                                        <div class="scroll-section">
+                                            <h4 class="section-label-gold">【经文原典明训】</h4>
+                                            <div class="classical-quote-box" id="course-original">
+                                                “大学之道，在明明德，在亲民，在止于至善。知止而后有定，定而后能静，静而后能安，安而后能虑，虑而后能得。”
+                                            </div>
+                                        </div>
+                                        <div class="scroll-section">
+                                            <h4 class="section-label-gold">【考亭章句阐发】</h4>
+                                            <p class="commentary-text" id="course-commentary">
+                                                明明德者，去其人欲之蔽，以复其天命之初也。三纲领提其领，格致诚正修齐治平八条目举其细。由浅入深，由内圣而达外王。
+                                            </p>
+                                        </div>
+                                        <div class="scroll-section">
+                                            <h4 class="section-label-gold">【学者思辨切问】</h4>
+                                            <p class="thinking-text" id="course-thinking">
+                                                学者且反躬：吾胸次之中，今日可有私欲障蔽本心？当从何事何处去穷格此理？
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+
+
+
+
+                <!-- ==============================================
+                     【视图 5】沧洲藏书 · 3D 沉浸式互动图书馆  · 舒展单屏书阁
+                     ============================================== -->
+                <section class="page-view" id="view-recommend">
+                    <div class="dedicated-view-container library-studio-container">
+                        <!-- 专属顶栏 -->
+                        <div class="dedicated-header-bar">
+                            <div class="header-left">
+                                <button class="back-home-pill" onclick="switchNav('home')">‹ 首页总览</button>
+                                <div class="header-title-group">
+                                    <h2>⭐ 沧洲藏书 · 传世立体藏书阁</h2>
+                                    <span class="header-desc">CText 开放原典库 · 武夷学院图书馆特藏与 OPAC 索书号 · 考亭手订读书次第</span>
+                                </div>
+                            </div>
+                            <div class="header-right-actions">
+                                <button class="action-pill-btn red" onclick="startNewChat('recommend')" title="开启新的荐书与读书次第指引">
+                                    <span>➕ 新建求学咨询</span>
+                                </button>
+                                <button class="action-pill-btn outline" onclick="clearCurrentMessages('recommend')" title="清空推荐对话">
+                                    <span>🧹 清空推荐对答</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 典籍学脉分类切换导览条 -->
+                        <div class="library-category-bar" id="library-category-bar">
+                            <span class="category-bar-label">🏛️ 典籍学脉分类：</span>
+                            <div class="category-pills-row">
+                                <button class="category-pill active" onclick="library3DEngine.filterCategory('sishu', this)">① 四书章句类 · 进学之阶 5部</button>
+                                <button class="category-pill" onclick="library3DEngine.filterCategory('daotong', this)">② 理学道统类 · 性理心法 4部</button>
+                                <button class="category-pill" onclick="library3DEngine.filterCategory('jingshi', this)">③ 经史政理类 · 春秋史鉴 3部</button>
+                                <button class="category-pill" onclick="library3DEngine.filterCategory('wenxue_meng', this)">④ 骚体蒙学类 · 家风规矩 3部</button>
+                                <button class="category-pill special-wuyi-pill" onclick="library3DEngine.filterCategory('wuyi_spec', this)" style="border-color:#b45309; color:#92400e; font-weight:700;">🏛️ 武夷学院特色馆 · 闽北文库 6部</button>
+                                <button class="category-pill" onclick="library3DEngine.filterCategory('all', this)">❖ 全部典籍 · 五列通览 21部</button>
+                            </div>
+                        </div>
+
+                        <!-- 3D 真实古典藏书阁殿堂与分类多层实木书架 -->
+                        <div class="library-3d-stage realistic-library-mode" id="library-3d-container">
+                            <div class="library-ambient-overlay"></div>
+
+                            <!-- 真实多层立体分类实木书架空间  · 带 3D 鼠标微动视差 -->
+                            <div class="realistic-bookshelf-wrapper" id="stereoscopic-bookshelf-frame">
+                                <div class="bookshelf-top-cornice">
+                                    <div class="cornice-carving">❖ 沧洲藏书阁 · 考亭手订文脉 ❖</div>
+                                    <div class="cornice-sub">古阁深藏，典籍列架。点击任意典籍抽取展卷，细绎考亭读书法与理学精义</div>
+                                </div>
+
+                                <div class="classified-shelves-container single-tier-mode" id="classified-shelves-container">
+                                    <!-- 第 1 层：四书章句类  · 进学总纲 -->
+                                    <div class="classified-shelf-tier" id="shelf-tier-sishu" data-cat="sishu">
+                                        <div class="shelf-tier-header">
+                                            <div class="tier-nav-left">
+                                                <span class="tier-brass-tag">【第一列架 · 四书章句类】</span>
+                                                <span class="tier-badge-gold">进学总纲</span>
+                                            </div>
+                                            <span class="tier-desc">考亭先生历四十载心血手订 · 后世科举国家准绳与初学立心之无上金针</span>
+                                            <div class="tier-nav-right">
+                                                <button class="tier-nav-arrow" onclick="library3DEngine.navTier('wenxue_meng')" title="切换到上一架">◀ 蒙学</button>
+                                                <button class="tier-nav-arrow" onclick="library3DEngine.navTier('daotong')" title="切换到下一架">道统 ▶</button>
+                                            </div>
+                                        </div>
+                                        <div class="shelf-tier-body">
+                                            <div class="shelf-books-row" id="tier-books-sishu"></div>
+                                        </div>
+                                        <div class="shelf-timber-beam">
+                                            <div class="beam-grain"></div>
+                                            <div class="beam-brass-label">四书章句类 · 《四书章句集注》 大学 · 论语 · 孟子 · 中庸</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 第 2 层：理学道统类  · 性理心法 -->
+                                    <div class="classified-shelf-tier" id="shelf-tier-daotong" data-cat="daotong" style="display:none;">
+                                        <div class="shelf-tier-header">
+                                            <div class="tier-nav-left">
+                                                <span class="tier-brass-tag">【第二列架 · 理学道统类】</span>
+                                                <span class="tier-badge-gold">性理心法</span>
+                                            </div>
+                                            <span class="tier-desc">寒泉精舍会聚四子格言 · 百四十卷师生问难实录 · 探求理气本原</span>
+                                            <div class="tier-nav-right">
+                                                <button class="tier-nav-arrow" onclick="library3DEngine.navTier('sishu')" title="切换到上一架">◀ 四书</button>
+                                                <button class="tier-nav-arrow" onclick="library3DEngine.navTier('jingshi')" title="切换到下一架">经史 ▶</button>
+                                            </div>
+                                        </div>
+                                        <div class="shelf-tier-body">
+                                            <div class="shelf-books-row" id="tier-books-daotong"></div>
+                                        </div>
+                                        <div class="shelf-timber-beam">
+                                            <div class="beam-grain"></div>
+                                            <div class="beam-brass-label">理学道统类 · 《近思录》《考亭语类》《太极图说解》《西铭解》</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 第 3 层：经史政理类  · 春秋史鉴 -->
+                                    <div class="classified-shelf-tier" id="shelf-tier-jingshi" data-cat="jingshi" style="display:none;">
+                                        <div class="shelf-tier-header">
+                                            <div class="tier-nav-left">
+                                                <span class="tier-brass-tag">【第三列架 · 经史政理类】</span>
+                                                <span class="tier-badge-gold">春秋史鉴</span>
+                                            </div>
+                                            <span class="tier-desc">五十九卷春秋笔法提要钩玄 · 区别治乱善恶得失 · 从政经世之不祧宝典</span>
+                                            <div class="tier-nav-right">
+                                                <button class="tier-nav-arrow" onclick="library3DEngine.navTier('daotong')" title="切换到上一架">◀ 道统</button>
+                                                <button class="tier-nav-arrow" onclick="library3DEngine.navTier('wenxue_meng')" title="切换到下一架">蒙学 ▶</button>
+                                            </div>
+                                        </div>
+                                        <div class="shelf-tier-body">
+                                            <div class="shelf-books-row" id="tier-books-jingshi"></div>
+                                        </div>
+                                        <div class="shelf-timber-beam">
+                                            <div class="beam-grain"></div>
+                                            <div class="beam-brass-label">经史政理类 · 《资治通鉴纲目》《诗集传》《周易本义》</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 第 4 层：骚体性灵与家塾蒙学 -->
+                                    <div class="classified-shelf-tier" id="shelf-tier-wenxue_meng" data-cat="wenxue_meng" style="display:none;">
+                                        <div class="shelf-tier-header">
+                                            <div class="tier-nav-left">
+                                                <span class="tier-brass-tag">【第四列架 · 骚体性灵与家塾蒙学】</span>
+                                                <span class="tier-badge-gold">下学上达</span>
+                                            </div>
+                                            <span class="tier-desc">晚岁寄托孤芳忠贞大文学气象 · 童蒙洒扫应对规矩 · 下学而上达</span>
+                                            <div class="tier-nav-right">
+                                                <button class="tier-nav-arrow" onclick="library3DEngine.navTier('jingshi')" title="切换到上一架">◀ 经史</button>
+                                                <button class="tier-nav-arrow" onclick="library3DEngine.navTier('sishu')" title="切换到下一架">四书 ▶</button>
+                                            </div>
+                                        </div>
+                                        <div class="shelf-tier-body">
+                                            <div class="shelf-books-row" id="tier-books-wenxue_meng"></div>
+                                        </div>
+                                        <div class="shelf-timber-beam">
+                                            <div class="beam-grain"></div>
+                                            <div class="beam-brass-label">骚体与蒙学 · 《楚辞集注》《童蒙须知》《白鹿洞书院学规》</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 第 5 层：武夷学院特藏 · 考亭特色文献  · 闽北文库 / 考亭专藏 -->
+                                    <div class="classified-shelf-tier" id="shelf-tier-wuyi_spec" data-cat="wuyi_spec" style="display:none;">
+                                        <div class="shelf-tier-header">
+                                            <div class="tier-nav-left">
+                                                <span class="tier-brass-tag">【特藏专架 · 武夷学院图书馆特色馆】</span>
+                                                <span class="tier-badge-gold" style="background:#b45309;color:#fff;">闽北文库 · 逸夫特藏</span>
+                                            </div>
+                                            <span class="tier-desc">武夷学院逸夫图书馆六楼特藏专区 · 考亭论坛专辑、朝圣考亭、海外理学文献及闽北理学志乘</span>
+                                            <div class="tier-nav-right">
+                                                <button class="tier-nav-arrow" onclick="library3DEngine.navTier('wenxue_meng')" title="切换到上一架">◀ 蒙学</button>
+                                                <button class="tier-nav-arrow" onclick="library3DEngine.navTier('sishu')" title="切换到下一架">四书 ▶</button>
+                                            </div>
+                                        </div>
+                                        <div class="shelf-tier-body">
+                                            <div class="shelf-books-row" id="tier-books-wuyi_spec"></div>
+                                        </div>
+                                        <div class="shelf-timber-beam">
+                                            <div class="beam-grain"></div>
+                                            <div class="beam-brass-label">武夷学院逸夫图书馆特藏 · 《考亭论坛专辑》《朝圣考亭》《海外理学文化》《理学家的诗和远方》《福建朱子学》《世纪之交的朱子学》</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="bookshelf-grand-plinth">
+                                    <span class="grand-plinth-brass">❖ 考亭书院万卷藏珍 · 考亭先生手撰校定珍本列架 ❖</span>
+                                </div>
+                            </div>
+
+                            <!-- 浮动折叠式寻书问学问答席 -->
+                            <div class="library-floating-inquire-dock" id="library-floating-dock">
+                                <div class="dock-toggle-bar" onclick="toggleLibraryChatDock()">
+                                    <span class="indicator-dot red"></span>
+                                    <span class="dock-toggle-title">💬 向夫子请益读书次第与适读典籍</span>
+                                    <span class="dock-toggle-icon" id="library-dock-icon">▲ 展开对答</span>
+                                </div>
+                                <div class="dock-body-content" id="library-dock-body" style="display:none;">
+                                    <div class="chat-messages-scroll" id="recommend-messages" style="max-height: 220px;">
+                                        <div class="message-row assistant">
+                                            <div class="message-avatar">
+                                                <img src="/static/avatar_ref_hd.png" alt="先生" class="msg-avatar-img">
+                                            </div>
+                                            <div class="message-bubble parchment-bubble">
+                                                <div class="bubble-top-row">
+                                                    <span class="speaker-label">考亭先生 · 藏书引路</span>
+                                                    <button class="tts-play-btn" onclick="playVoiceFromBubble(this)">
+                                                        <span class="tts-icon">🔊</span> <span class="tts-text">听先生指路</span>
+                                                    </button>
+                                                </div>
+                                                <div class="message-text">后学仁兄请坐！为学正如造塔，须先打牢地基，切不可躐等好高！老夫尝言：“先读《大学》以定其规模，次读《论语》以立其根本，次读《孟子》以观其发越，次读《中庸》以极夫精微。”仁兄今日学力如何？欲读何书？直告老夫，老夫当因材施教，为你手订进学阶梯！</div>
+                                                <div class="bubble-seal-mark">沧洲指津</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="dialogue-input-area" style="padding-top:6px;">
+                                        <div class="stop-generating-dock" id="recommend-stop-dock" style="display:none;">
+                                            <button class="stop-generating-pill" onclick="stopGenerating('recommend')" title="停止输出 Esc">
+                                                <span class="stop-icon">■</span>
+                                                <span class="stop-label">停止生成</span>
+                                                <span class="stop-shortcut">Esc</span>
+                                            </button>
+                                        </div>
+                                        <div class="voice-listening-dock" id="recommend-voice-dock" style="display:none;">
+                                            <div class="voice-wave-anim">
+                                                <span class="vwave-bar"></span>
+                                                <span class="vwave-bar"></span>
+                                                <span class="vwave-bar"></span>
+                                                <span class="vwave-bar"></span>
+                                                <span class="vwave-bar"></span>
+                                            </div>
+                                            <span class="voice-dock-label" id="recommend-voice-label">正在聆听仁兄问学 请开口道来...</span>
+                                            <button type="button" class="voice-dock-finish-btn" onclick="stopVoiceInput('recommend', true)">
+                                                <span>完成并发送 ↵</span>
+                                            </button>
+                                            <button type="button" class="voice-dock-cancel-btn" onclick="stopVoiceInput('recommend', false)" title="取消语音输入">✕</button>
+                                        </div>
+                                        <div class="input-pill-container">
+                                            <input type="text" id="recommend-user-input" class="user-text-input" placeholder="告知先生自己的学力背景，请先生量身推荐读书单与研读次第..." onkeydown="if(event.key==='Enter') sendQuery('recommend')">
+                                            <div class="input-actions-right">
+                                                <button class="action-mic-btn" id="recommend-mic-btn" type="button" onclick="toggleVoiceInput('recommend')" title="语音输入问对">
+                                                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                                                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                                                        <line x1="12" y1="19" x2="12" y2="23"></line>
+                                                        <line x1="8" y1="23" x2="16" y2="23"></line>
+                                                    </svg>
+                                                </button>
+                                                <button class="action-send-btn" id="recommend-send-btn" onclick="handleSendOrStop('recommend')" title="请教指引">
+                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5">
+                                                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                                                        <polygon points="22 2 15 22 11 13 2 9 22 2" fill="#dc2626"></polygon>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- ==============================================
+                 全局悬浮语音播放唱和台  · 玉璧质感 + 动态声波
+                 ============================================== -->
+            <div id="audio-dock" class="audio-dock" style="display:none;">
+                <div class="dock-left">
+                    <div class="dock-soundwaves">
+                        <span class="wave-bar bar-1"></span>
+                        <span class="wave-bar bar-2"></span>
+                        <span class="wave-bar bar-3"></span>
+                        <span class="wave-bar bar-4"></span>
+                    </div>
+                    <span id="dock-title" class="dock-title">考亭大儒 · 苍劲风骨 朗诵中</span>
+                </div>
+                <div class="dock-controls">
+                    <button id="dock-play-pause-btn" class="dock-btn" onclick="togglePauseVoice()" title="暂停/继续播放">
+                        <span id="dock-play-pause-icon">⏸️</span> <span id="dock-play-pause-text">暂停</span>
+                    </button>
+                    <button class="dock-btn stop-btn" onclick="stopCurrentVoice(true)" title="彻底停止当前朗读">
+                        <span>⏹️</span> 停止朗读
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ==============================================
+         弹窗 1：文献解析与特色典籍挂载  · 即物穷理深度剖析 + 知识库收录
+         ============================================== -->
+    <div id="upload-modal" class="modal-backdrop">
+        <div class="modal-card upload-enhanced-card">
+            <div class="modal-header">
+                <div class="modal-title-with-tabs">
+                    <h3>📎 文献经籍析理与挂载</h3>
+                    <div class="upload-mode-tabs">
+                        <button class="mode-tab-btn active" id="tab-btn-analyze" onclick="switchUploadMode('analyze')">
+                            <span>🏮 即物穷理 · 先生深度剖析</span>
+                        </button>
+                        <button class="mode-tab-btn" id="tab-btn-corpus" onclick="switchUploadMode('corpus')">
+                            <span>📜 并入书院知识库</span>
+                        </button>
+                    </div>
+                </div>
+                <button class="modal-close-btn" onclick="closeUploadModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <!-- 模式 A：即物穷理深度剖析  · 支持 txt, md, docx, pdf -->
+                <div class="upload-panel active" id="panel-upload-analyze">
+                    <p class="modal-hint">
+                        <strong>即物穷理 · 四维剖析：</strong>支持上传 <code>.txt</code>、<code>.md</code>、<code>.docx</code>、<code>.pdf</code> 文献资料。先生将以纯第一人称自述，从理气之辨、存养省察、格物致知、知行相须四大维度进行深度条分缕析并赐朱砂手批。
+                    </p>
+                    <div class="drop-zone highlight-drop" onclick="document.getElementById('analysis-file-input').click()">
+                        <div class="drop-icon">📜</div>
+                        <p class="drop-main-text">点击选择文献或拖拽至此即刻剖析</p>
+                        <p class="drop-sub-text">支持 TXT / MD / DOCX / PDF 格式</p>
+                        <input type="file" id="analysis-file-input" accept=".txt,.md,.docx,.pdf" style="display:none;" onchange="handleDocumentAnalysis(this)">
+                    </div>
+                    <div id="analysis-upload-status" class="status-msg"></div>
+                </div>
+
+                <!-- 模式 B：并入典籍知识库  · 支持 txt, md -->
+                <div class="upload-panel" id="panel-upload-corpus" style="display:none;">
+                    <p class="modal-hint">支持上传 <code>.txt</code> 或 <code>.md</code> 纯文本文献。系统将自动进行分块向量切片并即时并入知识库向量索引。</p>
+                    <div class="drop-zone" onclick="document.getElementById('file-input').click()">
+                        <div class="drop-icon">📚</div>
+                        <p>点击选择文件或拖拽至此上传</p>
+                        <input type="file" id="file-input" accept=".txt,.md" style="display:none;" onchange="handleFileUpload(this)">
+                    </div>
+                    <div id="upload-status" class="status-msg"></div>
+                    <div class="kb-files-list">
+                        <h4>已收录文献 <span id="kb-count">计算中...</span></h4>
+                        <div id="corpus-files"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==============================================
+         弹窗 2：历史对话与语录
+         ============================================== -->
+    <div id="history-modal" class="modal-backdrop">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>⏰ 研讨论道历史记录</h3>
+                <button class="modal-close-btn" onclick="closeHistoryModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="history-list-box" id="saved-history-list">
+                    <p style="color:#6b7280; font-size:13.5px;">暂无归档问答，您可在答疑、课堂、推荐中随时开启新对话。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==============================================
+         弹窗 3：设置与声音风骨
+         ============================================== -->
+    <div id="settings-modal" class="modal-backdrop">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>⚙️ 智能体声音与系统设置</h3>
+                <button class="modal-close-btn" onclick="closeSettingsModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-item">
+                    <label>🎙️ 夫子声线配置：</label>
+                    <span style="font-size:13.5px; font-weight:600; color:#b45309; font-family:var(--font-serif);">🎙️ 考亭大儒 · 苍劲风骨 唯一专属配音 沉稳温厚</span>
+                </div>
+                <div class="setting-item">
+                    <label>🔊 自动朗读回答：</label>
+                    <button class="toggle-pill-btn off" id="modal-tts-toggle" onclick="toggleAutoTTS()">已关闭</button>
+                </div>
+                <div class="setting-item">
+                    <label>🌐 局域网/手机端访问地址：</label>
+                    <div class="ip-info-box"><code>http://172.22.92.196:8000/</code> 同一Wi-Fi下手机直接访问</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==============================================
+         弹窗 4：考亭晨策 · 朱子灵签解惑
+         ============================================== -->
+    <div id="wisdom-modal" class="modal-backdrop" onclick="closeWisdomModal(event)">
+        <div class="modal-card wisdom-modal-card" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div class="modal-title-wrap">
+                    <span class="seal-red-mini">考亭晨策</span>
+                    <h3 class="wisdom-modal-title">朱子灵签 · 每日省察箴规</h3>
+                </div>
+                <button class="modal-close-btn" onclick="closeWisdomModal()">✕</button>
+            </div>
+            <div class="modal-body wisdom-modal-body">
+                <div class="ancient-scroll-wrap">
+                    <div class="scroll-pin-top"></div>
+                    <div class="ancient-scroll-paper">
+                        <div class="scroll-seal-watermark">文公手定</div>
+                        <div class="slip-quote-large" id="modal-slip-quote">“涵养须用敬，进学在致知。穷理者，因其所已知者而推之，以各穷尽其极。”</div>
+                        <div class="slip-source-large" id="modal-slip-source">—— 考亭夫子 · 《四书章句集注》</div>
+                    </div>
+                    <div class="scroll-pin-bottom"></div>
+                </div>
+                <div class="wisdom-actions-row">
+                    <button class="action-pill-btn gold" onclick="consultMasterAboutSlip()">
+                        <span>💬 请先生为我析解此签</span>
+                    </button>
+                    <button class="action-pill-btn outline" onclick="drawAnotherSlip()">
+                        <span>🎲 诚心再求一签</span>
+                    </button>
+                    <button class="action-pill-btn outline" onclick="copySlipQuote()">
+                        <span>📋 复制箴言</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==============================================
+         弹窗 6：研学考校堂 · 武夷朱子文化小测验与當堂朱批
+         ============================================== -->
+    <div id="quiz-modal" class="modal-backdrop" onclick="closeQuizModal(event)">
+        <div class="modal-card quiz-modal-card" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div class="modal-title-wrap">
+                    <span class="seal-red-mini">考校堂</span>
+                    <h3 class="quiz-modal-title">武夷研学 · 考亭考校小课堂</h3>
+                </div>
+                <button class="modal-close-btn" onclick="closeQuizModal()">✕</button>
+            </div>
+            <div class="modal-body quiz-modal-body">
+                <!-- 答题进行中区域 -->
+                <div id="quiz-active-area">
+                    <!-- 考校试卷模式自选与抽测导航 -->
+                    <div class="quiz-mode-nav-bar">
+                        <span class="quiz-nav-label">试卷模式：</span>
+                        <div class="quiz-category-pills" id="quiz-category-tabs">
+                            <button class="quiz-cat-pill active" onclick="switchQuizCategory('all', this)">🎲 随机抽测 5 题</button>
+                            <button class="quiz-cat-pill" onclick="switchQuizCategory('sishu', this)">① 四书章句</button>
+                            <button class="quiz-cat-pill" onclick="switchQuizCategory('gongfu', this)">② 理学工夫</button>
+                            <button class="quiz-cat-pill" onclick="switchQuizCategory('zhixing', this)">③ 知行之辨</button>
+                            <button class="quiz-cat-pill" onclick="switchQuizCategory('sixfa', this)">④ 读书六法</button>
+                            <button class="quiz-cat-pill" onclick="switchQuizCategory('daotong', this)">⑤ 理气道统</button>
+                            <button class="quiz-cat-pill" onclick="switchQuizCategory('wuyi', this)">⑥ 武夷文脉</button>
+                        </div>
+                    </div>
+
+                    <div class="quiz-progress-row">
+                        <span class="quiz-badge" id="quiz-cat-badge">武夷地缘与书院</span>
+                        <span class="quiz-step-indicator" id="quiz-step-indicator">第 1 / 5 题</span>
+                        <div class="quiz-timer-pill" id="quiz-difficulty-pill">研学试题</div>
+                    </div>
+                    <div class="quiz-question-title" id="quiz-question-text">试题研拟中...</div>
+                    <div class="quiz-options-list" id="quiz-options-container">
+                        <!-- 动态渲染选项 -->
+                    </div>
+                    <div class="quiz-footer-actions">
+                        <button class="action-pill-btn outline" id="quiz-prev-btn" onclick="prevQuizQuestion()" style="display:none;">
+                            <span>‹ 上一题</span>
+                        </button>
+                        <button class="action-pill-btn gold" id="quiz-next-btn" onclick="nextQuizQuestion()">
+                            <span>下一题 ›</span>
+                        </button>
+                        <button class="action-pill-btn red" id="quiz-submit-btn" onclick="submitQuizExam()" style="display:none;">
+                            <span>呈交答卷 · 候夫子朱批</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 考校结语与當堂朱批区域 -->
+                <div id="quiz-result-area" style="display:none;">
+                    <!-- 成绩与等第 -->
+                    <div class="quiz-score-banner">
+                        <div class="score-circle-box">
+                            <span class="score-num" id="quiz-final-score">100</span>
+                            <span class="score-unit">分</span>
+                        </div>
+                        <div class="score-verdict-wrap">
+                            <div class="rank-title-stamp" id="quiz-rank-title">进士及第 · 融会贯通</div>
+                            <p class="score-summary-text" id="quiz-score-desc">答对 5 题，共 5 题</p>
+                        </div>
+                    </div>
+
+                    <!-- 先生當堂朱批 -->
+                    <div class="zhupi-parchment-card">
+                        <div class="zhupi-header">
+                            <span class="zhupi-seal">文公朱批</span>
+                            <span class="zhupi-title">考亭先生 · 當堂批点</span>
+                        </div>
+                        <div class="zhupi-content" id="quiz-zhupi-text">
+                            “甚善！诸题皆中肯綮，见卿平日于经传用功之深。武夷活水，源远流长，望卿知行合一，弗懈于持守！”
+                        </div>
+                    </div>
+
+                    <!-- 试题详细考据解析折叠列表 -->
+                    <div class="quiz-review-wrap">
+                        <h4 class="review-title">📜 试题原典溯源与义理发微</h4>
+                        <div class="quiz-review-list" id="quiz-review-list"></div>
+                    </div>
+
+                    <!-- 结业文牒证书 -->
+                    <div class="certificate-card" id="quiz-certificate-card">
+                        <div class="cert-border-inner">
+                            <div class="cert-header">
+                                <span class="cert-seal-top">宋 · 考亭书院</span>
+                                <h3 class="cert-main-title">武夷理学研学结业文牒</h3>
+                            </div>
+                            <p class="cert-body-text">
+                                兹有后学同门，于武夷精舍考校堂精研朱子理学义理，潜心研思，功力精纯，特赐此牒，以资修身进德！
+                            </p>
+                            <div class="cert-footer-row">
+                                <div class="cert-info-col">
+                                    <div>文牒编号：<span id="cert-id-val">KT-2026-WZ89</span></div>
+                                    <div>立牒年月：庆元四年春 · 考亭讲筵</div>
+                                </div>
+                                <div class="cert-stamp-box">
+                                    <div class="cert-red-stamp">朱熹<br>之印</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 结业操作栏 -->
+                    <div class="quiz-result-actions">
+                        <button class="action-pill-btn gold" onclick="resetAndRestartQuiz()">
+                            <span>↻ 重新考较一套新题</span>
+                        </button>
+                        <button class="action-pill-btn outline" onclick="printOrShareCertificate()">
+                            <span>📜 复制文牒修学证明</span>
+                        </button>
+                        <button class="action-pill-btn outline" onclick="closeQuizModal()">
+                            <span>关闭</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==============================================
+         弹窗 7：典籍考据 · 古籍全文精确检索引擎
+         ============================================== -->
+    <div id="corpus-search-modal" class="modal-backdrop" onclick="closeCorpusSearchModal(event)">
+        <div class="modal-card corpus-search-modal-card" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div class="modal-title-wrap">
+                    <span class="seal-red-mini">典籍考据</span>
+                    <h3 class="corpus-search-title">古籍全文精确检索引擎</h3>
+                </div>
+                <button class="modal-close-btn" onclick="closeCorpusSearchModal()">✕</button>
+            </div>
+            <div class="modal-body corpus-search-body">
+                <!-- 搜索条与检索范围 -->
+                <div class="corpus-search-input-row">
+                    <div class="corpus-input-box">
+                        <span class="corpus-search-icon">🔍</span>
+                        <input type="text" id="corpus-keyword-input" class="corpus-text-input" placeholder="输入经义字词，检索23部典籍原文段落，如：格物致知、半亩方塘、存天理..." onkeydown="if(event.key==='Enter') executeCorpusSearch()">
+                        <button class="corpus-clear-btn" onclick="clearCorpusInput()">✕</button>
+                    </div>
+                    <button class="action-pill-btn gold corpus-search-submit-btn" onclick="executeCorpusSearch()">
+                        <span>考据原典</span>
+                    </button>
+                </div>
+
+                <!-- 推荐热搜标签 -->
+                <div class="corpus-hot-tags-row">
+                    <span class="hot-label">考据热词：</span>
+                    <span class="hot-tag" onclick="quickCorpusSearch('格物致知')">格物致知</span>
+                    <span class="hot-tag" onclick="quickCorpusSearch('存天理灭人欲')">存天理灭人欲</span>
+                    <span class="hot-tag" onclick="quickCorpusSearch('心统性情')">心统性情</span>
+                    <span class="hot-tag" onclick="quickCorpusSearch('半亩方塘')">半亩方塘</span>
+                    <span class="hot-tag" onclick="quickCorpusSearch('读书六法')">读书六法</span>
+                    <span class="hot-tag" onclick="quickCorpusSearch('武夷九曲')">武夷九曲</span>
+                    <span class="hot-tag" onclick="quickCorpusSearch('主敬涵养')">主敬涵养</span>
+                </div>
+
+                <!-- 搜索状态与统计 -->
+                <div class="corpus-result-summary" id="corpus-result-summary">
+                    已收录《朱子语类》《四书章句集注》《近思录》等 23 部典籍，共 1465 个高精度文库分卷。请输入关键词考据。
+                </div>
+
+                <!-- 搜索结果列表容器 -->
+                <div class="corpus-results-scroll" id="corpus-results-list">
+                    <div class="corpus-empty-state">
+                        <span class="empty-icon">📖</span>
+                        <p>输入词句后点击“考据原典”，即可定位对应典籍之卷目、篇章与原文上下文段落，杜绝伪托与幻觉。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==============================================
+         弹窗 8：考亭尺牍 · 拟宋制书信往还
+         ============================================== -->
+    <div id="letter-modal" class="modal-backdrop" onclick="closeLetterModal(event)">
+        <div class="modal-card letter-modal-card" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div class="modal-title-wrap">
+                    <span class="seal-red-mini">考亭尺牍</span>
+                    <h3 class="letter-modal-title">考亭尺牍 · 门生呈想法与先生草书手札</h3>
+                </div>
+                <button class="modal-close-btn" onclick="closeLetterModal()">✕</button>
+            </div>
+            <div class="modal-body letter-modal-body">
+                <!-- 尺牍想法输入笺纸 -->
+                <div class="song-letter-compose-paper" id="letter-compose-area">
+                    <div class="letter-salutation-top">
+                        <span class="letter-to-label">考亭尺牍 · 朱子代拟文人草书手札</span>
+                    </div>
+                    <div class="letter-input-guide">写下汝欲托付信札之寄语或想法，朱熹先生当运用考亭理学文化与草书墨宝为汝代拟一帧传世尺牍：</div>
+                    <!-- 快捷寄语推荐标签 -->
+                    <div class="letter-quick-ideas-row">
+                        <span class="quick-idea-label">快捷寄语：</span>
+                        <button type="button" class="quick-idea-chip" onclick="quickFillLetterIdea('勉励同窗立志')">📌 劝勉同窗立志读书</button>
+                        <button type="button" class="quick-idea-chip" onclick="quickFillLetterIdea('自励修身戒急戒躁')">📌 自励修身戒急戒躁</button>
+                        <button type="button" class="quick-idea-chip" onclick="quickFillLetterIdea('感恩师长教诲')">📌 感恩师友春风化雨</button>
+                        <button type="button" class="quick-idea-chip" onclick="quickFillLetterIdea('探讨知行并进')">📌 探讨格物知行并进</button>
+                    </div>
+                    <div class="letter-textarea-wrap">
+                        <textarea id="letter-content-input" class="song-letter-textarea" rows="5" placeholder="写下汝欲寄托之思，例如：同窗好友近来读书有些懈怠迷茫，我想写一封信勉励他重新立下高远志向，踏实治学，循序渐进，莫负大好光阴。"></textarea>
+                    </div>
+                    <div class="letter-sign-bottom">
+                        <span class="letter-sender-label">门生后学 托付寄语</span>
+                        <div class="letter-date-stamp">宋庆元四年 · 考亭讲筵</div>
+                    </div>
+                    <div class="letter-actions-bar">
+                        <button class="action-pill-btn gold" id="letter-send-btn" onclick="sendAncientLetter()">
+                            <span>✒️ 呈递想法 · 请考亭先生融汇理学代拟草书尺牍</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 先生草书回函与墨宝图片宣纸 -->
+                <div class="song-letter-reply-paper" id="letter-reply-area" style="display:none;">
+                    <div class="letter-reply-header">
+                        <div class="letter-reply-tag-wrap">
+                            <span class="reply-badge">考亭先生代拟草书尺牍</span>
+                            <span class="letter-style-tag">行草墨韵 · 宣纸朱印</span>
+                        </div>
+                        <div class="letter-reply-head-actions">
+                            <button class="action-pill-btn outline small" id="letter-edit-toggle-btn" onclick="toggleLetterEdit()">
+                                <span>✏️ 修改信札文字</span>
+                            </button>
+                            <button class="tts-play-btn" id="letter-tts-btn" onclick="playVoiceFromLetter()">
+                                <span class="tts-icon">🔊</span> <span>聆听先生诵读</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 在线修润文字区域，不满意可直接修改 -->
+                    <div class="letter-edit-box" id="letter-edit-box" style="display:none;">
+                        <div class="letter-edit-hint">若对信札字句不甚满意，可于此直接修润改动：</div>
+                        <textarea id="letter-edit-textarea" class="letter-edit-textarea" rows="6"></textarea>
+                        <div class="letter-edit-btn-row">
+                            <button class="action-pill-btn gold small" onclick="confirmLetterEdit()">
+                                <span>✓ 完成修改并更新手札图片</span>
+                            </button>
+                            <button class="action-pill-btn outline small" onclick="cancelLetterEdit()">
+                                <span>取消</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 草书字体排版展示 -->
+                    <div class="letter-calligraphy-container" id="letter-calligraphy-container">
+                        <div class="letter-watermark">考亭尺牍</div>
+                        <div class="letter-calligraphy-text song-caoshu-font" id="letter-reply-content">
+                            <!-- 草书文本内容 -->
+                        </div>
+                        <div class="letter-seal-footer">
+                            <div class="letter-reply-seal-stamp">考亭<br>晦翁</div>
+                            <div class="letter-reply-date" id="letter-reply-date">宋庆元四年 · 考亭讲筵 晦庵朱熹 代拟手札</div>
+                        </div>
+                    </div>
+
+                    <!-- 高清宣纸长卷图片呈现区域，可直接保存 -->
+                    <div class="letter-export-card">
+                        <div class="letter-export-header">
+                            <span class="seal-red-tag">书法长卷图片</span>
+                            <span class="letter-export-hint">已自动为您绘制高清宣纸毛笔长卷，可点击下方按钮保存，或长按右键另存为图片</span>
+                        </div>
+                        <div class="letter-canvas-display-wrap">
+                            <canvas id="letter-canvas-render" width="800" height="1100" style="display:none;"></canvas>
+                            <img id="letter-image-preview" class="letter-image-preview" alt="考亭朱子草书尺牍长卷" title="长按或右键另存为图片">
+                        </div>
+                    </div>
+
+                    <div class="letter-reply-bottom-actions">
+                        <button class="action-pill-btn red" id="letter-save-btn" onclick="downloadLetterImage()">
+                            <span>💾 保存信札图片到本地</span>
+                        </button>
+                        <button class="action-pill-btn gold" onclick="resetLetterCompose()">
+                            <span>✉️ 重新写一封</span>
+                        </button>
+                        <button class="action-pill-btn outline" onclick="copyLetterReply()">
+                            <span>📋 复制文字</span>
+                        </button>
+                        <button class="action-pill-btn outline" onclick="closeLetterModal()">
+                            <span>收纳信箧</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==============================================
+         弹窗 5：先生引路引导过渡动画  · 请随老夫前往——
+         ============================================== -->
+    <div id="guide-transition-modal" class="modal-backdrop guide-modal-backdrop" style="display:none !important;">
+        <div class="guide-modal-card">
+            <div class="guide-video-wrapper">
+                <video id="guide-master-video" class="guide-avatar-video" playsinline webkit-playsinline muted loop autoplay>
+                    <source src="/static/avatar_videos/avatar_guide_leading.mp4" type="video/mp4">
+                    <source src="/static/avatar_videos/avatar_guide_leading.webm" type="video/webm">
+                </video>
+                <div class="guide-video-overlay-glow"></div>
+            </div>
+            <div class="guide-dialogue-box">
+                <div class="guide-master-tag">考亭先生 · 拂袖引路</div>
+                <div class="guide-speech-text" id="guide-speech-text">“善哉！求道不远，随老夫步入讲筵，细参圣贤义理——”</div>
+                <div class="guide-loading-bar">
+                    <div class="guide-loading-progress" id="guide-progress-bar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Three.js 核心三维渲染与交互控制器  · 本地极速加载 -->
+    <script src="/static/libs/three.min.js?v=5.0.0"></script>
+    <script src="/static/libs/OrbitControls.js?v=5.0.0"></script>
+    <script src="/static/libs/GLTFLoader.js?v=5.0.0"></script>
+    <!-- 考亭书院第一人称 GalGame 引擎 -->
+    <script src="/static/galgame_engine.js?v=8.0.0"></script>
+    <!-- 沧洲藏书阁 3D 沉浸式互动图书馆 -->
+    <script src="/static/library_3d.js?v=8.0.0"></script>
+    <!-- 考亭先生无界 3D 连贯视频数字人系统 -->
+    <script src="/static/avatar_3d_engine.js?v=8.0.0"></script>
+    <!-- 交互与多模块独立控制器 -->
+    <script src="/static/app.js?v=8.0.0"></script>
+</body>
+</html>

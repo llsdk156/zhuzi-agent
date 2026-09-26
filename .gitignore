@@ -1,0 +1,33 @@
+# 本地大文件与可执行程序
+cloudflared.exe
+*.exe
+*.dll
+*.so
+
+# Python 缓存与虚拟环境
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+.pytest_cache/
+
+# 临时测试生成物与图片
+scratch/
+scratch_*.png
+test_*.png
+cdp_*.png
+snap*.png
+scratch_*.py
+test_tts.mp3
+
+# 编辑器与系统配置
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+.agent/
+
+# 日志
+*.log

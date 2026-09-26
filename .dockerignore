@@ -1,0 +1,35 @@
+# 忽略本地二进制文件与临时生成物
+cloudflared.exe
+*.exe
+*.dll
+*.so
+
+# 忽略开发环境与缓存
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# 忽略临时测试图片与测试脚本
+scratch/
+scratch_*.png
+test_*.png
+cdp_*.png
+snap*.png
+scratch_*.py
+test_tts.mp3
+
+# 忽略版本控制与编辑器配置
+.git/
+.gitignore
+.vscode/
+.idea/
+.agent/
+
+# 忽略日志文件
+*.log
