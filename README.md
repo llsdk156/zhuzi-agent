@@ -104,7 +104,7 @@
 ### 方式二：标准 Python 命令行启动
 ```bash
 # 1. 克隆代码仓
-git clone https://gitcode.com/llsdk156/zhuzi-agent.git
+git clone https://gitcode.com/lin1235678/zhuzi-agent.git
 cd zhuzi-agent
 
 # 2. 安装依赖（清华源极速下载，几十秒即可完成）
