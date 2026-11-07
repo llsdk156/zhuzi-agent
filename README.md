@@ -1,13 +1,11 @@
 # 考亭云章 · 朱子理学特藏文献智能研习馆
 
 <p align="center">
-  <img src="resources/home_ink_bamboo.jpg" alt="考亭云章" width="750" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
-</p>
-
-<p align="center">
   <strong>国内首个打通高校图书馆实体借阅流通与理学原典考据的 AI 智能体</strong><br>
   <em>—— 依托华为云码道 (CodeArts) 全流程研发赋能 · 推动高校古籍从“库房静态保存”走向“全校数智活态流转”</em>
 </p>
+
+![考亭云章 · 朱子理学特藏文献智能研习馆](resources/cover.png)
 
 <p align="center">
   <a href="#"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
@@ -63,6 +61,8 @@
 
 ### 5. 📜 考亭古风宣纸尺牍文创生图
 - **数字文创生成**：智能提炼研习感悟，自适应排版为宋代宣纸毛笔手札并钤盖朱子印章，可一键保存分享。
+
+![水墨书斋与典籍研习](resources/home_ink_bamboo.jpg)
 
 ---
 
