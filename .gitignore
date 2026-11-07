@@ -1,28 +1,41 @@
-# 本地大文件与可执行程序
+# 运行时与大文件二进制
 cloudflared.exe
 *.exe
 *.dll
 *.so
+*.zip
+*.tar.gz
 
 # Python 缓存与虚拟环境
 __pycache__/
 *.py[cod]
-*$py.class
+*.class
 .venv/
 env/
 venv/
 .pytest_cache/
 
-# 临时测试生成物与图片
+# 环境变量与本地配置
+.env
+
+# 调试过程临时文件、脚本与抓图（隔离归档）
 scratch/
-scratch_*.png
-test_*.png
+scratch_*
+test_*.txt
+test_account_gate.py
+test_clean_gate.py
+test_markdown.py
+check_gal.py
+fix_js.py
+verify_frontend_formatting.py
+api_reply_sample.txt
 cdp_*.png
 snap*.png
-scratch_*.py
+test_*.png
+verify_*.png
 test_tts.mp3
 
-# 编辑器与系统配置
+# 编辑器与系统文件
 .vscode/
 .idea/
 .DS_Store

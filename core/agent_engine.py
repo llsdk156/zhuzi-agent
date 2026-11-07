@@ -38,15 +38,15 @@ def strip_parentheses(text: str) -> str:
     t = re.sub(r'[\(（][^()（）\n]*', '', t)
     # 最终防御：彻底清除所有孤立的残余括号符号
     t = t.replace("(", "").replace(")", "").replace("（", "").replace("）", "")
-    # 规整连续换行
+    # 规整连续3个以上换行为2个换行，严禁调用 t.strip() 消除首尾换行，防止破坏流式拼接与段落格式
     t = re.sub(r'\n{3,}', '\n\n', t)
-    return t.strip()
+    return t
 
 
 def sanitize_zhuxi_first_person(text: str) -> str:
     """全面净化输出文本：
-    1. 彻底清除'朱熹'与'朱子'，替换为大儒第一人称'老夫'或'考亭先生'
-    2. 彻底清洗典籍中包含的朱熹或朱子字样
+    1. 彻底清除对朱熹第三人称的描述，自称替换为大儒第一人称'老夫'或'考亭先生'
+    2. 严格保护真实传世典籍书名（如《朱子语类》《朱子文集》《朱子家礼》《朱子全书》），严禁篡改书名
     3. 严格清除任何中英文圆括号
     """
     if not text:
@@ -54,26 +54,40 @@ def sanitize_zhuxi_first_person(text: str) -> str:
     # 1. 优先剔除所有括号及其内部文本
     t = strip_parentheses(text)
 
-    # 2. 经典书名与复合词前置替换
-    t = re.sub(r'《朱子语类》|《朱子语录》', '《考亭语类》', t)
-    t = re.sub(r'《朱子读书法》', '《考亭读书法》', t)
-    t = re.sub(r'《朱文公文集》|《朱子文集》', '《考亭文集》', t)
-    t = re.sub(r'《朱子家训》', '《考亭家训》', t)
-    t = re.sub(r'朱子学派|朱子学', '考亭理学', t)
-    t = re.sub(r'朱子文化', '考亭理学文化', t)
-    t = re.sub(r'朱子读书法', '考亭读书法', t)
-    t = re.sub(r'朱子语类|朱子语录', '考亭语类', t)
-    t = re.sub(r'朱子文集|朱文公文集', '考亭文集', t)
+    # 2. 保护书名号《》内的所有真实典籍名称，以及特定机构和学术专有名词
+    protected = []
+    def _protect_repl(match):
+        token = f"__PROT_BOOK_{len(protected)}__"
+        protected.append(match.group(0))
+        return token
+
+    # 保护所有《...》书名
+    t = re.sub(r'《[^》]+》', _protect_repl, t)
+
+    # 保护专有名词
+    proper_nouns = [
+        "朱子文化", "朱子学", "朱子书院", "朱子学研究中心", "朱子特藏专柜", "朱子特藏",
+        "朱子行教", "朱子像", "朱子故里", "武夷学院", "考亭书院", "紫阳楼", "建阳考亭",
+        "朱子读书法", "朱子读书六法", "朱子全书", "朱子语类", "朱子文集", "朱子家训",
+        "朱子理学", "朱子诗词", "朱子的诗和远方", "世纪之交的朱子学"
+    ]
+    for noun in proper_nouns:
+        if noun in t:
+            token = f"__PROT_NOUN_{len(protected)}__"
+            protected.append(noun)
+            t = t.replace(noun, token)
+
+    # 3. 称谓前置替换
     t = re.sub(r'朱文公', '考亭先生', t)
     t = re.sub(r'朱夫子', '考亭先生', t)
     t = re.sub(r'朱老师|朱爷爷', '考亭先生', t)
 
-    # 3. 修正偶发的多重错误表述
+    # 4. 修正偶发的多重错误表述
     t = re.sub(r'我乃(?:南宋理学家)?(?:朱熹|朱子|老夫)?之后学(?:中的一员)?', '老夫乃考亭先生', t)
     t = re.sub(r'我是(?:朱熹|朱子|老夫)之后学(?:中的一员)?', '老夫乃考亭先生', t)
     t = re.sub(r'老夫之后学中的一员', '考亭理学门人', t)
 
-    # 4. 诗文与著述第三人称全面更正为作者第一人称
+    # 5. 诗文与著述第三人称全面更正为作者第一人称
     t = re.sub(r'(?:作者|诗人)个人的生活经历(?:、思想感情)?', '老夫当年的修道求索与山水寄托', t)
     t = re.sub(r'作为武夷山所作的总篇', '作为老夫当年所作武夷山之总篇', t)
     t = re.sub(r'反映了(?:作者|诗人)', '体现了老夫当年', t)
@@ -99,11 +113,11 @@ def sanitize_zhuxi_first_person(text: str) -> str:
     t = re.sub(r'作者', '老夫', t)
     t = re.sub(r'诗人', '老夫', t)
 
-    # 5. 现代语文阅读理解套话滤除转雅化大儒风骨
+    # 6. 现代语文阅读理解套话滤除转雅化大儒风骨
     t = re.sub(r'不仅具有很高的文学艺术价值和审美意蕴.*?(?=，|。|$)', '不仅景致清幽，更蕴含理学生意', t)
     t = re.sub(r'同时也体现了.*?所抱有的批判态度.*?(?=，|。|$)', '亦寄托了老夫澄清世道、求索天理之怀抱', t)
 
-    # 6. 第三人称称谓转换
+    # 7. 第三人称称谓转换
     t = re.sub(r'朱熹在此提出|朱子在此提出', '老夫在此提出', t)
     t = re.sub(r'朱熹提出|朱子提出', '老夫当年提出', t)
     t = re.sub(r'朱熹认为|朱子认为', '老夫以为', t)
@@ -111,7 +125,7 @@ def sanitize_zhuxi_first_person(text: str) -> str:
     t = re.sub(r'朱熹有句名言|朱子有句名言', '老夫常言', t)
     t = re.sub(r'朱熹强调|朱子强调', '老夫一向戒勉门生', t)
     t = re.sub(r'朱熹曾说|朱熹尝言|朱熹说|朱子曾说|朱子尝言|朱子说', '老夫尝言', t)
-    t = re.sub(r'朱熹在《|朱子在《', '老夫在《', t)
+    t = re.sub(r'朱熹在|朱子在', '老夫在', t)
     t = re.sub(r'关于朱熹学问|关于朱子学问', '关于理学精义', t)
     t = re.sub(r'了解朱熹|了解朱子', '研味理学', t)
     t = re.sub(r'朱熹的|朱子的', '老夫的', t)
@@ -121,26 +135,35 @@ def sanitize_zhuxi_first_person(text: str) -> str:
     t = re.sub(r'朱熹先生|朱子先生', '老夫', t)
     t = re.sub(r'朱熹是|朱子是', '老夫乃', t)
 
-    # 7. 彻底消除任何孤立残留的“朱熹”与“朱子”
+    # 8. 消除任何孤立残留的“朱熹”与“朱子”
     t = t.replace('朱熹', '老夫')
     t = t.replace('朱子', '老夫')
 
-    # 8. 消除连带可能产生的叠词
+    # 9. 消除连带可能产生的叠词
     t = re.sub(r'老夫老夫+', '老夫', t)
 
-    # 9. 再次确保没有任何残留括号漏出
+    # 10. 恢复被保护的真实典籍书名与专有名词
+    for idx, p in enumerate(protected):
+        t = t.replace(f"__PROT_BOOK_{idx}__", p)
+        t = t.replace(f"__PROT_NOUN_{idx}__", p)
+
+    # 11. 再次确保没有任何残留括号漏出
     t = strip_parentheses(t)
     return t
 
 
 def sanitize_sources(sources: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    """递归清洗引用文献来源中的所有朱熹与朱子字样，杜绝元数据泄漏"""
+    """清洗引用文献来源中的正文叙述，但保留真实文献书名、文件名与路径，杜绝元数据篡改"""
     clean_list = []
     for s in sources:
         item = {}
         for k, v in s.items():
             if isinstance(v, str):
-                item[k] = sanitize_zhuxi_first_person(v)
+                # source / filename / path / book_key / title 等元数据必须保持真实文献名，绝不能被篡改为《老夫的诗和远方》
+                if k in ("source", "filename", "path", "book_key", "bookKey", "bookTitle", "title"):
+                    item[k] = v
+                else:
+                    item[k] = sanitize_zhuxi_first_person(v)
             else:
                 item[k] = v
         clean_list.append(item)
@@ -177,88 +200,201 @@ def deduplicate_repetitive_text(text: str) -> str:
     return res
 
 
+# 典籍来源知识库归属映射表（严格绑定武夷学院逸夫图书馆自建专库）
+SOURCE_DB_MAP = {
+    # 闽北地方文献特色库【闽北文库】
+    "wuyi_shici": "武夷学院图书馆闽北地方文献特色库【闽北文库】",
+    "wuyi_chaosheng": "武夷学院图书馆闽北地方文献特色库【闽北文库】",
+    "wuyi_fujian": "武夷学院图书馆闽北地方文献特色库【闽北文库】",
+    "wuyi_dongjing": "武夷学院图书馆闽北地方文献特色库【闽北文库】",
+    # 朱子学研究中心特藏
+    "wuyi_century": "武夷学院朱子学研究中心协同创新专库",
+    "wuyi_kaoting": "武夷学院朱子学研究中心协同创新专库",
+    "wuyi_haiwai": "武夷学院朱子学研究中心国际传播特色库",
+    # 宋明理学特色库
+    "sishu": "武夷学院图书馆宋明理学特色库",
+    "daxue": "武夷学院图书馆宋明理学特色库",
+    "zhongyong": "武夷学院图书馆宋明理学特色库",
+    "lunyu": "武夷学院图书馆宋明理学特色库",
+    "mengzi": "武夷学院图书馆宋明理学特色库",
+    "jinsi": "武夷学院图书馆宋明理学特色库",
+    "yulei": "武夷学院图书馆宋明理学特色库",
+    "taiji": "武夷学院图书馆宋明理学特色库",
+    "ximing": "武夷学院图书馆宋明理学特色库",
+    "gangmu": "武夷学院图书馆宋明理学特色库",
+    "shijizhuan": "武夷学院图书馆宋明理学特色库",
+    "zhouyi": "武夷学院图书馆宋明理学特色库",
+    "chuci": "武夷学院图书馆宋明理学特色库",
+    "tongmeng": "武夷学院图书馆宋明理学特色库",
+    "xuegui": "武夷学院图书馆宋明理学特色库",
+}
+
+# 著者考订映射
+BOOK_AUTHOR_MAP = {
+    "yulei": "宋·黎靖德 编 · 考亭门人实录",
+    "jinsi": "宋·朱熹、吕祖谦 共同选编",
+    "wuyi_shici": "张建光 著 · 海峡文艺出版社",
+    "wuyi_chaosheng": "张建光 著 · 鹭江出版社",
+    "wuyi_century": "潘飞声、张品端 主编 · 协同创新文丛",
+    "wuyi_kaoting": "武夷学院朱子学研究中心 编",
+    "wuyi_fujian": "政和县朱子文化研究会 编",
+    "wuyi_haiwai": "武夷学院朱子学研究中心 编",
+    "wuyi_dongjing": "武夷学院朱子文化特藏整理小组",
+    "sishu": "宋·朱熹 著",
+    "daxue": "宋·朱熹 著",
+    "zhongyong": "宋·朱熹 著",
+    "lunyu": "宋·朱熹 著",
+    "mengzi": "宋·朱熹 著",
+    "taiji": "宋·朱熹 著",
+    "ximing": "宋·朱熹 著",
+    "gangmu": "宋·朱熹 著",
+    "shijizhuan": "宋·朱熹 著",
+    "zhouyi": "宋·朱熹 著",
+    "chuci": "宋·朱熹 著",
+    "tongmeng": "宋·朱熹 著",
+    "xuegui": "宋·朱熹 著",
+}
+
 UNGROUNDED_REFUSAL = (
-    "老夫反复检点经笥典籍与武夷山房藏书，于贤生所问之事，未见先贤原典与确凿记载，实难妄加推断。"
+    "老夫反复检点经笥典籍与武夷学院逸夫图书馆自建馆藏，于贤生所问之事，未见先贤原典与确凿文献记载，实难妄加推断。"
     "先圣有云：知之为知之，不知为不知，是知也。老夫对此实属无能为力，未敢率尔悬断以误后学。"
-    "贤生若欲深入求索，可移步武夷学院图书馆查阅相关专题馆藏，或就四书章句与治学存养之方再与老夫商榷。"
-    "\n\n📜 **【典籍原典出处】**：《论语集注·为政第二》知之为知之 · CText开放公有领域原典库\n"
-    "🏛️ **【武夷学院馆藏OPAC】**：武夷学院逸夫图书馆特藏专区 索书号 B244.7/X82 · 专题参考咨询"
+    "贤生若欲深入求索，可移步武夷学院逸夫图书馆查阅相关专题馆藏，或就四书章句与治学存养之方再与老夫商榷。"
+    "\n\n【参考资料】\n"
+    "1 《论语集注·为政第二》 | 著者：宋·朱熹 著 | 索书号：B222.22/Z90 | 馆藏地点：总馆 - 朱子书院图书资料室 | 来源：武夷学院图书馆宋明理学特色库《四书章句集注_论语集注.txt》\n\n"
+    "注：以上资料均为武夷学院逸夫图书馆特色馆藏收录典籍，是否为在架纸质藏书请以 OPAC 实时查询为准。\n\n"
+    "相关资源 · 点击直达或扫码打开\n"
+    "• 宋明理学特色库 · 检索理学文献题录\n"
+    "  检索到：《论语集注》、《四书章句集注》等武夷学院逸夫图书馆自建馆藏典籍"
 )
 
 
-def format_citation(query: str, retrieved_chunks: List[Dict[str, Any]]) -> str:
-    """生成合规的 CText 公开原典与武夷学院特藏 OPAC 索书号引注，严格无括号"""
-    ctext_src = "《考亭语类》与《四书章句集注》"
-    opac_num = "B244.7/X82"
-    location = "武夷学院逸夫图书馆特藏专区 · 闽北文库"
+def _load_opac_db() -> Dict[str, Any]:
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    db_file = os.path.join(base_dir, "data", "opac_books_db.json")
+    if os.path.exists(db_file):
+        try:
+            with open(db_file, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return {}
 
-    q = query.lower()
-    if any(k in q for k in ["九曲棹歌", "九曲", "武夷山", "隐屏"]):
-        ctext_src = "《考亭文集》卷九《武夷九曲棹歌》"
-        opac_num = "I207.227/Z43"
-        location = "武夷学院逸夫图书馆六楼特藏专区"
-    elif any(k in q for k in ["观书有感", "半亩方塘", "活水", "春日", "胜日寻芳"]):
-        ctext_src = "《考亭文集》卷二《观书有感二首》"
-        opac_num = "I214.22/Z89"
-        location = "武夷学院逸夫图书馆特藏专室"
-    elif any(k in q for k in ["白鹿洞", "学规", "揭示", "五教"]):
-        ctext_src = "《白鹿洞书院揭示》"
-        opac_num = "B244.7/Z89"
-        location = "朱子学研究中心理学文献资料室"
-    elif any(k in q for k in ["格物致知", "大学章句", "大学", "三纲八目"]):
-        ctext_src = "《四书章句集注·大学章句》"
-        opac_num = "B244.7/X82"
-        location = "武夷学院逸夫图书馆特藏专区"
-    elif any(k in q for k in ["中庸", "十六字心传", "率性"]):
-        ctext_src = "《四书章句集注·中庸章句》"
-        opac_num = "B244.7/X82"
-        location = "武夷学院逸夫图书馆特藏专区"
-    elif any(k in q for k in ["论语", "仁者", "学而", "温故知新"]):
-        ctext_src = "《四书章句集注·论语集注》"
-        opac_num = "B244.7/X82"
-        location = "武夷学院逸夫图书馆特藏专区"
-    elif any(k in q for k in ["孟子", "浩然之气", "性善", "义利"]):
-        ctext_src = "《四书章句集注·孟子集注》"
-        opac_num = "B244.7/X82"
-        location = "武夷学院逸夫图书馆特藏专区"
-    elif any(k in q for k in ["近思录", "寒泉"]):
-        ctext_src = "《近思录》十四卷"
-        opac_num = "B244.7/H34"
-        location = "朱子学研究中心理学文献资料室"
-    elif any(k in q for k in ["社仓", "五夫", "救荒", "饥荒"]):
-        ctext_src = "《考亭文集》卷七十七《建宁府崇安县五夫社仓记》"
-        opac_num = "K825.4/X82"
-        location = "武夷学院逸夫图书馆特藏专区"
-    elif any(k in q for k in ["鹅湖", "陆九渊", "朱陆", "尊德性", "道问学"]):
-        ctext_src = "《考亭语类》卷五十四与《考亭文集》"
-        opac_num = "B244.7/K36"
-        location = "武夷学院逸夫图书馆特藏专区"
-    elif any(k in q for k in ["语类", "读书法", "六法", "循序渐进", "熟读精思"]):
-        ctext_src = "《考亭语类》卷十五·读书法"
-        opac_num = "B244.7/X82"
-        location = "武夷学院逸夫图书馆特藏专区"
-    elif any(k in q for k in ["太极图", "无极而太极"]):
-        ctext_src = "《太极图说解》"
-        opac_num = "B244.7/X82"
-        location = "武夷学院逸夫图书馆特藏专区"
-    elif any(k in q for k in ["西铭", "民胞物与"]):
-        ctext_src = "《西铭解》"
-        opac_num = "B244.7/X82"
-        location = "武夷学院逸夫图书馆特藏专区"
-    elif retrieved_chunks:
-        s_name = retrieved_chunks[0].get("source", "考亭典籍").replace(".txt", "").replace(".md", "").replace("《", "").replace("》", "")
-        s_name = sanitize_zhuxi_first_person(s_name)
-        s_chap = retrieved_chunks[0].get("title", "") or retrieved_chunks[0].get("chapter", "精选")
-        s_chap = sanitize_zhuxi_first_person(s_chap)
-        ctext_src = f"《{s_name}》{s_chap}"
-        opac_num = "B244.7/X82"
-        location = "武夷学院逸夫图书馆特藏专区"
 
-    citation = (
-        f"\n\n📜 **【典籍原典出处】**：{ctext_src} · CText开放公有领域原典库\n"
-        f"🏛️ **【武夷学院馆藏OPAC】**：{location} 索书号 {opac_num} · 专题参考咨询"
-    )
-    return citation
+_CACHED_OPAC_DB = _load_opac_db()
+
+
+def match_book_record(source_filename: str, query: str = "") -> Tuple[Optional[Dict[str, Any]], str]:
+    db = _CACHED_OPAC_DB
+    fname = source_filename.lower()
+    for k, b in db.items():
+        std_clean = b.get("stdTitle", "").replace("《", "").replace("》", "").lower()
+        opac_clean = b.get("opacTitle", "").replace("《", "").replace("》", "").lower()
+        if k in fname or (opac_clean and opac_clean in fname) or (std_clean and std_clean in fname):
+            return b, k
+
+    # 关键词映射
+    if any(w in fname for w in ["语类", "yulei"]): return db.get("yulei"), "yulei"
+    if any(w in fname for w in ["近思录", "jinsi"]): return db.get("jinsi"), "jinsi"
+    if any(w in fname for w in ["大学", "daxue"]): return db.get("daxue"), "daxue"
+    if any(w in fname for w in ["中庸", "zhongyong"]): return db.get("zhongyong"), "zhongyong"
+    if any(w in fname for w in ["论语", "lunyu"]): return db.get("lunyu"), "lunyu"
+    if any(w in fname for w in ["孟子", "mengzi"]): return db.get("mengzi"), "mengzi"
+    if any(w in fname for w in ["四书", "sishu"]): return db.get("sishu"), "sishu"
+    if any(w in fname for w in ["学规", "揭示", "白鹿洞", "xuegui"]): return db.get("xuegui"), "xuegui"
+    if any(w in fname for w in ["童蒙", "tongmeng", "家训"]): return db.get("tongmeng"), "tongmeng"
+    if any(w in fname for w in ["九曲", "文集", "诗", "远方", "wuyi_shici"]): return db.get("wuyi_shici"), "wuyi_shici"
+    if any(w in fname for w in ["朝圣", "五夫", "chaosheng"]): return db.get("wuyi_chaosheng"), "wuyi_chaosheng"
+    if any(w in fname for w in ["世纪", "century"]): return db.get("wuyi_century"), "wuyi_century"
+    if any(w in fname for w in ["考亭", "论坛", "kaoting"]): return db.get("wuyi_kaoting"), "wuyi_kaoting"
+    if any(w in fname for w in ["政和", "家风", "fujian"]): return db.get("wuyi_fujian"), "wuyi_fujian"
+    if any(w in fname for w in ["海外", "haiwai"]): return db.get("wuyi_haiwai"), "wuyi_haiwai"
+    if any(w in fname for w in ["太极", "taiji"]): return db.get("taiji"), "taiji"
+    if any(w in fname for w in ["西铭", "ximing"]): return db.get("ximing"), "ximing"
+    if any(w in fname for w in ["纲目", "资治通鉴", "gangmu"]): return db.get("gangmu"), "gangmu"
+    if any(w in fname for w in ["诗集传", "诗经", "shijizhuan"]): return db.get("shijizhuan"), "shijizhuan"
+    if any(w in fname for w in ["周易", "易经", "zhouyi"]): return db.get("zhouyi"), "zhouyi"
+    if any(w in fname for w in ["楚辞", "chuci"]): return db.get("chuci"), "chuci"
+    if any(w in fname for w in ["精舍志", "精舍", "dongjing"]): return db.get("wuyi_dongjing"), "wuyi_dongjing"
+
+    return db.get("sishu"), "sishu"
+
+
+def generate_library_provenance_block(query: str, retrieved_chunks: List[Dict[str, Any]]) -> str:
+    """生成武夷学院逸夫图书馆自建特色库馆藏溯源区块，严格无括号，严禁任何第三方外网库名"""
+    cited_records = []
+    seen_keys = set()
+
+    for c in retrieved_chunks:
+        src = c.get("source", "")
+        book, key = match_book_record(src, query)
+        if book and key not in seen_keys:
+            seen_keys.add(key)
+            cited_records.append((book, key, src))
+            if len(cited_records) >= 3:
+                break
+
+    # 若检索未命中，根据 query 匹配 1-2 本核心典籍
+    if not cited_records:
+        book, key = match_book_record(query, query)
+        if book:
+            cited_records.append((book, key, book.get("stdTitle", "") + ".txt"))
+
+    lines = ["\n\n【参考资料】"]
+    titles_for_related = []
+    main_db = "武夷学院图书馆宋明理学特色库"
+
+    for idx, (b, k, fname) in enumerate(cited_records, start=1):
+        std_title = b.get("stdTitle", "《考亭理学典籍》")
+        titles_for_related.append(std_title)
+        author = BOOK_AUTHOR_MAP.get(k, "宋·朱熹 著")
+        call_no = b.get("callNumber", "B244.7/1")
+        loc = b.get("location", "武夷学院逸夫图书馆 总馆 - 流通书库")
+        db_name = SOURCE_DB_MAP.get(k, "武夷学院图书馆宋明理学特色库")
+        main_db = db_name
+
+        clean_fname = os.path.basename(fname)
+        if not clean_fname.endswith(('.txt', '.md')):
+            clean_fname = f"{std_title.replace('《','').replace('》','')}.txt"
+
+        lines.append(f"{idx} {std_title} | 著者：{author} | 索书号：{call_no} | 馆藏地点：{loc} | 来源：{db_name}《{clean_fname}》")
+
+    # 官方馆藏在架注释卡片（与茶文化智能服务完全一致）
+    lines.append("\n注：以上资料均为武夷学院逸夫图书馆特色馆藏收录典籍，是否为在架纸质藏书请以 OPAC 实时查询为准。")
+
+    # 相关资源检索入口
+    joined_titles = "、".join(titles_for_related) if titles_for_related else "《四书章句集注》、 《朱子语类》"
+    short_db_title = main_db.replace("武夷学院图书馆", "").replace("武夷学院", "")
+    lines.append("\n相关资源 · 点击直达或扫码打开")
+    lines.append(f"• {short_db_title} · 检索理学文献题录\n  检索到：{joined_titles} 等武夷学院逸夫图书馆自建馆藏典籍")
+
+    return "\n".join(lines)
+
+
+# 保持向下兼容别名
+format_citation = generate_library_provenance_block
+
+
+def inject_inline_citations(text: str) -> str:
+    """在回答正文关键原典引证明训或要义处，注入馆藏角标【1】，确保与下方参考资料呼应"""
+    if not text:
+        return ""
+    # 若已经包含角标，直接返回
+    if re.search(r'【[0-9]{1,2}】|\[[0-9]{1,2}\]', text):
+        return text
+    # 优先在引用块 > 结尾处注入 【1】
+    if "> " in text:
+        parts = text.split("> ", 1)
+        subparts = parts[1].split("\n", 1)
+        first_line = subparts[0]
+        if "”" in first_line:
+            first_line = re.sub(r'”([。！？]?)', r'”\1【1】', first_line, count=1)
+        elif "。" in first_line:
+            first_line = re.sub(r'。', r'。【1】', first_line, count=1)
+        else:
+            first_line = first_line + "【1】"
+        rest = "\n" + subparts[1] if len(subparts) > 1 else ""
+        return parts[0] + "> " + first_line + rest
+    return text
 
 
 def is_grounded_query(query: str, retrieved_chunks: List[Dict[str, Any]]) -> bool:
@@ -366,7 +502,10 @@ def ensure_socratic_question(text: str, query: str) -> str:
     else:
         follow_up = "老夫且掩卷设问以验贤生：仁兄体味此节要义，若落在汝自家日用身心之中，当从何处切己下手？"
 
-    if "📜 **【典籍原典出处】" in clean:
+    if "【参考资料】" in clean:
+        parts = clean.split("【参考资料】", 1)
+        return parts[0].rstrip() + f"\n\n{follow_up}\n\n【参考资料】" + parts[1]
+    elif "📜 **【典籍原典出处】" in clean:
         parts = clean.split("📜 **【典籍原典出处】", 1)
         return parts[0].rstrip() + f"\n\n{follow_up}\n\n📜 **【典籍原典出处】" + parts[1]
     elif "📜 **【考亭典籍出处】" in clean:
@@ -576,21 +715,22 @@ class ZhuXiAgent:
                 + "\n".join(rag_texts)
             )
 
-        # 注入回答规范与因材施教指引（拒绝固定模板与模式化套话）
+        # 注入考亭宗师标准四段式讲学规制与特藏索书号引据规范
         system_parts.append(
-            "\n\n【讲学规矩·因材施教·拒绝千篇一律】：\n"
-            "1. 严禁使用任何固定套路或死板的四段式模板！观学者之机，灵活开导。\n"
-            "2. 每次回答根据问学者的情绪、提问重点自如组织言辞：\n"
-            "   - 若学者表达疲惫、厌学或心烦，当以长者关怀温和抚慰，直指心结；\n"
-            "   - 若学者探讨经书义理，当逐层剖析字句精微；\n"
-            "   - 若学者询问读书方法，当开列切实门径；\n"
-            "   - 若学者提出质疑争辩，当正气凛然透彻辨析；\n"
-            "   - 若学者随性闲聊，当从容对谈，切勿说教。\n"
-            "3. 篇幅充实详尽，内容厚重深刻，说理透彻完整，严禁简略应付或半路截断，必须自然收束成完整段落。\n"
-            "4. 每逢回答，必须详细给出具体文献出处、篇章卷次与原文引据，如《四书章句集注》、《朱子语类》卷次、《近思录》、《朱子全书》等，并在文末标明武夷学院逸夫图书馆六楼特藏专区之具体典籍与OPAC索书号。\n"
-            "5. 必须联系多轮交谈上下文，并在解答义理之后，推断问学者的内心疑虑，以循循善诱口吻主动提出一个启发性反问引导其自察体省。\n"
-            "6. 【最高禁令】：在任何情况下，绝不可输出朱熹或朱子字样！自称一律用老夫、某或考亭先生！\n"
-            "7. 绝对严禁输出任何中英文圆括号！"
+            "\n\n【考亭讲席宗师规制·严谨四段式规范排版】：\n"
+            "为彰显考亭书院理学宗师气度，所有日常求益与经义问答均必须遵循典雅庄重的【标准四段式结构】，使用清晰的 Markdown 排版，严格包含以下四大核心段落：\n\n"
+            "一、开篇称谓与破题引语：以温厚大儒第一人称（如‘诸生请了！’或‘仁兄问及...，此乃关乎...之枢要！’）自然破题。\n\n"
+            "二、📜 **【考亭原典明训】**：\n"
+            "必须结合具体儒家经典或老夫平生著述（如《朱子语类》《四书章句集注》《近思录》《白鹿洞书院揭示》等），使用 Markdown 引用语法 `> ` 给出至少一至两句具体真实的典籍原文名句（字求其训，严禁空洞概括），并在引用名句句末紧跟自建馆藏角标【1】。\n\n"
+            "三、💡 **【现代白话精析】**：\n"
+            "以通俗易懂、生动晓畅的白话深入剖析原典微言大义与心性哲思，杜绝枯燥刻板的教科书大白话，将深奥义理化为明白透彻之理。\n\n"
+            "四、🎯 **【切己体察功夫】**：\n"
+            "将义理切实联系到后学当下的日常学业、心性涵养与为人涉世，指出知行合一的修持功夫与下手处；并在该部分末尾以长者循循善诱口吻，主动提出一个切己体察的启发性反思问话（如‘老夫且掩卷设问以验贤生：...’），引导学者自察省思。\n\n"
+            "五、自建馆藏溯源引据：\n"
+            "由考亭智能系统统一附加【参考资料】特色馆藏溯源清单（标注武夷学院逸夫图书馆自建库、索书号与OPAC在架预约），正文末尾无需重复生成旧式出处。\n\n"
+            "【空行排版铁律】：每个大段落与标题之间必须使用两个换行符（空一行）隔开，确保各个标题（📜 **【考亭原典明训】**：、💡 **【现代白话精析】**：、🎯 **【切己体察功夫】**：）独占一行，绝不与前后文文字挤在同一行！\n"
+            "【书名与称谓铁律】：在书名号《》内，必须保持真实典籍原名（如《四书章句集注》、《朱子语类》、《近思录》），绝对严禁篡改为《老夫全书》或《老夫全集》！正文自称一律用‘老夫’、‘某’或‘考亭先生’，严禁直呼‘朱熹/朱子’。\n"
+            "【标点铁律】：绝对严禁输出任何中英文圆括号，严禁出现第三方外网库名！"
         )
 
         # 根据 session_id 注入对应的专属场景指引
@@ -663,9 +803,10 @@ class ZhuXiAgent:
         answer_text = sanitize_zhuxi_first_person(answer_text)
         answer_text = deduplicate_repetitive_text(answer_text)
         answer_text = ensure_socratic_question(answer_text, query)
+        answer_text = inject_inline_citations(answer_text)
 
-        if not any(k in answer_text for k in ["典籍原典出处", "考亭典籍出处", "典籍出处", "出处："]):
-            answer_text += format_citation(query, retrieved_chunks)
+        if not any(k in answer_text for k in ["【参考资料】", "参考资料", "典籍原典出处", "考亭典籍出处", "典籍出处", "出处："]):
+            answer_text += generate_library_provenance_block(query, retrieved_chunks)
 
         answer_text = sanitize_zhuxi_first_person(answer_text)
         answer_text = strip_parentheses(answer_text)
@@ -710,12 +851,6 @@ class ZhuXiAgent:
         )
 
         full_reply_parts = []
-        seen_sentences = set()
-        current_sentence_tokens = []
-        current_sentence_text = ""
-        stopped_early_due_to_loop = False
-        in_paren = False
-
         resp = urllib.request.urlopen(req, timeout=30)
         meta_event = {
             "type": "meta",
@@ -748,55 +883,19 @@ class ZhuXiAgent:
                         if not token:
                             continue
 
-                        to_send_chars = []
-                        for ch in token:
-                            if ch in "（(":
-                                in_paren = True
-                            elif ch in "）)":
-                                in_paren = False
-                            elif in_paren:
-                                pass
-                            else:
-                                to_send_chars.append(ch)
+                        # 过滤中英文圆括号
+                        safe_token = token.replace("（", "——").replace("）", "——").replace("(", "——").replace(")", "——")
+                        safe_token = sanitize_zhuxi_first_person(safe_token)
 
-                        if not to_send_chars:
-                            continue
+                        full_reply_parts.append(safe_token)
+                        data_event = {"type": "token", "content": safe_token}
+                        yield f"data: {json.dumps(data_event, ensure_ascii=False)}\n\n"
 
-                        safe_token = "".join(to_send_chars)
-                        for ch in safe_token:
-                            current_sentence_tokens.append(ch)
-                            current_sentence_text += ch
-                            if ch in "。！？\n":
-                                norm = current_sentence_text.strip()
-                                if len(norm) >= 12:
-                                    if norm in seen_sentences:
-                                        stopped_early_due_to_loop = True
-                                        current_sentence_tokens.pop()
-                                        break
-                                    seen_sentences.add(norm)
-
-                                sentence_str = "".join(current_sentence_tokens)
-                                sentence_str = sanitize_zhuxi_first_person(sentence_str)
-                                full_reply_parts.append(sentence_str)
-                                data_event = {"type": "token", "content": sentence_str}
-                                yield f"data: {json.dumps(data_event, ensure_ascii=False)}\n\n"
-                                current_sentence_tokens = []
-                                current_sentence_text = ""
-                        if stopped_early_due_to_loop:
-                            break
                     except Exception:
                         continue
 
-            if current_sentence_tokens and not self.is_session_stopped(session_id):
-                rem = "".join(current_sentence_tokens)
-                rem = sanitize_zhuxi_first_person(rem)
-                if not rem.endswith(('。', '！', '？', '”', '’')):
-                    rem = rem.rstrip('，、； ') + "。"
-                full_reply_parts.append(rem)
-                data_event = {"type": "token", "content": rem}
-                yield f"data: {json.dumps(data_event, ensure_ascii=False)}\n\n"
-
             raw_full = "".join(full_reply_parts)
+            # 若生成中缺失启发性提问，且未被用户主动中止，则在正文后温和补充
             last_window = raw_full[-120:] if len(raw_full) >= 120 else raw_full
             if not any(q in last_window for q in ["？", "?"]) and not self.is_session_stopped(session_id):
                 socratic_q = "\n\n老夫且掩卷设问以验贤生：仁兄体味此节要义，若落在汝自家日用身心之中，当从何处切己下手？"
@@ -805,14 +904,16 @@ class ZhuXiAgent:
                 yield f"data: {json.dumps(data_event, ensure_ascii=False)}\n\n"
 
             raw_full = "".join(full_reply_parts)
-            if not any(k in raw_full for k in ["典籍原典出处", "考亭典籍出处", "典籍出处", "出处："]) and not self.is_session_stopped(session_id):
-                source_cite = format_citation(query, retrieved_chunks)
+            # 若末尾未输出馆藏参考资料，则补充【参考资料】引据规范
+            if not any(k in raw_full for k in ["【参考资料】", "参考资料", "典籍原典出处", "考亭典籍出处", "典籍出处", "OPAC特藏引据", "馆藏OPAC"]) and not self.is_session_stopped(session_id):
+                source_cite = generate_library_provenance_block(query, retrieved_chunks)
                 full_reply_parts.append(source_cite)
                 data_event = {"type": "token", "content": source_cite}
                 yield f"data: {json.dumps(data_event, ensure_ascii=False)}\n\n"
 
             raw_full = "".join(full_reply_parts)
             cleaned_full = sanitize_zhuxi_first_person(raw_full)
+            cleaned_full = inject_inline_citations(cleaned_full)
             cleaned_full = strip_parentheses(cleaned_full)
             session_manager.update_with_reply(session_id, cleaned_full)
             yield f"data: {json.dumps({'type': 'done'}, ensure_ascii=False)}\n\n"
@@ -1038,22 +1139,286 @@ class ZhuXiAgent:
             )
 
         # =========================================================================
-        # 3. 学术论文撰写、选题立论与课题咨询分支（面向本科生通识与研究生研学）
+        # 3. 学术论文撰写、选题立论与文献多轮交互轮换体系（面向本科生通识与研究生研学）
         # =========================================================================
+        # 3. 学术论文系统六步递进研撰体系（步骤一选题破题 -> 步骤二文献考证 -> 步骤三范畴辩证 -> 步骤四章节细纲 -> 步骤五学术创新 -> 步骤六模拟答辩与总纲）
+        # =========================================================================
+
+        # 3.1 步骤六【毕业答辩模拟质询与开题评语总纲】
+        if ("步骤六" in q_lower or any(k in q_lower for k in ["模拟答辩", "答辩质询", "开题评语", "终审评语", "开题总纲", "毕业答辩"])) and not any(k in q_lower for k in ["步骤一", "步骤二", "步骤三", "步骤四", "步骤五"]):
+            return (
+                f"{salutation}仁兄历经五步磨砺，论文雏形大备，骨肉俱全！老夫特以考亭书院山长暨答辩委员会主席之身份，为仁兄设堂举行**【步骤六 · 毕业论文答辩模拟质询与开题总纲终审】**。\n\n"
+                "🎓 **【考亭答辩委员会·三大核心学术质询】**：\n"
+                "• **第一问（本体论深究）**：“贤生主张‘理在气先’为逻辑本原在先，然若‘未有这事，先有这理’，此理究竟是虚悬于太虚之实相，抑或仅为心智之推测？若气化尚未流行，理在何处挂搭？”\n"
+                "  > **【应答金针】**：须紧扣朱子“理未尝离乎气”与“理如太极，气如太极所赋”之不离不杂，阐明理乃宇宙生物之“所当然”与“所以然”之法则秩序，非离气孤立实体。\n"
+                "• **第二问（工夫论质辨）**：“仁兄论‘格物致知’，既言‘即凡天下之物益穷其理’，后儒多病其‘支离外求’，贤生如何在文中论证外格物理与内明本心之统一？”\n"
+                "  > **【应答金针】**：指出朱子“物物有一太极，人心有一太极”之本体依据，物之理即心之理，穷理正是为了豁显本心之明德，绝非向外逐物。\n"
+                "• **第三问（时代价值转化）**：“宋明理学距今已八百余载，贤生所撰‘心统性情’与‘主敬工夫’，如何转化为当代青年舒缓精神内耗、重塑公共伦理之现代资源？”\n"
+                "  > **【应答金针】**：紧扣“主敬涵养”收敛身心之现代心理学意义与“民胞物与”对当代生态共同体之启示。\n\n"
+                "📜 **【武夷学院考亭书院 · 学术论文开题终审评语】**：\n"
+                "> **开题评审意见**：该生论文选题高迈，问题意识锐敏。能深扎武夷学院宋明理学特藏文献，征引《朱子语类》《四书章句集注》确凿无误；四章节逻辑环环相扣，学术史梳理详明，兼具古今会通之创新眼界。答辩对答沉稳，考亭道脉后继有人！\n"
+                "> **终审结论**：**准予开题，列为特优等级！颁发《考亭书院学士院开题总纲》！**\n\n"
+                "【考亭书院学士院 终审通过 · 朱熹手订印】"
+            )
+
+        # 3.2 步骤五【学术前沿创新点与文献综述撰拟】
+        if ("步骤五" in q_lower or any(k in q_lower for k in ["创新点", "文献综述", "学术前沿", "前沿创新"])) and not any(k in q_lower for k in ["步骤一", "步骤二", "步骤三", "步骤四", "步骤六"]):
+            return (
+                f"{salutation}四章节骨架既立，老夫当与仁兄进入**【步骤五 · 学术前沿创新点提炼与文献综述撰拟】**。学术论文之灵魂在于前沿创新与学术谱系之清晰。\n\n"
+                "🔬 **【本论文三大核心创新点提炼示范】**：\n"
+                "一、**史料与文献对勘创新**：跳脱清代汉学家（如戴震、凌廷堪）对宋明理学‘以理杀人’之刻板标签，直接以武夷学院馆藏《朱子语类》早期善本与闽北师生问对，还原朱子‘仁者天地生物之心’之生生温厚原貌；\n"
+                "二、**范畴阐释视角创新**：突破以往‘西方本体论 vs 认识论’简单硬套之模式，建立‘天道流行—心统性情—日用践履’之宋代理学有机生命哲学范式；\n"
+                "三、**当代价值转化创新**：将‘主敬持志’与‘居敬存诚’之传统修养工夫，与当代认知哲学、心理学情绪调节及生态伦理进行跨文明对话。\n\n"
+                "📚 **【现当代权威学术谱系文献综述范式】**：\n"
+                "• **陈来先生《朱子哲学研究》**（清华大学）：精深梳理理气、心性、工夫发展之四个时期，是当代朱子学登峰造极之基石；\n"
+                "• **钱穆先生《朱子新学案》**（全五册）：以全息生命史视野重构朱子一生著述与学术交游；\n"
+                "• **蒙培元先生《理学范畴系统》**：厘清‘理、气、心、性、情、诚、敬’之范畴演进逻辑。\n\n"
+                "老夫且引贤生前行：步骤五已立！仁兄且请点击下方【🎓 推进至步骤六：毕业答辩模拟质询与开题总纲】，老夫当亲自设堂质询，颁发开题评语！"
+            )
+
+        # 3.3 步骤四【四章节论证细纲与分章写作】
+        if ("步骤四" in q_lower or any(k in q_lower for k in ["论证细纲", "分章写作", "章节写作", "章节论证", "正文执笔", "正文写作", "四章节", "提纲框架"])) and not any(k in q_lower for k in ["步骤一", "步骤二", "步骤三", "步骤五", "步骤六"]):
+            return (
+                f"{salutation}经前三步筑基，学术论点与文献考据已尽皆熔铸于胸！今老夫与仁兄切入实战撰拟——**【步骤四 · 四章节系统论证细纲与分章正文写作要领】**：\n\n"
+                "📖 **第一章：问题缘起、学术史综述与文献定位**\n"
+                "• **1.1 研究背景与问题提出**：揭示当前学界对本论题理解之分歧与不足；\n"
+                "• **1.2 宋明以降学术史流变**：梳理宋代同门辩难、明代阳明心学反拨至清代汉学反思之轨迹；\n"
+                "• **1.3 核心文献版本与考证方法**：交代《四书章句集注》与《朱子语类》版本依据。\n\n"
+                "📖 **第二章：核心范畴界定与原典文本微言大义**\n"
+                "• **2.1 核心概念训诂疏证**：从字义学与哲学层面对‘理’、‘气’、‘心’、‘性’做双重界定；\n"
+                "• **2.2 原典文本逻辑对勘**：逐层解析《大学章句·补传》与《语类》卷一之经典论断；\n"
+                "• **2.3 范畴互动之动力机制**：论证形上与形下、动静互涵之机理。\n\n"
+                "📖 **第三章：核心论点层层推进与学术辩难回应**\n"
+                "• **3.1 核心论题之逻辑证明**：层层展开核心论断，避免断言，注重因果推导；\n"
+                "• **3.2 学术争鸣与批评回应**：预设学术对手之质疑并做逻辑化解；\n"
+                "• **3.3 本体与工夫之圆融贯通**：阐明理论建构如何回向实践工夫。\n\n"
+                "📖 **第四章：当代身心安顿与现代价值转化**\n"
+                "• **4.1 传统理学智慧对现代精神异化之疗治**；\n"
+                "• **4.2 考亭文脉在当代高校与文化建设中之启示**；\n"
+                "• **4.3 结语：源头活水长流不息之学术瞻望**。\n\n"
+                "老夫且勉贤生：步骤四细纲已成！仁兄且请点击下方【🔬 推进至步骤五：学术前沿创新点与文献综述撰拟】，提炼学术创新之矛！"
+            )
+
+        # 3.4 步骤三【核心哲学范畴辩证与学术争鸣】
+        if ("步骤三" in q_lower or any(k in q_lower for k in ["范畴辩证", "学术争鸣", "核心范畴", "学术辩难", "辩证关系"])) and not any(k in q_lower for k in ["步骤一", "步骤二", "步骤四", "步骤五", "步骤六"]):
+            return (
+                f"{salutation}原典文句既熟，当知‘析理贵精，辨学贵严’！老夫便与仁兄切入**【步骤三 · 核心哲学范畴辩证与学术史争鸣】**：\n\n"
+                "⚖️ **【核心范畴三大关键学术辩难】**：\n\n"
+                "一、**【时间先后 vs 逻辑本体在先之争】**：\n"
+                "• **争鸣焦点**：清儒戴震批老夫‘分理气为二，以理为如有物在气之先’，视理为悬空实体。\n"
+                "• **朱子辨正**：此大误也！老夫在《朱子语类》卷一明确开示：“理未尝离乎气，气未尝离乎理。若理在气先，非有先后之次，乃有本原之序也。”理气在时间上不可分，但在本体存在根据上，理乃气之所以然，故曰在先，此‘逻辑本体在先’也！\n\n"
+                "二、**【西方共相说 vs 规则法则说之争鸣】**：\n"
+                "• **学者论争**：冯友兰先生曾以西方新实在论‘共相与殊相’套用朱子理气，认为理独立于气而存在；陈来先生《朱子哲学研究》则力证朱子之理乃‘事物存在与发展之规律准则’，不可脱离具体事物。\n"
+                "• **论文立论指引**：汝在论文中当支持陈来先生之说，结合《太极图说解》阐明‘理一分殊，月印万川’，理虽超验，却时时具于气中。\n\n"
+                "三、**【知先行后 vs 知行相须并进之辩】**：\n"
+                "• **学术辨难**：王阳明倡‘知行合一’，谓朱子知先行后为支离。\n"
+                "• **考亭义理**：老夫尝云：“论先后，知为先；论轻重，行为重。知行常相须，如目无足不行，足无目不见。”不可偏废任一端！\n\n"
+                "老夫且勉贤生：三阶辩难已通！仁兄且请点击下方【✍️ 推进至步骤四：四章节论证细纲与分章写作】，正式构筑论文正文！"
+            )
+
+        # 3.5 步骤二【特藏文献精研与文句考证】
+        if ("步骤二" in q_lower or any(k in q_lower for k in ["文献精研", "文句考证", "字词训诂", "原典精研", "精研文句", "字句考证"])) and not any(k in q_lower for k in ["步骤一", "步骤三", "步骤四", "步骤五", "步骤六"]):
+            return (
+                f"{salutation}治学当从字句训诂下切己工夫！老夫便为仁兄开启**【步骤二 · 特藏原典精研与核心文句逐句考证】**：\n\n"
+                "📜 **【考亭原典三大核心文句精深疏解】**：\n\n"
+                "一、**《朱子语类》卷一《理气上·太极天地》第3条（黎靖德编，中华书局本）**：\n"
+                "• **【原典文句】**：“未有天地之先，毕竟也只是理。有此理，便有此天地；若无此理，便亦无天地，无人无物，都无该载了！有理便有气，流行发育万物。”\n"
+                "• **【逐字考证】**：‘毕竟’二字，斩钉截铁，直指宇宙终极追问；‘该载’者，统摄包含之义。朱子在此以假定语气确立宇宙形上基石——天地万物皆依循此永恒秩序而发育流行。\n"
+                "• **【逸夫图书馆特藏】**：六楼古籍特藏室【B244.7/1】（特藏01排A架第1层）\n\n"
+                "二、**《晦庵先生朱文公文集》卷四十六《答刘叔文》第8书**：\n"
+                "• **【原典文句】**：“所谓理不离气，气不离理。虽不离，然亦不杂；所谓理自理，气自气，各有界限，不可混淆也。”\n"
+                "• **【逐字考证】**：‘不离’显其相依之实态，‘不杂’辨其形上形下之本质界限。朱子强调‘各有界限’，正是防门人陷入禅宗‘认气化物为道’之迷妄。\n"
+                "• **【逸夫图书馆特藏】**：六楼闽北文库【B244.75/L43:1】（特藏柜2号）\n\n"
+                "三、**《四书章句集注·大学章句·补格物致知传》（中华书局本第6页）**：\n"
+                "• **【原典文句】**：“所谓致知在格物者，言欲致吾之知，在即物而穷其理也。因其已知之理而益穷之，以求至乎其极。至于用力之久，而一旦豁然贯通焉……”\n"
+                "• **【逐字考证】**：‘格’训为‘至’，‘物’训为‘事’，‘穷’训为‘推至其极’。‘豁然贯通’非禅宗顿悟，乃由无数积叠渐进而致之质跃飞跃。\n"
+                "• **【逸夫图书馆特藏】**：三楼理学专架【B244.7/12】与六楼特藏专柜\n\n"
+                "老夫且引贤生前行：原典文句考证已明晰！仁兄且请点击下方【⚖️ 推进至步骤三：核心哲学范畴辩证与学术争鸣】，深入哲学论辩！"
+            )
+
+        # 3.6 步骤一【选题破题与文献定位】（涵盖四大论题方向）
+        if any(k in q_lower for k in ["论题一", "理在气先", "本体宇宙论", "步骤一", "破题立意"]) and not any(k in q_lower for k in ["步骤二", "步骤三", "步骤四", "步骤五", "步骤六"]):
+            return (
+                f"{salutation}选定【朱子‘理在气先’与本体宇宙论深析】为论题，此乃直叩考亭理学之最高堂奥！老夫特按学术规制，为仁兄开启**【步骤一 · 选题破题与文献定位】**：\n\n"
+                "🎯 **一、【立论破题与问题意识】**：\n"
+                "• **研究命题**：辨析朱子‘理在气先’究竟是‘时间先后’抑或‘逻辑本体在先’；\n"
+                "• **核心问题意识**：清代以降戴震等学者误斥朱子‘理在气先’为割裂理气之‘以理杀人’。本论文之根本任务，正在于拨乱反正，基于原典证明‘理气不离不杂’，理为生生之主宰，气为流行之质具，重构考亭宇宙图景。\n\n"
+                "📚 **二、【武夷学院逸夫图书馆特藏核心文献定位】**：\n"
+                "1. **《朱子语类》（宋·黎靖德编，中华书局百四十卷本）**\n"
+                "   • **卷次篇目**：卷一《理气上·太极天地》\n"
+                "   • **具体文句**：“未有天地之先，毕竟也只是理。有此理，便有此天地；若无此理，便亦无天地，无人无物，都无该载了！有理便有气，流行发育万物。”\n"
+                "   • **逸夫图书馆索书号**：六楼古籍特藏室·闽北文库【B244.7/1】（特藏室01排A架1-3层）\n"
+                "2. **《晦庵先生朱文公文集》（宋·朱熹撰）**\n"
+                "   • **卷次篇目**：卷四十六《答刘叔文》与卷七十七《建宁府崇安县五夫社仓记》\n"
+                "   • **具体文句**：“所谓理不离气，气不离理……然理本也，气具也。有理方有气，不可道气本而理具。”\n"
+                "   • **逸夫图书馆索书号**：六楼特藏专区【K825.4/X82】与【B244.75/L43:1】\n"
+                "3. **《四书章句集注》（宋·朱熹撰，中华书局本）**\n"
+                "   • **卷次篇目**：《大学章句·补格物致知传》与《中庸章句·首章注》\n"
+                "   • **具体文句**：“天命之谓性。天以阴阳五行化生万物，气以成形，而理亦赋焉，犹命令也。”\n"
+                "   • **逸夫图书馆索书号**：三楼哲学与理学阅览区【B244.7/12】（三楼东区06排A架2层）\n\n"
+                "💡 **【循序进道】**：【步骤一 · 选题破题与文献定位】已备齐！仁兄且请点击下方【📜 推进至步骤二：特藏文献精研与文句考证】，老夫当为仁兄展开逐字逐句深细考释！"
+            )
+        elif any(k in q_lower for k in ["论题二", "即物穷理", "科学精神", "认识论"]) and not any(k in q_lower for k in ["步骤二", "步骤三", "步骤四", "步骤五", "步骤六"]):
+            return (
+                f"{salutation}选定【从‘即物穷理’看朱子认识论与现代科学精神之异同】为论题，融通古今哲学，极具开拓气象！老夫特为仁兄开启**【步骤一 · 选题破题与文献定位】**：\n\n"
+                "🎯 **一、【立论破题与问题意识】**：\n"
+                "• **核心论点**：考亭‘即物穷理’既具面向自然物理之经验求真品格，更具统摄伦理天命之形上超越性；\n"
+                "• **问题意识**：李约瑟曾惊叹朱熹为现代科学有机哲学之先驱，但国内学界亦有人批评理学偏重伦理践履而缺乏实验数理。论文需辨清朱子‘格物’实乃‘物理与性理之合一’，揭示其对克服现代科学唯技术论工具理性之解毒剂价值。\n\n"
+                "📚 **二、【武夷学院逸夫图书馆特藏核心文献定位】**：\n"
+                "1. **《四书章句集注·大学章句》（宋·朱熹撰）**\n"
+                "   • **卷次篇目**：《补格物致知传》\n"
+                "   • **具体文句**：“所谓致知在格物者，言欲致吾之知，在即物而穷其理也。盖人心之灵莫不有知，而天下之物莫不有理……至于用力之久，而一旦豁然贯通焉，则众物之表里精粗无不到。”\n"
+                "   • **逸夫图书馆索书号**：三楼哲学阅览区【B244.7/12】\n"
+                "2. **《朱子语类》（宋·黎靖德编）**\n"
+                "   • **卷次篇目**：卷九十四《大学三·格物致知》与卷二《天地水泉山石》\n"
+                "   • **具体文句**：“常见高山上有螺蚌壳，或生石中，此石即旧日之水土，螺蚌即水中之物。下者却变而为高，柔者变而为刚，此物理之可验者。”（中国最早之化石成因地质学观察记录！）\n"
+                "   • **逸夫图书馆索书号**：六楼古籍特藏室【B244.7/1】\n\n"
+                "💡 **【循序进道】**：【步骤一 · 选题破题与文献定位】已建立！仁兄且请点击下方【📜 推进至步骤二：特藏文献精研与文句考证】，深入化石考订与格致字句精义！"
+            )
+        elif any(k in q_lower for k in ["论题三", "心统性情", "身心安顿", "工夫论"]) and not any(k in q_lower for k in ["步骤二", "步骤三", "步骤四", "步骤五", "步骤六"]):
+            return (
+                f"{salutation}选定【‘心统性情’视野下朱子工夫论与当代身心安顿】为论题，切己体察，直击当代青年心灵焦灼之痛点！老夫特为仁兄开启**【步骤一 · 选题破题与文献定位】**：\n\n"
+                "🎯 **一、【立论破题与问题意识】**：\n"
+                "• **核心论点**：朱子‘心统性情’确立‘心为一身之主宰，性为未发之体，情为已发之用’；主敬存诚工夫能有效统驭情绪内耗，重构主体安宁；\n"
+                "• **问题意识**：现代人身心分离、情绪焦虑加剧。论文通过梳理朱子延平师事时期‘中和旧说’至‘中和新说’之转变，揭示如何以‘静中涵养未发，动中省察已发’达成身心和谐自洽。\n\n"
+                "📚 **二、【武夷学院逸夫图书馆特藏核心文献定位】**：\n"
+                "1. **《朱子语类》（宋·黎靖德编）**\n"
+                "   • **卷次篇目**：卷五《性理二·心性情才》\n"
+                "   • **具体文句**：“心统性情。性是体，情是用，心是主宰。不可道心便是个性，又不可道心只是个情。人有这心，虚灵不昧，以具众理而应万事。”\n"
+                "   • **逸夫图书馆索书号**：六楼理学特藏室【B244.7/1】\n"
+                "2. **《晦庵先生朱文公文集》（宋·朱熹撰）**\n"
+                "   • **卷次篇目**：卷六十七《已发未发说》（即中和新说之纲）\n"
+                "   • **具体文句**：“喜怒哀乐未发之时，其心虚明澄澈，天理完全，此所谓中，性之本体也；感而遂通，发而皆中节，此所谓和，情之正也。”\n"
+                "   • **逸夫图书馆索书号**：六楼闽北文库【B244.75/L43:1】\n\n"
+                "💡 **【循序进道】**：【步骤一 · 选题破题与文献定位】已完成！仁兄且请点击下方【📜 推进至步骤二：特藏文献精研与文句考证】，进入心性原典细读！"
+            )
+        elif any(k in q_lower for k in ["论题四", "书院理学", "武夷精舍", "考亭书院", "教育体系"]) and not any(k in q_lower for k in ["步骤二", "步骤三", "步骤四", "步骤五", "步骤六"]):
+            return (
+                f"{salutation}选定【武夷精舍与考亭书院理学教育体系考论】为论题，立足闽北文脉与本校历史根基，意义深远！老夫特为仁兄开启**【步骤一 · 选题破题与文献定位】**：\n\n"
+                "🎯 **一、【立论破题与问题意识】**：\n"
+                "• **核心论点**：朱子武夷精舍（淳熙十年）与考亭沧洲精舍（绍熙三年）首创会讲、学规、读书法三位一体之书院教育模式，是中国古代高等教育典范；\n"
+                "• **问题意识**：反思当代大学分科过细、唯功利就业之偏失，发掘考亭书院以立品成人、通识求道为核心之知行合一教育机制。\n\n"
+                "📚 **二、【武夷学院逸夫图书馆特藏核心文献定位】**：\n"
+                "1. **《白鹿洞书院揭示》（宋·朱熹手订）**\n"
+                "   • **篇目**：古代第一书院学规\n"
+                "   • **具体文句**：“父子有亲，君臣有义，夫妇有别，长幼有序，朋友有信。为学之序：博学之，审问之，慎思之，明辨之，笃行之。处事之要：正其义不谋其利，明其道不计其功。”\n"
+                "   • **逸夫图书馆索书号**：六楼书院文化特藏室【G649.29/1】\n"
+                "2. **《朱文公文集》（宋·朱熹撰）**\n"
+                "   • **卷次篇目**：卷七十四《武夷精舍杂咏序》与卷七十八《建阳县沧洲精舍告先圣文》\n"
+                "   • **具体文句**：“琴书五十载，隐屏云雾深。门径几盘纡，清溪抱森秀。欲知精舍意，默坐体天心。”\n"
+                "   • **逸夫图书馆索书号**：六楼闽北地方文献【K825.4/X82】\n\n"
+                "💡 **【循序进道】**：【步骤一 · 选题破题与文献定位】已备就！仁兄且请点击下方【📜 推进至步骤二：特藏文献精研与文句考证】，细读精舍学规！"
+            )
+
+        # 3.7 文献轮换体系（满足用户要求更换其他批次文献）
+        if any(k in q_lower for k in ["换一批", "换文献", "补充文献", "换别的", "还有别的文献"]):
+            cur_batch = (sess.get("thesis_batch_idx", 0) + 1) % 3
+            sess["thesis_batch_idx"] = cur_batch
+            if cur_batch == 1:
+                return (
+                    f"{salutation}遵贤生雅意，老夫特从武夷学院逸夫图书馆六楼特藏专柜中，为仁兄**【更换第二批典籍文献】**：\n\n"
+                    "📚 **一、《近思录》（宋·朱熹、吕祖谦同编，十四卷本）**\n"
+                    "• **卷次篇目**：卷一《道体》与卷二《为学大要》\n"
+                    "• **具体文句**：“万物皆有一理，至赜而不可乱。学者当于喜怒哀乐未发之前体认气象，于事物交接之际存守天理。”\n"
+                    "• **逸夫图书馆馆藏**：三楼哲学典籍阅览区【B244.7/26】（三楼东区06排B架1层 / 六楼理学专柜）\n\n"
+                    "📚 **二、《晦庵先生朱文公文集》（宋·朱熹撰，全一百卷）**\n"
+                    "• **卷次篇目**：卷三十六《答陆子静书》（鹅湖辨学书札）\n"
+                    "• **具体文句**：“为学须兼尊德性与道问学二者，未可偏废。切己体察之功，必与穷究文理相资互发，方免空疏狂荡之弊。”\n"
+                    "• **逸夫图书馆馆藏**：六楼古籍特藏室·闽北文库【B244.75/L43:1】\n\n"
+                    "📚 **三、《周易本义》（宋·朱熹撰）**\n"
+                    "• **卷次篇目**：卷首《易学启蒙》与《系辞传本义》\n"
+                    "• **具体文句**：“易者，阴阳刚柔之变也。理在天地之先，而数与象则理之著也。即凡天下之象数，无非阴阳往复之节制。”\n"
+                    "• **逸夫图书馆馆藏**：三楼哲学典籍书库【B221/15】\n\n"
+                    "仁兄文献既已丰盈，且请点击下方【📜 推进至步骤二：特藏文献精研与文句考证】继续推进！"
+                )
+            else:
+                return (
+                    f"{salutation}治学精益求精，老夫特从武夷学院逸夫图书馆特藏室中，为仁兄**【更换第三批典籍文献】**：\n\n"
+                    "📚 **一、《朱子家礼》（宋·朱熹编次）**\n"
+                    "• **卷次篇目**：卷一《通礼》、卷二《冠礼》与卷三《祭礼》\n"
+                    "• **具体文句**：“君子将营宫室，宗庙为先，居室为后……礼仪三百，威仪三千，皆天理之节文，人事之仪则也。”\n"
+                    "• **逸夫图书馆馆藏**：三楼教育与家训文献区【B244.7/28】\n\n"
+                    "📚 **二、《楚辞集注》（宋·朱熹撰）**\n"
+                    "• **卷次篇目**：卷首《离骚序》与《九歌》\n"
+                    "• **具体文句**：“屈原之志，托芳草以寄忠贞，托幽兰以表洁白。理在天地之中，情发于中而形于言，虽极悱恻，而忠君爱国之至性不可泯也。”\n"
+                    "• **逸夫图书馆馆藏**：二楼古典文学特藏阅览区【I222.3/8】（六楼闽北文库备藏）\n\n"
+                    "文献考订充足，且请仁兄点击下方【📜 推进至步骤二：特藏文献精研与文句考证】继续研核！"
+                )
+
+        # 3.8 泛论论文咨询
         if any(k in q_lower for k in ["论文", "写论文", "做论文", "毕业论文", "开题", "做研究", "选题"]):
             return (
                 f"{salutation}欲作理学学术论文，大展宏图，老夫深为嘉许！考亭理学博大精深，立论之要，首在‘先立乎其大者’。\n\n"
                 "📜 **【考亭原典明训】**：\n"
-                "> 《考亭语类》云：“大抵为学，须先有个规模，然后有所遵循。若规模未立，便漫然用功，亦不过为碎义逃难而已。”\n\n"
+                "> 老夫在《朱子语类》中示门人：“大抵为学，须先有个规模，然后有所遵循。若规模未立，便漫然用功，亦不过为碎义逃难而已。”\n\n"
                 "💡 **【现代研学选题与立论门径】**：\n"
                 "结合本校闽北文库与朱子特藏资源，老夫建议仁兄可从以下四个学术前沿方向切入立论：\n"
-                "一、四书章句系统与理学工夫之建构：考订《大学章句》格物补传与《中庸章句》之逻辑闭环；\n"
-                "二、武夷精舍与九曲棹歌山水理趣考：探析老夫在隐屏峰下讲学期间‘即物穷理’与自然审美的哲学融通；\n"
-                "三、五夫社仓救荒恤民制度与宋代社会经世实践：考察理学家‘义利双行’之经世致用与制度创新；\n"
-                "四、鹅湖之会朱陆异同与知行学脉辨析：对比‘尊德性’与‘道问学’之工夫次第与现代启示。\n\n"
-                "🎯 **【文献依据与进阶指引】**：\n"
-                "仁兄可先至武夷学院逸夫图书馆六楼特藏专区调阅《四书章句集注》索书号 B244.7/X82 与《建宁府崇安县五夫社仓记》索书号 K825.4/X82，再辅以 CText 原典互校。\n\n"
-                "老夫且设问以验贤生：仁兄当下志趣，是更倾向于理学纯哲学范畴之思辨，还是侧重于制度实务与经世致用之考察？"
+                "一、**论题一**：朱子‘理在气先’与本体宇宙论深析；\n"
+                "二、**论题二**：从‘即物穷理’看朱子认识论与现代科学精神之异同；\n"
+                "三、**论题三**：‘心统性情’视野下朱子工夫论与当代身心安顿；\n"
+                "四、**论题四**：武夷精舍与考亭书院理学教育体系考论。\n\n"
+                "仁兄可点击上方论题按钮或直接告知老夫拟选题，老夫当从步骤一破题全面指引！"
+            )
+
+        # =========================================================================
+        # 3.5 朱子人生经历六大历史阶段专修
+        # =========================================================================
+        if any(k in q_lower for k in ["幼承庭训", "从师游学"]):
+            return (
+                f"老夫追忆当年【幼承庭训与从师游学】之岁月，往事历历如在目前。\n\n"
+                "建炎四年九月，老夫生于南剑州尤溪县郑氏草堂。先父韦斋公朱松，进士及第，官任吏部员外郎，刚直廉洁。老夫四岁时，先父指天示曰：‘此天也。’老夫即问：‘天上有何物？天外是何物？’先父大异之。\n\n"
+                "十四岁时先父弃养，遗命老夫母子寄寓崇安五夫里，托付给抗金忠义之士刘子羽先生。子羽先生视老夫如己出，建紫阳楼以居。老夫师从屏山先生刘子翚、籍溪先生胡宪、白水先生刘勉之，三先生道德纯备。老夫日夜攻读于五夫，十九岁登绍兴十八年进士第！\n\n"
+                "📜 **【原典文献出处】**：《建安先贤传》与《晦庵先生朱文公文集》卷七十七《屏山先生刘公墓表》· 武夷学院逸夫图书馆特藏专区【K825.4/X82】\n\n"
+                "贤生对此段早年求索之岁月，可有何疑问或欲深入研讨之处？老夫当知无不言！"
+            )
+        elif any(k in q_lower for k in ["延平师事", "弃佛归儒"]):
+            return (
+                f"论及老夫青年时代【延平师事与弃佛归儒】，实乃老夫一生学术与性命之根本转折！\n\n"
+                "老夫登第后任同安县主簿。早岁求道切迫，曾一度泛滥释老，沉溺于禅宗妙悟，自以为得之矣。绍兴二十三年，老夫闻南平延平府李侗先生（延平先生）乃二程先生之三传再传正统，遂步行数百里往返求教。\n\n"
+                "延平先生容貌庄重，默坐澄心。先生见老夫言词浮动、喜言高妙，当头棒喝云：‘学者须是日用居敬，于喜怒哀乐未发之前体认气象，释氏以空无为空，圣人以真实为实！’老夫如梦初醒，痛哭流涕，尽焚早年佛禅文字，决然弃佛归儒，返求孔孟六经道统！\n\n"
+                "📜 **【原典文献出处】**：《延平答问》与《朱子语类》卷一百四 · 武夷学院逸夫图书馆三楼哲学书库【B244.7/26】\n\n"
+                "贤生对老夫当年弃禅归儒之心路历程，可有疑问或欲研讨之处？"
+            )
+        elif any(k in q_lower for k in ["结庐武夷", "撰集四书", "精舍"]):
+            return (
+                f"老夫平生最适志之岁月，莫过于在【武夷山结庐讲学与撰集四书】之春秋！\n\n"
+                "老夫居五夫紫阳楼四十余载，手创五夫社仓以惠济饥民。淳熙五年后，老夫厌倦朝廷风波，定居武夷山九曲溪畔，在幔亭、隐屏二峰之下手建‘武夷精舍’。精舍背依绝壁，面临清流，老夫在此率门生躬耕砚田、讲诵群经。\n\n"
+                "在此期间，老夫耗费毕生四十载光阴，字斟句酌，完成《四书章句集注》之定稿。白昼披览，夜以继日，凡一字未安，寝食难宁。老夫常携诸生泛舟九曲，赋《九曲棹歌》十首，于烟霞山水之间默察天理生意！\n\n"
+                "📜 **【原典文献出处】**：《四书章句集注》与《武夷九曲棹歌》· 武夷学院逸夫图书馆特藏专区【B244.7/12】与【I207.227.442/Z43】\n\n"
+                "贤生对此段武夷结庐岁月，心中可有何疑义欲与老夫切磋？"
+            )
+        elif any(k in q_lower for k in ["鹅湖之会", "朱陆论辩", "朱陆"]):
+            return (
+                f"淳熙二年之【鹅湖之会】，乃南宋思想史上最为波澜壮阔之学术盛事！\n\n"
+                "东莱吕祖谦先生见老夫与金溪陆九龄、陆九渊（象山）兄弟学风各异，恐儒门分裂，特促成信州铅山鹅湖寺之会。鹅湖寺中，象山主张‘宇宙便是吾心，吾心即是宇宙’，倡‘发明本心、尊德性’为先；老夫则以为性即理也，理在万物之中，倡‘格物致知、道问学’由浅入深。\n\n"
+                "两派辨论三日，辞锋凛冽。老夫虽未能尽同陆氏之见，然深敬其光明笃实、意气豪迈。后来老夫主掌白鹿洞书院，特延请象山登堂主讲‘君子喻于义，小人喻于利’，听者莫不感泣落泪。儒门同道，虽工夫门户有异，而正人心、明道德之宏愿无分畛域！\n\n"
+                "📜 **【原典文献出处】**：《朱子语类》卷五十四与《宋元学案·象山学案》· 武夷学院逸夫图书馆特藏室【B244.75/L43:1】\n\n"
+                "贤生体察当年鹅湖论道，对于‘尊德性’与‘道问学’之工夫次第，心中有何高见？"
+            )
+        elif any(k in q_lower for k in ["知南康军", "复兴白鹿洞", "白鹿洞"]):
+            return (
+                f"淳熙六年老夫出任知南康军，【复兴白鹿洞书院】乃老夫地方经世施教之生平快事！\n\n"
+                "老夫至南康，值大旱饥馑，先发仓赈济，惩办贪墨。案牍少暇，老夫策杖登庐山五老峰下，寻访后唐李渤隐居读书之白鹿洞。彼时书院兵燹之后，断壁残垣，荆棘丛生。老夫慨然以兴学为己任，自出俸禄，召工聚徒，重修精舍。\n\n"
+                "老夫奏请朝廷赐御书敕额《白鹿洞书院》，并亲手手订《白鹿洞书院揭示》，立‘五教之目、为学之序、修身之要、处事之要、接物之要’。老夫严诫学者：读书非为求官干禄，而在明人伦天理。此规遂成天下万世书院之宪章！\n\n"
+                "📜 **【原典文献出处】**：《白鹿洞书院揭示》· 武夷学院逸夫图书馆六楼特藏专柜【G649.29/1】\n\n"
+                "贤生对老夫当年复兴书院、立范垂训之经纬，可有何思索？"
+            )
+        elif any(k in q_lower for k in ["晚年考亭", "庆元党禁", "伪学"]):
+            return (
+                f"提及【晚年考亭与庆元党禁】，此乃老夫生命中风骨最凛烈、道义最坚韧之一章！\n\n"
+                "绍熙三年老夫定居建阳考亭，建沧洲精舍，天下学者不远数千里负笈从游。然而庆元二年，权臣韩侂胄擅政，为扼杀正义公论，大兴‘庆元党禁’，斥理学为‘伪学’，列所谓伪党名录五十九人，老夫首当其冲！官职被削，祠禄被夺，门人四散，更有狂徒奏请斩老夫以谢天下。\n\n"
+                "危难当前，门人忧惧，老夫神色泰然，笑谓门生曰：‘道在天地，岂一纸文告所能夺哉？任他风狂浪急，老夫惟敬而已！’老夫在考亭草堂日日升堂讲学，研订文字。庆元六年三月，老夫病笃，犹执笔手订《大学章句·诚意章》毕，泊然而逝，春秋七十有一！\n\n"
+                "📜 **【原典文献出处】**：《朱子语类》卷一百七《考亭门人遗录》与《宋史·朱熹传》· 武夷学院逸夫图书馆六楼特藏专柜【B244.7/1】\n\n"
+                "贤生对老夫晚年临大节而不可夺之风骨，心中可有何感慨或疑问？"
+            )
+        elif any(k in q_lower for k in ["存养", "涵养", "当时内心如何", "如何面对挫折"]):
+            return (
+                f"{salutation}问及面对挫折非议时内心如何居敬存养，此问正中宋学切己工夫之骨髓！\n\n"
+                "📜 **【考亭原典明训】**：\n"
+                "> 老夫在《近思录》中尝引伊川先生之训：“君子当困穷之时，自乐其天，不以得丧自变。主敬立极，此心湛然如止水，何忧何惧？”\n\n"
+                "💡 **【现代白话精析】**：\n"
+                "当年老夫落职受辱，甚至身背‘伪学魁首’之毁谤，若论凡常人心，安得不怨天尤人？但老夫平日教诸生‘敬’之一字，正是在困顿摧折之处用得上力！所谓‘敬’，不是闭门作枯木，而是心中时时刻刻有一尊不可摇撼的天理大主宰。身名荣辱乃气运之无常，道体公义乃天地之不易。外境愈狂，内心愈当如万丈古潭，一丝不乱。\n\n"
+                "老夫且问贤生：仁兄平日在求学谋生之中，若遇旁人之误解与挫败，能否以此‘主敬存诚’之工夫稳住心神？"
             )
 
         # =========================================================================
@@ -1076,7 +1441,7 @@ class ZhuXiAgent:
             return (
                 f"善哉！仁兄能有此向道精进之心，老夫正欲与仁兄击节共赏！\n\n"
                 "📜 **【考亭原典明训】**：\n"
-                "> 《考亭语类》云：“学问之道无他，宽着期限，紧着日程。人一能之己百之，人十能之己千之。”\n\n"
+                "> 《朱子语类》云：“学问之道无他，宽着期限，紧着日程。人一能之己百之，人十能之己千之。”\n\n"
                 "💡 **【现代白话精析】**：\n"
                 "凡求圣贤之学，最重‘勇往直前、切己体察’。既然仁兄决意着力，便不可泛泛听过，须将理学工夫真正融铸于自家身心实践之中。\n\n"
                 "老夫且问贤生：仁兄既愿着手，咱们不妨先从手头一部经典或是日常一件实事切近研磨，仁兄意下如何？"
@@ -1125,7 +1490,7 @@ class ZhuXiAgent:
                 return (
                     f"{salutation}且请宽坐，莫要苛责自己！古人读书求学，亦非一味硬撑死挨。\n\n"
                     "📜 **【考亭原典明训】**：\n"
-                    "> 老夫在《考亭语类》中尝诫门人：“体倦则心怠，心怠则理不入。半日静坐，半日读书。读书不可贪多，宽着期限，紧着日程。”\n\n"
+                    "> 老夫在《朱子语类》中尝诫门人：“体倦则心怠，心怠则理不入。半日静坐，半日读书。读书不可贪多，宽着期限，紧着日程。”\n\n"
                     "💡 **【现代白话精析】**：\n"
                     "人的身体若已经疲累至极，心神自然懈怠涣散，此时强行捧书硬看，经书字句如同水浇鸭背，根本入不了心。老夫平生极重半日静坐、半日读书。所谓静坐，不是去参枯木死灰之禅，而是端正身躯、双目微闭、收敛心神，让纷扰的杂念沉淀下去。精神养足了，再拿出一小段文章从容细嚼，反而事半功倍！\n\n"
                     "🎯 **【切己体察功夫】**：\n"
@@ -1135,7 +1500,7 @@ class ZhuXiAgent:
                 return (
                     f"{salutation}且放宽心怀！人之心神正如琴弦，过张则易折，过弛则不鸣。\n\n"
                     "📜 **【考亭原典明训】**：\n"
-                    "> 老夫在《考亭语类》中示门生：“为学须从容优游，不可急迫。心急则气浮，气浮则理不入。”\n\n"
+                    "> 老夫在《朱子语类》中示门生：“为学须从容优游，不可急迫。心急则气浮，气浮则理不入。”\n\n"
                     "💡 **【现代白话精析】**：\n"
                     "今日感到疲惫倦怠，正是心力消耗所致，切莫强自责备而添懊恼。求学如细雨润物，而非暴风骤雨。暂将案头书籍掩起，静立窗前深吸清气，待浮躁心火退去，神清气爽之际，自能再续进境！\n\n"
                     "🎯 **【切己体察功夫】**：\n"
@@ -1253,7 +1618,7 @@ class ZhuXiAgent:
             return (
                 f"{salutation}问及读书法第一条**【循序渐进】**，此乃专治浮躁贪快之第一良药！\n\n"
                 "📜 **【考亭原典明训】**：\n"
-                "> 老夫在《考亭语类》中谆谆戒曰：“以二书并观，则历落相瞒；以一书兼旬，则融液精明。小立课程，微加积叠。字求其训，句索其旨。未得乎前，不敢求乎后；未通乎上，不敢求乎下。”\n\n"
+                "> 老夫在《朱子语类》中谆谆戒曰：“以二书并观，则历落相瞒；以一书兼旬，则融液精明。小立课程，微加积叠。字求其训，句索其旨。未得乎前，不敢求乎后；未通乎上，不敢求乎下。”\n\n"
                 "💡 **【现代白话精析】**：\n"
                 "今天的人读书，常常心猿意马，同时翻好几本书，结果翻哪本都只是浮光掠影，连字面都没看懂便想跳过去。老夫讲的‘小立课程’，就是每天定下实实在在的小篇幅——今天啃透这一小段，明明白白搞清每一个字的古训与全句旨趣，明天再前进一步。\n\n"
                 "🎯 **【切己体察功夫】**：\n"
@@ -1332,7 +1697,7 @@ class ZhuXiAgent:
             return (
                 f"{salutation}问及老夫本体最高奥妙**‘理一分殊’**，此乃万古天地之玄机！\n\n"
                 "📜 **【考亭原典明训】**：\n"
-                "> 老夫在《考亭语类》中设千古绝喻：“理一分殊，本只是一太极，而万物各有其太极。如月在天，只一而已；及散在江湖，则随处而见，不可谓月已分也。”\n\n"
+                "> 老夫在《朱子语类》中设千古绝喻：“理一分殊，本只是一太极，而万物各有其太极。如月在天，只一而已；及散在江湖，则随处而见，不可谓月已分也。”\n\n"
                 "💡 **【现代白话精析】**：\n"
                 "理一分殊，就是天地之间大理本是至纯至善的一体理一，但流布在万事万物中，又各自形成合乎自身身份的分寸与秩序分殊。正像夜空里唯有一轮真月，但照在长江有一月，照在小溪有一月，甚至照在一盆水中也有一月。天上的明月何曾被切成千万块？各处之月皆具完满月光！在君臣则为敬义，在父子则为慈孝，草木鸟兽亦各得其生理。\n\n"
                 "🎯 **【切己体察功夫】**：\n"
@@ -1356,7 +1721,7 @@ class ZhuXiAgent:
             return (
                 f"{salutation}论及**‘存天理，灭人欲’**，此语被千百年来曲解极深，老夫正当为诸生昭雪辨明！\n\n"
                 "📜 **【考亭原典明训】**：\n"
-                "> 老夫在《考亭语类》中谆谆辨释曰：“饮食，天理也；要求山珍海味贪索无度，人欲也。衣以御寒，天理也；奢靡纨绔文绣，人欲也。革尽人欲，复还天理之全。”\n\n"
+                "> 老夫在《朱子语类》中谆谆辨释曰：“饮食，天理也；要求山珍海味贪索无度，人欲也。衣以御寒，天理也；奢靡纨绔文绣，人欲也。革尽人欲，复还天理之全。”\n\n"
                 "💡 **【现代白话精析】**：\n"
                 "世人常毁谤老夫，说老夫教人不食不寝、灭绝人性，此乃千古大诬！人饿了要吃饭，冷了要加衣，这是天经地义、自然健康的‘天理’。老夫所言要灭除的‘人欲’，是违背礼法、放纵自私、损人利己的过度贪妄之念！\n\n"
                 "🎯 **【切己体察功夫】**：\n"
@@ -1451,7 +1816,7 @@ class ZhuXiAgent:
             return (
                 f"善哉！{salutation}能踏实读完眼前这一节功课，老夫深为嘉许！\n\n"
                 "📜 **【考亭原典明训】**：\n"
-                "> 老夫在《考亭语类》中谆谆教诲门生：\n"
+                "> 老夫在《朱子语类》中谆谆教诲门生：\n"
                 "> **“小立课程，微加积叠。读书百遍，其义自见。须读得烂熟，使其言尽若出于吾之口；继以精思，使其意尽若出于吾之心。未得乎前，不敢求乎后。”**\n\n"
                 "💡 **【现代白话精析】**：\n"
                 "读书最忌急于翻卷贪多。读完一节，切莫如走马看花般立刻奔向下一节。老夫教人的秘诀在于‘掩卷精思’——此时不妨将书合上，闭目反刍：这一节古圣贤究竟确立了何等义理？其脉络首尾如何连接？若换作自己行事，当如何依此奉行？\n\n"
@@ -1468,7 +1833,7 @@ class ZhuXiAgent:
             return (
                 f"{salutation}且请宽心！初学之人，心如奔马，略有浮躁与杂念乃人之常情，切莫强自懊恼。\n\n"
                 "📜 **【考亭原典明训】**：\n"
-                "> 老夫在《考亭读书法》中立主宰之则：\n"
+                "> 老夫在《朱子读书法》中立主宰之则：\n"
                 "> **“居敬持志，主一无适。整齐严肃，敬以直内。体倦则心怠，半日静坐，半日读书。”**\n\n"
                 "💡 **【现代白话精析】**：\n"
                 "人心如一池清池，心神浮躁就像微风吹乱了水面。此时若强行去‘捉’杂念、强逼自己不准想，反而心火愈炽。老夫开给诸生的良方是‘居敬’：先端正身姿脊梁，理好衣冠，将书案收拾得一尘不染；随后双目微闭，调匀呼吸，让散乱之气缓缓归聚胸中。\n\n"
@@ -1507,8 +1872,13 @@ class ZhuXiAgent:
         if retrieved_chunks:
             chunk_idx = abs(hash(query)) % len(retrieved_chunks)
             selected_chunk = retrieved_chunks[chunk_idx]
-            c_src = selected_chunk['source'].replace('.txt', '').replace('.md', '').replace('《', '').replace('》', '')
-            best_source = f"《{c_src}》"
+            raw_src = selected_chunk.get('source', '')
+            matched_b, _ = match_book_record(raw_src, query)
+            if matched_b and matched_b.get("stdTitle"):
+                best_source = matched_b.get("stdTitle")
+            else:
+                c_src = raw_src.replace('.txt', '').replace('.md', '').replace('《', '').replace('》', '').split('_')[0]
+                best_source = f"《{c_src}》"
             clean_c = selected_chunk['content'].replace('\n', ' ').strip()
             sentences = [s.strip() for s in re.split(r'[。！？]', clean_c) if len(s.strip()) > 8]
             rag_quote_block = sentences[0] if sentences else clean_c[:70]
@@ -1567,8 +1937,14 @@ class ZhuXiAgent:
                 "user_name": sess.get("user_name")
             }
 
-        # 优先级 1：智谱 GLM 免费大模型
-        if self.api_key:
+        # 结构化任务流（如论文专修六步法、特定考证指令）优先调用内生专家引擎，确保步骤环环相扣且绝不重复
+        is_taskflow_structured = any(k in query for k in [
+            "【论文专修", "步骤一", "步骤二", "步骤三", "步骤四", "步骤五", "步骤六",
+            "换一批特藏", "换一批典籍", "换一批文献"
+        ])
+
+        # 优先级 1：智谱 GLM 免费大模型（自由问答时）
+        if not is_taskflow_structured and self.api_key:
             try:
                 res = self._call_glm(query, history, session_id, retrieved_chunks)
                 if res and res.get("reply"):
@@ -1580,8 +1956,9 @@ class ZhuXiAgent:
         reply_text = self._generate_intelligent_response(query, session_id, retrieved_chunks)
         reply_text = sanitize_zhuxi_first_person(reply_text)
         reply_text = ensure_socratic_question(reply_text, query)
-        if not any(k in reply_text for k in ["典籍原典出处", "考亭典籍出处", "典籍出处"]):
-            reply_text += format_citation(query, retrieved_chunks)
+        reply_text = inject_inline_citations(reply_text)
+        if not any(k in reply_text for k in ["【参考资料】", "参考资料", "典籍原典出处", "考亭典籍出处", "典籍出处"]):
+            reply_text += generate_library_provenance_block(query, retrieved_chunks)
         reply_text = strip_parentheses(reply_text)
         session_manager.update_with_reply(session_id, reply_text)
 
@@ -1624,8 +2001,14 @@ class ZhuXiAgent:
             yield f"data: {json.dumps({'type': 'done'}, ensure_ascii=False)}\n\n"
             return
 
-        # 优先使用智谱 GLM 免费大模型以纯流式秒级吐字
-        if self.api_key:
+        # 结构化任务流（如论文专修六步法、特定考证指令）优先调用内生专家引擎，确保步骤环环相扣且绝不重复
+        is_taskflow_structured = any(k in query for k in [
+            "【论文专修", "步骤一", "步骤二", "步骤三", "步骤四", "步骤五", "步骤六",
+            "换一批特藏", "换一批典籍", "换一批文献"
+        ])
+
+        # 优先使用智谱 GLM 免费大模型以纯流式秒级吐字（自由问答时）
+        if not is_taskflow_structured and self.api_key:
             try:
                 for chunk in self._call_glm_stream(query, history, session_id, retrieved_chunks):
                     yield chunk
@@ -1637,8 +2020,9 @@ class ZhuXiAgent:
         reply_text = self._generate_intelligent_response(query, session_id, retrieved_chunks)
         reply_text = sanitize_zhuxi_first_person(reply_text)
         reply_text = ensure_socratic_question(reply_text, query)
-        if not any(k in reply_text for k in ["典籍原典出处", "考亭典籍出处", "典籍出处"]):
-            reply_text += format_citation(query, retrieved_chunks)
+        reply_text = inject_inline_citations(reply_text)
+        if not any(k in reply_text for k in ["【参考资料】", "参考资料", "典籍原典出处", "考亭典籍出处", "典籍出处"]):
+            reply_text += generate_library_provenance_block(query, retrieved_chunks)
         reply_text = strip_parentheses(reply_text)
         session_manager.update_with_reply(session_id, reply_text)
 

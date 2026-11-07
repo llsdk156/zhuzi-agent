@@ -1,0 +1,279 @@
+[
+  {
+    "reservationId": "WYU-OPAC-20260929-3223",
+    "createdAt": "2026-09-29 01:12:55",
+    "readerName": "林磊",
+    "readerId": "202514812688",
+    "phone": "18259133970",
+    "pickupDate": "2026-09-29",
+    "pickupLocation": "逸夫图书馆 六楼 · 特藏阅览室",
+    "books": [
+      {
+        "id": "sishu",
+        "title": "《四书章句集注》",
+        "callNumber": "B222.12/Z90:10",
+        "location": "总馆 - 流通书库",
+        "status": "可借",
+        "bibId": "mc7034ec9f084a8217d312a7fbb9d0960"
+      }
+    ],
+    "status": "已取消预约",
+    "notes": "",
+    "cancelledAt": "2026-09-29 01:28:18"
+  },
+  {
+    "reservationId": "WYU-OPAC-20260929-1476",
+    "createdAt": "2026-09-29 00:43:07",
+    "readerName": "林磊",
+    "readerId": "202514812688",
+    "phone": "18259133970",
+    "pickupDate": "2026-09-29",
+    "pickupLocation": "逸夫图书馆 六楼 · 特藏阅览室",
+    "books": [
+      {
+        "id": "sishu",
+        "title": "《四书章句集注》",
+        "callNumber": "B222.12/Z90:10",
+        "location": "总馆 - 流通书库",
+        "status": "可借",
+        "bibId": "mc7034ec9f084a8217d312a7fbb9d0960"
+      }
+    ],
+    "status": "已取消预约",
+    "notes": "",
+    "cancelledAt": "2026-09-29 00:43:15"
+  },
+  {
+    "reservationId": "WYU-OPAC-20260929-4272",
+    "createdAt": "2026-09-29 00:41:34",
+    "readerName": "林磊",
+    "readerId": "20251481260",
+    "phone": "18259133970",
+    "pickupDate": "2026-09-29",
+    "pickupLocation": "逸夫图书馆 六楼 · 特藏阅览室",
+    "books": [
+      {
+        "id": "sishu",
+        "title": "《四书章句集注》",
+        "callNumber": "B222.12/Z90:10",
+        "location": "总馆 - 流通书库",
+        "status": "可借",
+        "bibId": "mc7034ec9f084a8217d312a7fbb9d0960"
+      }
+    ],
+    "status": "已取消预约",
+    "notes": "",
+    "cancelledAt": "2026-09-29 00:43:19"
+  },
+  {
+    "reservationId": "WYU-OPAC-20260929-6850",
+    "createdAt": "2026-09-29 00:37:29",
+    "readerName": "林磊",
+    "readerId": "20251481260",
+    "phone": "18259133970",
+    "pickupDate": "2026-10-08",
+    "pickupLocation": "逸夫图书馆 六楼 · 特藏阅览室",
+    "books": [
+      {
+        "id": "sishu",
+        "title": "《四书章句集注》",
+        "callNumber": "B222.12/Z90:10",
+        "location": "总馆 - 流通书库",
+        "status": "可借",
+        "bibId": "mc7034ec9f084a8217d312a7fbb9d0960"
+      }
+    ],
+    "status": "已取消预约",
+    "notes": "",
+    "cancelledAt": "2026-09-29 00:41:22"
+  },
+  {
+    "reservationId": "WYU-OPAC-20260929-7294",
+    "createdAt": "2026-09-29 00:36:39",
+    "readerName": "林磊",
+    "readerId": "20251481260",
+    "phone": "18259133970",
+    "pickupDate": "2026-10-08",
+    "pickupLocation": "逸夫图书馆 六楼 · 特藏阅览室",
+    "books": [
+      {
+        "id": "daxue",
+        "title": "《大学章句》",
+        "callNumber": "B222.12/Z90：1",
+        "location": "总馆 - 流通书库",
+        "status": "可借",
+        "bibId": "m1ac8664b61c03d8a5c8a35571d676d66"
+      }
+    ],
+    "status": "已取消预约",
+    "notes": "",
+    "cancelledAt": "2026-09-29 00:37:15"
+  },
+  {
+    "reservationId": "WYU-OPAC-20260929-9344",
+    "createdAt": "2026-09-29 00:34:02",
+    "readerName": "考亭问学社 李同学",
+    "readerId": "2024090123",
+    "phone": "13859300000",
+    "pickupDate": "2026-09-29",
+    "pickupLocation": "逸夫图书馆 六楼 · 特藏阅览室",
+    "books": [
+      {
+        "id": "daxue",
+        "title": "《大学章句》",
+        "callNumber": "B222.12/Z90：1",
+        "location": "总馆 - 流通书库",
+        "status": "可借",
+        "bibId": "m1ac8664b61c03d8a5c8a35571d676d66"
+      }
+    ],
+    "status": "已取消预约",
+    "notes": "毕业论文宋明理学原典调研",
+    "cancelledAt": "2026-09-29 00:34:05"
+  },
+  {
+    "reservationId": "WYU-OPAC-20260929-1599",
+    "createdAt": "2026-09-29 00:31:54",
+    "readerName": "考亭问学社 李同学",
+    "readerId": "2024090123",
+    "phone": "13859300000",
+    "pickupDate": "2026-09-29",
+    "pickupLocation": "逸夫图书馆 六楼 · 特藏阅览室",
+    "books": [
+      {
+        "id": "daxue",
+        "title": "《大学章句》",
+        "callNumber": "B222.12/Z90：1",
+        "location": "总馆 - 流通书库",
+        "status": "可借",
+        "bibId": "m1ac8664b61c03d8a5c8a35571d676d66"
+      }
+    ],
+    "status": "已取消预约",
+    "notes": "毕业论文宋明理学原典调研",
+    "cancelledAt": "2026-09-29 00:31:57"
+  },
+  {
+    "reservationId": "WYU-OPAC-20260929-7746",
+    "createdAt": "2026-09-29 00:28:34",
+    "readerName": "测试学子",
+    "readerId": "202409001",
+    "phone": "13800000000",
+    "pickupDate": "2026-09-30",
+    "pickupLocation": "逸夫图书馆六楼特藏专区",
+    "books": [
+      {
+        "id": "daxue",
+        "title": "《大学章句》",
+        "callNumber": "B222.12/Z90：1",
+        "location": "逸夫图书馆六楼特藏专区"
+      }
+    ],
+    "status": "已取消预约",
+    "notes": "自动测试",
+    "cancelledAt": "2026-09-29 00:28:34"
+  },
+  {
+    "reservationId": "WYU-OPAC-20260929-9457",
+    "createdAt": "2026-09-29 00:02:47",
+    "readerName": "朱门学子",
+    "readerId": "2024090188",
+    "phone": "13812345678",
+    "pickupDate": "2026-09-29",
+    "pickupLocation": "逸夫图书馆 六楼 · 特藏阅览室",
+    "books": [
+      {
+        "id": "daxue",
+        "title": "《大学章句》",
+        "callNumber": "B222.12/Z90：1",
+        "location": "总馆 - 流通书库",
+        "status": "可借",
+        "bibId": "m1ac8664b61c03d8a5c8a35571d676d66"
+      }
+    ],
+    "status": "已取消预约",
+    "notes": "",
+    "cancelledAt": "2026-09-29 01:28:26"
+  },
+  {
+    "reservationId": "WYU-OPAC-20260928-5889",
+    "createdAt": "2026-09-28 23:54:23",
+    "readerName": "朱门学子",
+    "readerId": "2024090188",
+    "phone": "13812345678",
+    "pickupDate": "2026-09-29",
+    "pickupLocation": "逸夫图书馆 六楼 · 特藏阅览室",
+    "books": [
+      {
+        "id": "daxue",
+        "title": "《大学章句》",
+        "callNumber": "B222.12/Z90：1",
+        "location": "总馆 - 流通书库",
+        "status": "可借",
+        "bibId": "m1ac8664b61c03d8a5c8a35571d676d66"
+      }
+    ],
+    "status": "预约成功·待到馆取书",
+    "notes": ""
+  },
+  {
+    "reservationId": "WYU-OPAC-20260928-2248",
+    "createdAt": "2026-09-28 23:47:44",
+    "readerName": "朱门学子",
+    "readerId": "2024090188",
+    "phone": "13812345678",
+    "pickupDate": "2026-09-29",
+    "pickupLocation": "逸夫图书馆 六楼 · 特藏阅览室",
+    "books": [
+      {
+        "id": "daxue",
+        "title": "《大学章句》",
+        "callNumber": "B222.12/Z90：1",
+        "location": "总馆 - 流通书库",
+        "status": "可借",
+        "bibId": "m1ac8664b61c03d8a5c8a35571d676d66"
+      }
+    ],
+    "status": "预约成功·待到馆取书",
+    "notes": ""
+  },
+  {
+    "reservationId": "WYU-OPAC-20260928-7005",
+    "createdAt": "2026-09-28 23:43:50",
+    "readerName": "测试学者",
+    "readerId": "2024090199",
+    "phone": "13800000000",
+    "pickupDate": "2026-09-29",
+    "pickupLocation": "逸夫图书馆 六楼 · 特藏阅览室",
+    "books": [
+      {
+        "id": "daxue",
+        "title": "《大学章句》",
+        "callNumber": "B222.12/Z90：1",
+        "location": "总馆 - 流通书库",
+        "status": "可借",
+        "bibId": "m1ac8664b61c03d8a5c8a35571d676d66"
+      }
+    ],
+    "status": "已取消预约",
+    "notes": "自动化测试预约",
+    "cancelledAt": "2026-09-29 01:28:23"
+  },
+  {
+    "reservationId": "WYU-OPAC-20260928-6589",
+    "createdAt": "2026-09-28 23:27:14",
+    "readerName": "测试学者",
+    "readerId": "202609001",
+    "phone": "13800000000",
+    "pickupDate": "2026-09-29",
+    "pickupLocation": "逸夫图书馆六楼特藏专区服务台",
+    "books": [
+      {
+        "title": "大学章句",
+        "callNumber": "B222.12/Z90:1"
+      }
+    ],
+    "status": "预约成功·待到馆取书",
+    "notes": "请携带校园卡或有效凭证至所选服务台核验领书。"
+  }
+]

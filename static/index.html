@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>云起武夷·活水传理 -- 考亭理学研习</title>
-    <link rel="stylesheet" href="/static/style.css?v=8.0.0">
+    <title>武夷学院逸夫图书馆 · 宋明理学特藏文献智能研习馆</title>
+    <link rel="stylesheet" href="/static/style.css?v=20260929_1130">
 </head>
 <body class="app-body">
     <div class="window-frame">
@@ -97,22 +97,29 @@
 
                 <div class="nav-divider"></div>
 
-                <div class="nav-item" onclick="openHistoryModal()">
+                <!-- 1. 书院雅乐 BGM 快速开关（循环重复播放） -->
+                <div class="nav-item" id="nav-bgm-toggle" onclick="toggleAcademyBGM()" title="点击播放/暂停书院雅乐BGM（循环重复播放）">
+                    <span class="nav-icon" id="bgm-nav-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 18V5l12-2v13"></path>
+                            <circle cx="6" cy="18" r="3"></circle>
+                            <circle cx="18" cy="16" r="3"></circle>
+                        </svg>
+                    </span>
+                    <span class="nav-title">书院雅乐</span>
+                    <span class="nav-badge" id="nav-bgm-badge" style="background:#e2e8f0; color:#475569; font-size:11px; padding:1px 6px; border-radius:10px;">静音</span>
+                </div>
+
+                <!-- 2. 雅乐琴台 (选曲与控制弹窗) -->
+                <div class="nav-item" onclick="openBgmModal()" title="打开雅乐琴台，更换宋韵古琴曲目与调节音量">
                     <span class="nav-icon">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="10"></circle>
-                            <polyline points="12 6 12 12 16 14"></polyline>
+                            <polygon points="10 8 16 12 10 16 10 8" fill="currentColor"></polygon>
                         </svg>
                     </span>
-                    <span class="nav-title">论道历史</span>
-                </div>
-                <div class="nav-item" onclick="openFavoriteModal()">
-                    <span class="nav-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-                        </svg>
-                    </span>
-                    <span class="nav-title">精选语录</span>
+                    <span class="nav-title">雅乐琴台</span>
+                    <span class="nav-badge" style="background:#fef3c7; color:#92400e; font-size:11px; padding:1px 6px; border-radius:10px;">选曲</span>
                 </div>
                 <div class="nav-item" onclick="openSettingsModal()">
                     <span class="nav-icon">
@@ -138,7 +145,12 @@
             <!-- 顶部控制条 -->
             <header class="window-topbar">
                 <div class="topbar-status-tip">
-                    <span class="dot-online"></span> 武夷精舍 · 考亭理学认知引擎
+                    <img src="/static/wuyi_logo.jpg" class="topbar-school-logo" alt="武夷学院">
+                    <span class="topbar-school-title">武夷学院逸夫图书馆</span>
+                    <span class="topbar-divider">·</span>
+                    <span class="dot-online"></span>
+                    <span class="topbar-engine-name">宋明理学特藏与文献智能研习馆</span>
+                    <span class="topbar-loc-tag">六楼特藏室直连</span>
                 </div>
                 <div class="window-controls">
                     <button class="topbar-action-pill" onclick="openWisdomModal()" title="考亭晨策 · 每日求取先生修身箴规">
@@ -163,21 +175,48 @@
                      【视图 1】首页总览研习台 · 1:1 配色复刻 + 雅致升华
                      ============================================== -->
                 <section class="page-view active" id="view-home">
+                    <!-- 动态水墨竹林画卷背景层与微风落叶画布 -->
+                    <div class="home-bamboo-bg-layer" id="home-bamboo-bg" aria-hidden="true"></div>
+                    <canvas id="home-bamboo-leaves-canvas" class="home-leaves-canvas" aria-hidden="true"></canvas>
+
                     <div class="home-scroll-body">
-                    <!-- 1. 顶部大横幅 Banner  · 高精度水墨山水画卷 + 亭台楼阁 + 题辞印章 -->
+                    <!-- 1. 顶部大横幅 Banner  · 武夷学院逸夫图书馆宋明理学特藏文献中心 -->
                     <div class="hero-banner-card">
-                        <!-- 横幅左侧：考亭水墨圆章徽标与立言标题 -->
                         <div class="banner-left-content">
+                            <!-- 双徽映照：武夷学院官方校徽 + 考亭夫子墨宝画像 -->
                             <div class="portrait-badge-wrap">
-                                <div class="portrait-circle">
+                                <div class="portrait-circle wuyi-circle" title="武夷学院校徽 · 官方认证特藏平台">
+                                    <img src="/static/wuyi_logo.jpg" alt="武夷学院" class="wuyi-banner-img">
+                                </div>
+                                <div class="portrait-circle zhuxi-circle" title="考亭夫子朱熹 · 宋代理学宗师">
                                     <img src="/static/avatar_ref_hd.png" alt="考亭夫子" class="zhuxi-banner-img">
                                 </div>
                             </div>
 
                             <div class="banner-text-group">
-                                <h1 class="banner-title">云起武夷·活水传理 -- 考亭理学研习</h1>
-                                <h2 class="banner-subtitle">问道考亭 · 传承智慧</h2>
-                                <p class="banner-desc">与先生对话，汲取千年智慧，在学习、生活与成长中找到方向。</p>
+                                <div class="banner-top-institution-tag">
+                                    <span class="lib-emblem-dot"></span>
+                                    <span class="lib-emblem-name">武夷学院逸夫图书馆 · 闽北文库与朱子特藏文献中心</span>
+                                    <span class="lib-emblem-badge">六楼特藏室直连</span>
+                                    <span class="lib-emblem-badge gold">校内OPAC实时互通</span>
+                                </div>
+                                <h1 class="banner-title">云起武夷·活水传理 —— 逸夫图书馆朱子理学特藏研习馆</h1>
+                                <h2 class="banner-subtitle">问道考亭 · 传承智慧 · 活化馆藏</h2>
+                                <p class="banner-desc">依托武夷学院逸夫图书馆六楼特藏室、闽北文献专架与朱子学研究中心特藏专柜，对接学校OPAC书目检索系统，以朱熹先生第一人称古今通融传道解惑。</p>
+                                <div class="banner-features-row">
+                                    <span class="banner-feature-item" onclick="guideToModule('recommend')">
+                                        <span class="bf-icon">🏛️</span> 逸夫图书馆六楼特藏阅览室
+                                    </span>
+                                    <span class="banner-feature-item" onclick="openReservationModal()">
+                                        <span class="bf-icon">🔍</span> OPAC书目检索与预约借阅
+                                    </span>
+                                    <span class="banner-feature-item" onclick="openCorpusSearchModal()">
+                                        <span class="bf-icon">📜</span> 23部馆藏原典精准索书考据
+                                    </span>
+                                    <span class="banner-feature-item" onclick="guideToModule('recommend')">
+                                        <span class="bf-icon">📖</span> CADAL古籍数字平台特藏集成
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -191,16 +230,16 @@
                         <div class="master-welcome-speech">
                             <div class="welcome-speech-header">
                                 <span class="live-dot-pulse"></span>
-                                <span class="welcome-title">考亭先生 · 迎客引席</span>
-                                <span class="welcome-seal">武夷活水</span>
+                                <span class="welcome-title">考亭先生 · 逸夫图书馆特藏迎学引席</span>
+                                <span class="welcome-seal">逸夫特藏</span>
                             </div>
                             <p class="welcome-speech-text">
-                                “诸生后学请了！武夷活水，源远流长。今日欲往何处研理修身？点击下方任一书院讲席，老夫自当拂袖引路，带汝登堂入室！”
+                                “诸生后学请了！武夷活水，源远流长。老夫今在此武夷学院逸夫图书馆特藏室中，与诸君共聚一堂。六楼特藏之闽北文库、传世典籍皆在架待阅。今日欲往何处研理修身、查阅馆藏？老夫自当拂袖引路，带汝登堂入室！”
                             </p>
                             <div class="welcome-chips-row">
                                 <span class="welcome-hint-pill" onclick="guideToModule('qa')">💬 考亭答疑：请益疑窦</span>
                                 <span class="welcome-hint-pill" onclick="guideToModule('class')">📖 考亭讲筵：第一人称研学</span>
-                                <span class="welcome-hint-pill" onclick="guideToModule('recommend')">⭐ 沧洲藏书：真实藏书阁</span>
+                                <span class="welcome-hint-pill" onclick="guideToModule('recommend')">⭐ 沧洲藏书：逸夫3D书阁</span>
                                 <span class="welcome-hint-pill gold" onclick="openQuizModal()">📝 研学考校：随堂答卷</span>
                                 <span class="welcome-hint-pill blue" onclick="openCorpusSearchModal()">🔍 典籍考据：原文速查</span>
                                 <span class="welcome-hint-pill amber" onclick="openLetterModal()">✉️ 考亭尺牍：叩呈信函</span>
@@ -208,11 +247,11 @@
                         </div>
                     </div>
 
-                    <!-- 2. 核心功能入口卡片矩阵  · 四大书院场景 -->
+                    <!-- 3. 核心功能入口卡片矩阵  · 四大书院场景 -->
                     <div class="feature-cards-grid">
                         <!-- 卡片 1：考亭答疑  · 蓝色系 #3b82f6 -->
                         <div class="feature-card card-blue" onclick="guideToModule('qa')">
-                            <div class="card-corner-ribbon">专属书斋</div>
+                            <div class="card-corner-ribbon">特藏文库研读</div>
                             <div class="card-icon-bubble bubble-blue">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
@@ -222,7 +261,7 @@
                                 </svg>
                             </div>
                             <h3 class="card-title title-blue">考亭答疑</h3>
-                            <p class="card-desc">独立问学书斋。涵盖经义阐发、心性理气、为人涉世与治学疑窦，随时开辟新对答。</p>
+                            <p class="card-desc">依托逸夫图书馆宋明理学特藏文献。涵盖经义阐发、心性理气、为人涉世与治学疑窦，引朱子原典答疑解惑。</p>
                             <button class="card-action-btn btn-blue" onclick="event.stopPropagation(); guideToModule('qa')">
                                 <span>随先生进入答疑书斋</span> <span class="arrow-right">➔</span>
                             </button>
@@ -230,7 +269,7 @@
 
                         <!-- 卡片 2：考亭讲筵  · 琥珀金橙色系 #d97706 -->
                         <div class="feature-card card-amber" onclick="guideToModule('class')">
-                            <div class="card-corner-ribbon">第一人称研学</div>
+                            <div class="card-corner-ribbon">书院沉浸研学</div>
                             <div class="card-icon-bubble bubble-amber">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                                     <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
@@ -248,7 +287,7 @@
 
                         <!-- 卡片 3：研学考校  · 翠绿青绿系 #16a34a -->
                         <div class="feature-card card-green" onclick="openQuizModal()">
-                            <div class="card-corner-ribbon">随堂考校</div>
+                            <div class="card-corner-ribbon">武夷研学测评</div>
                             <div class="card-icon-bubble bubble-green">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -258,27 +297,188 @@
                                 </svg>
                             </div>
                             <h3 class="card-title title-green">研学考校</h3>
-                            <p class="card-desc">武夷理学研学小课堂。精选题随堂测评、先生当堂评定点拨，签发宋制结业文牒。</p>
+                            <p class="card-desc">武夷理学研学小课堂。精选题随堂测评、先生当堂评定点拨，签发武夷学院理学文牒。</p>
                             <button class="card-action-btn btn-green" onclick="event.stopPropagation(); openQuizModal()">
                                 <span>随先生进入研学考校堂</span> <span class="arrow-right">➔</span>
                             </button>
                         </div>
 
-                        <!-- 卡片 4：沧洲藏书  · 朱红砖红系 #dc2626 -->
+                        <!-- 卡片 4：沧洲藏书 · 逸夫特藏  · 朱红砖红系 #dc2626 -->
                         <div class="feature-card card-red" onclick="guideToModule('recommend')">
-                            <div class="card-corner-ribbon">真实图书馆</div>
+                            <div class="card-corner-ribbon">逸夫六楼特藏</div>
                             <div class="card-icon-bubble bubble-red">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
                                     <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
                                 </svg>
                             </div>
-                            <h3 class="card-title title-red">沧洲藏书</h3>
-                            <p class="card-desc">真实古典藏书阁空间。实木书架立体翻阅六大传世典籍，细绎提要、读书法与理学精义。</p>
+                            <h3 class="card-title title-red">沧洲藏书 · 逸夫特藏</h3>
+                            <p class="card-desc">武夷学院逸夫图书馆 3D实境藏书空间。直通校图书馆OPAC系统、索书号导引与实体书借阅，实木书架立体翻阅。</p>
                             <button class="card-action-btn btn-red" onclick="event.stopPropagation(); guideToModule('recommend')">
-                                <span>随先生进入真实藏书阁</span> <span class="arrow-right">➔</span>
+                                <span>随先生进入逸夫3D藏书阁</span> <span class="arrow-right">➔</span>
                             </button>
                         </div>
                     </div>
+
+                    <!-- ==============================================
+                         【专属特藏专区】武夷学院逸夫图书馆 · 实体馆藏与OPAC直通展台
+                         ============================================== -->
+                    <div class="home-library-showcase-panel">
+                        <div class="lib-showcase-header">
+                            <div class="lsh-left">
+                                <div class="lsh-badge-icon">
+                                    <img src="/static/wuyi_logo.jpg" alt="武夷学院校徽" class="lsh-logo-img">
+                                </div>
+                                <div class="lsh-title-group">
+                                    <h3 class="lsh-title">武夷学院逸夫图书馆 · 特藏专架与实体借阅导引</h3>
+                                    <span class="lsh-subtitle">六楼特藏阅览室 · 闽北地方文献专架 · 实时在架状态对接</span>
+                                </div>
+                            </div>
+                            <div class="lsh-right">
+                                <button class="lsh-action-btn primary" onclick="openReservationModal()">
+                                    <span class="btn-icon">🔍</span>
+                                    <span>武夷学院OPAC书目检索系统</span>
+                                </button>
+                                <button class="lsh-action-btn outline" onclick="openCorpusSearchModal()">
+                                    <span class="btn-icon">📜</span>
+                                    <span>典籍原典精准考据</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 馆藏物理概况信息条 -->
+                        <div class="lib-info-ribbon">
+                            <div class="lir-col">
+                                <span class="lir-icon">🏛️</span>
+                                <div class="lir-text">
+                                    <strong>馆藏物理定位</strong>
+                                    <span>武夷学院逸夫图书馆 6楼特藏室（闽北文库） / 2楼社会科学书库</span>
+                                </div>
+                            </div>
+                            <div class="lir-col">
+                                <span class="lir-icon">📚</span>
+                                <div class="lir-text">
+                                    <strong>特藏典籍规模</strong>
+                                    <span>收录武夷特色专著、朱子诗文集、四书集注等 23 部权威典籍</span>
+                                </div>
+                            </div>
+                            <div class="lir-col">
+                                <span class="lir-icon">⚡</span>
+                                <div class="lir-text">
+                                    <strong>智慧借阅对接</strong>
+                                    <span>与武夷学院图书馆OPAC书目借阅系统互通，支持实体书预约借阅</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 典籍分类切换药丸导航 -->
+                        <div class="home-cat-pills-row" id="home-showcase-cat-pills">
+                            <button type="button" class="home-cat-pill active" onclick="switchHomeShowcaseCategory('sishu', this)">① 四书章句类 · 进学之阶 5部</button>
+                            <button type="button" class="home-cat-pill" onclick="switchHomeShowcaseCategory('daotong', this)">② 理学道统类 · 性理心法 4部</button>
+                            <button type="button" class="home-cat-pill" onclick="switchHomeShowcaseCategory('jingshi', this)">③ 经史政理类 · 春秋史鉴 3部</button>
+                            <button type="button" class="home-cat-pill" onclick="switchHomeShowcaseCategory('wenxue_meng', this)">④ 骚体蒙学类 · 家风规矩 3部</button>
+                            <button type="button" class="home-cat-pill special-wuyi" onclick="switchHomeShowcaseCategory('wuyi_spec', this)">🏛️ 武夷学院特色馆 · 闽北文库 6部</button>
+                        </div>
+
+                        <!-- 动态典籍卡片网格容器（预载第①分类：四书章句类） -->
+                        <div class="lib-books-grid" id="home-showcase-books-grid">
+                            <!-- 专著 1 -->
+                            <div class="lib-book-card">
+                                <div class="lbc-tag">进学第一关</div>
+                                <div class="lbc-title">《大学章句》</div>
+                                <div class="lbc-author">宋·朱熹 章句 · 传世善本</div>
+                                <div class="lbc-callno">索书号：<code>B222.12/Z90：1</code></div>
+                                <div class="lbc-loc">馆藏：总馆 - 流通书库</div>
+                                <div class="lbc-borrow-row">
+                                    <span class="borrow-status-pill available">🟢 租借情况：在架可借【实时在架3册】</span>
+                                </div>
+                                <div class="lbc-actions">
+                                    <button type="button" class="lbc-btn read" onclick="openFulltextFromProvenance('daxue', '《大学章句》', '大学之道在明明德', '01_大学章句.txt', '经一章')">📖 翻阅电子版</button>
+                                    <button type="button" class="lbc-btn reserve" onclick="openReservationModal('daxue')">🔖 OPAC预约借阅</button>
+                                </div>
+                            </div>
+                            <!-- 专著 2 -->
+                            <div class="lib-book-card">
+                                <div class="lbc-tag">性命心法</div>
+                                <div class="lbc-title">《中庸章句》</div>
+                                <div class="lbc-author">宋·朱熹 章句 · 宋本中庸</div>
+                                <div class="lbc-callno">索书号：<code>B222.12/Z90：1</code></div>
+                                <div class="lbc-loc">馆藏：总馆 - 流通书库</div>
+                                <div class="lbc-borrow-row">
+                                    <span class="borrow-status-pill available">🟢 租借情况：在架可借【实时在架3册】</span>
+                                </div>
+                                <div class="lbc-actions">
+                                    <button type="button" class="lbc-btn read" onclick="openFulltextFromProvenance('zhongyong', '《中庸章句》', '天命之谓性', '02_中庸章句.txt', '第一章')">📖 翻阅电子版</button>
+                                    <button type="button" class="lbc-btn reserve" onclick="openReservationModal('zhongyong')">🔖 OPAC预约借阅</button>
+                                </div>
+                            </div>
+                            <!-- 专著 3 -->
+                            <div class="lib-book-card">
+                                <div class="lbc-tag">仁义践履</div>
+                                <div class="lbc-title">《论语集注》</div>
+                                <div class="lbc-author">宋·朱熹 集注 · 考亭讲筵</div>
+                                <div class="lbc-callno">索书号：<code>B222.22/Z90</code></div>
+                                <div class="lbc-loc">馆藏：特藏室 · 宋明理学专柜</div>
+                                <div class="lbc-borrow-row">
+                                    <span class="borrow-status-pill borrowed">🔴 租借情况：特藏借出【支持线上预约】</span>
+                                </div>
+                                <div class="lbc-actions">
+                                    <button type="button" class="lbc-btn read" onclick="openFulltextFromProvenance('lunyu', '《论语集注》', '学而时习之', '03_论语集注.txt', '学而第一')">📖 翻阅电子版</button>
+                                    <button type="button" class="lbc-btn reserve" onclick="openReservationModal('lunyu')">🔖 OPAC预约借阅</button>
+                                </div>
+                            </div>
+                            <!-- 专著 4 -->
+                            <div class="lib-book-card">
+                                <div class="lbc-tag">义利辨析</div>
+                                <div class="lbc-title">《孟子集注》</div>
+                                <div class="lbc-author">宋·朱熹 集注 · 性善阐微</div>
+                                <div class="lbc-callno">索书号：<code>B222.52/Z90/1</code></div>
+                                <div class="lbc-loc">馆藏：总馆 - 流通书库</div>
+                                <div class="lbc-borrow-row">
+                                    <span class="borrow-status-pill available">🟢 租借情况：在架可借【实时在架2册】</span>
+                                </div>
+                                <div class="lbc-actions">
+                                    <button type="button" class="lbc-btn read" onclick="openFulltextFromProvenance('mengzi', '《孟子集注》', '仁义礼智根于心', '04_孟子集注.txt', '梁惠王章句上')">📖 翻阅电子版</button>
+                                    <button type="button" class="lbc-btn reserve" onclick="openReservationModal('mengzi')">🔖 OPAC预约借阅</button>
+                                </div>
+                            </div>
+                            <!-- 专著 5 -->
+                            <div class="lib-book-card">
+                                <div class="lbc-tag">理学金梯</div>
+                                <div class="lbc-title">《四书章句集注》</div>
+                                <div class="lbc-author">宋·朱熹 著 · 中华书局典藏版</div>
+                                <div class="lbc-callno">索书号：<code>B222.12/Z90:10</code></div>
+                                <div class="lbc-loc">馆藏：总馆 - 流通书库</div>
+                                <div class="lbc-borrow-row">
+                                    <span class="borrow-status-pill available">🟢 租借情况：在架可借【实时在架1册】</span>
+                                </div>
+                                <div class="lbc-actions">
+                                    <button type="button" class="lbc-btn read" onclick="openFulltextFromProvenance('sishu', '《四书章句集注》', '为己之学', '05_四书或问.txt', '四书总论')">📖 翻阅电子版</button>
+                                    <button type="button" class="lbc-btn reserve" onclick="openReservationModal('sishu')">🔖 OPAC预约借阅</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 首页官方机构底栏 -->
+                    <footer class="home-institutional-footer">
+                        <div class="footer-crest-row">
+                            <img src="/static/wuyi_logo.jpg" alt="武夷学院" class="footer-wuyi-badge">
+                            <div class="footer-names">
+                                <span class="footer-main-inst">武夷学院逸夫图书馆</span>
+                                <span class="footer-sub-inst">朱子学研究中心 · 闽北文库 · 宋明理学特藏文献空间</span>
+                            </div>
+                        </div>
+                        <div class="footer-details-row">
+                            <span>📍 馆址：福建省武夷山市武夷大道16号 武夷学院逸夫图书馆</span>
+                            <span class="footer-sep">|</span>
+                            <span>🏛️ 特藏专柜：逸夫楼六层特藏阅览室 & 二层社科书库</span>
+                            <span class="footer-sep">|</span>
+                            <span>🔗 书目系统：武夷学院OPAC书目检索系统实时对接</span>
+                        </div>
+                        <div class="footer-copy-row">
+                            <span>© 2026 武夷学院逸夫图书馆 版权所有 · 本系统为武夷学院特色文献智慧服务平台，严禁用于商业用途</span>
+                        </div>
+                    </footer>
 
                     </div><!-- end .home-scroll-body -->
                 </section>
@@ -548,6 +748,9 @@
                                 <button class="action-pill-btn amber" onclick="galGameEngine.loadChapter(galGameEngine.currentChapterId, 0)" title="重新开始本章研习">
                                     <span>↻ 重启本篇研读</span>
                                 </button>
+                                <button class="action-pill-btn gold" onclick="galGameEngine.showCertificate()" title="查看考亭讲筵结业文凭与研学评定">
+                                    <span>🎓 结业文凭</span>
+                                </button>
                                 <button class="action-pill-btn outline" onclick="toggleGalGameSyllabusDrawer()" id="galgame-mode-toggle-btn" title="查看经卷讲义提要">
                                     <span>📜 经卷讲义提要</span>
                                 </button>
@@ -555,7 +758,7 @@
                         </div>
 
                         <!-- 讲筵章节导航条 · 武夷特色考亭讲筵 -->
-                        <div class="galgame-chapter-bar">
+                        <div class="galgame-chapter-bar" id="gal-chapter-nav">
                             <span class="chapter-bar-label">武夷特色讲筵：</span>
                             <button class="chapter-tab-pill active" onclick="switchGalGameChapter('wuyi_jingshe', this)">① 隐屏结庐 · 武夷精舍</button>
                             <button class="chapter-tab-pill" onclick="switchGalGameChapter('jiuqu_zhaoge', this)">② 九曲寻源 · 棹歌理趣</button>
@@ -580,9 +783,9 @@
                                         </div>
                                     </div>
 
-                                    <!-- 3. 先生当堂授课实体角色立绘 · 站立于讲堂前方非背景 -->
+                                    <!-- 3. 先生当堂授课实体角色立绘 · 与背景自然融合 · 单一人物绝不重叠 -->
                                     <div class="galgame-sprite-stage" id="galgame-sprite-stage">
-                                        <img src="/static/galgame_assets/act_stand.png" alt="考亭先生" class="galgame-master-sprite" id="galgame-char-img">
+                                        <img src="/static/galgame_assets/pose_1_stand.png" alt="考亭先生" class="galgame-master-sprite" id="galgame-char-img">
                                     </div>
 
                                     <!-- 4. 启发式分支选择支停靠区  · A/B/C/弟子当堂请教 -->
@@ -634,11 +837,11 @@
                                     <div class="study-stats-card">
                                         <div class="stats-card-row">
                                             <span class="stats-label">当前章程：</span>
-                                            <strong class="stats-val" id="record-current-chapter">《大学章句》三纲八目</strong>
+                                            <strong class="stats-val" id="record-current-chapter">《隐屏结庐·武夷精舍》</strong>
                                         </div>
                                         <div class="stats-card-row">
                                             <span class="stats-label">当前讲次：</span>
-                                            <span class="stats-badge" id="record-current-step">第一节 · 升堂定纲</span>
+                                            <span class="stats-badge" id="record-current-step">第 1 讲次</span>
                                         </div>
                                         <div class="stats-meter-row">
                                             <div class="meter-col">
@@ -662,29 +865,38 @@
                                 </div>
 
                                 <!-- 标签 2：本篇原典章句与考亭注 -->
-                                <div class="drawer-scroll-body" id="panel-study-text" style="display:none;">
+                                <div class="drawer-scroll-body" id="panel-study-text" style="display:none; padding-top: 10px;">
+                                    <!-- 讲义章程快速切换栏（支持在抽屉内随意切换查阅或跟讲） -->
+                                    <div class="drawer-chapter-pills-bar" id="drawer-chapter-pills-bar">
+                                        <button class="drawer-chapter-pill active" data-chapter="wuyi_jingshe" onclick="galGameEngine.switchSyllabusChapter('wuyi_jingshe')">① 武夷精舍</button>
+                                        <button class="drawer-chapter-pill" data-chapter="jiuqu_zhaoge" onclick="galGameEngine.switchSyllabusChapter('jiuqu_zhaoge')">② 九曲棹歌</button>
+                                        <button class="drawer-chapter-pill" data-chapter="wuyi_tea" onclick="galGameEngine.switchSyllabusChapter('wuyi_tea')">③ 岩茶瀹茗</button>
+                                        <button class="drawer-chapter-pill" data-chapter="wufu_shecang" onclick="galGameEngine.switchSyllabusChapter('wufu_shecang')">④ 五夫社仓</button>
+                                        <button class="drawer-chapter-pill" data-chapter="ehu_debate" onclick="galGameEngine.switchSyllabusChapter('ehu_debate')">⑤ 鹅湖论辩</button>
+                                        <button class="drawer-chapter-pill" data-chapter="daxue_gewu" onclick="galGameEngine.switchSyllabusChapter('daxue_gewu')">⑥ 大学格物</button>
+                                    </div>
                                     <div class="scroll-reading-box" id="syllabus-content">
                                         <div class="scroll-header">
-                                            <span class="scroll-badge" id="course-badge">初学入德</span>
-                                            <h3 class="scroll-title" id="course-title">《大学章句》三纲八目</h3>
-                                            <p class="scroll-summary" id="course-summary">宋代理学立学之总纲领，为学与成己之蓝图。</p>
+                                            <span class="scroll-badge" id="course-badge">精舍初筵</span>
+                                            <h3 class="scroll-title" id="course-title">《武夷精舍杂咏并序》· 聚徒开山</h3>
+                                            <p class="scroll-summary" id="course-summary">淳熙十年卜居武夷隐屏，避俗嚣之扰，聚徒穷理，立道南正脉。</p>
                                         </div>
                                         <div class="scroll-section">
                                             <h4 class="section-label-gold">【经文原典明训】</h4>
                                             <div class="classical-quote-box" id="course-original">
-                                                “大学之道，在明明德，在亲民，在止于至善。知止而后有定，定而后能静，静而后能安，安而后能虑，虑而后能得。”
+                                                “琴书五十载，隐屏云雾深。淳熙十年，予卜居武夷隐屏峰下，结构精舍数楹，题曰武夷精舍。诸生环居，相与读书讲道。”
                                             </div>
                                         </div>
                                         <div class="scroll-section">
                                             <h4 class="section-label-gold">【考亭章句阐发】</h4>
                                             <p class="commentary-text" id="course-commentary">
-                                                明明德者，去其人欲之蔽，以复其天命之初也。三纲领提其领，格致诚正修齐治平八条目举其细。由浅入深，由内圣而达外王。
+                                                闹市之中，人心易于流荡；借武夷山川清幽之气，使学者收敛身心，方有从容穷理之基。此乃聚徒立雪之始。
                                             </p>
                                         </div>
                                         <div class="scroll-section">
                                             <h4 class="section-label-gold">【学者思辨切问】</h4>
                                             <p class="thinking-text" id="course-thinking">
-                                                学者且反躬：吾胸次之中，今日可有私欲障蔽本心？当从何事何处去穷格此理？
+                                                学者求道，心神常为外物喧嚣所牵。若无一处定静涵养之地，学问从何处扎根生发？
                                             </p>
                                         </div>
                                     </div>
@@ -1033,6 +1245,129 @@
     </div>
 
     <!-- ==============================================
+         弹窗：雅乐琴台 (宋韵BGM音乐播放器 · 循环重复播放)
+         ============================================== -->
+    <div id="bgm-modal" class="modal-backdrop">
+        <div class="modal-card" style="max-width:540px;">
+            <div class="modal-header">
+                <h3>🎶 考亭书院 · 雅乐琴台</h3>
+                <button class="modal-close-btn" onclick="closeBgmModal()">✕</button>
+            </div>
+            <div class="modal-body" style="padding:16px 20px;">
+                <div style="background:linear-gradient(135deg, #fdfbf7, #fef3c7); border:1px solid #e2d9c8; border-radius:12px; padding:16px; margin-bottom:16px; text-align:center;">
+                    <div style="font-size:36px; margin-bottom:4px;" id="bgm-player-icon">🎵</div>
+                    <div style="font-size:16px; font-weight:bold; color:#78350f; font-family:var(--font-serif);" id="bgm-current-title">《晨风琴韵》· 古筝清音 · 武夷空山新雨</div>
+                    <div style="font-size:12.5px; color:#92400e; margin-top:4px;" id="bgm-current-desc">太古遗音 · 正在循环重复播放中</div>
+                    <div style="display:flex; align-items:center; justify-content:center; gap:12px; margin-top:14px;">
+                        <button class="btn btn-secondary" onclick="prevBgmTrack()" style="padding:6px 14px; font-size:13px;">⏮ 上一曲</button>
+                        <button class="btn btn-primary" id="bgm-modal-play-btn" onclick="toggleAcademyBGM()" style="padding:8px 22px; font-size:14px;">▶ 播放雅乐</button>
+                        <button class="btn btn-secondary" onclick="nextBgmTrack()" style="padding:6px 14px; font-size:13px;">下一曲 ⏭</button>
+                    </div>
+                    <div style="display:flex; align-items:center; justify-content:center; gap:10px; margin-top:14px; flex-wrap:wrap;">
+                        <span style="font-size:13px; color:#78350f;">🔈 音量</span>
+                        <input type="range" id="bgm-volume-slider" min="0" max="1" step="0.05" value="0.45" oninput="setBgmVolume(this.value)" style="width:140px; accent-color:#b45309; cursor:pointer;">
+                        <span style="font-size:12px; color:#92400e; font-weight:600;" id="bgm-volume-val">45%</span>
+                        <span style="font-size:11.5px; background:#d97706; color:#fff; padding:2px 8px; border-radius:10px; margin-left:8px;">🔁 循环重复播放</span>
+                    </div>
+                </div>
+
+                <div style="font-size:13.5px; font-weight:bold; color:#57534e; margin-bottom:8px; font-family:var(--font-serif);">📜 精选宋韵雅乐曲目库（点击即切）：</div>
+                <div id="bgm-playlist-container" style="display:flex; flex-direction:column; gap:8px; max-height:240px; overflow-y:auto;">
+                    <!-- 由 JavaScript 动态生成并同步激活高亮 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==============================================
+         弹窗：考亭书院 · 圣学传道研学结业文凭 / 证书
+         ============================================== -->
+    <div id="galgame-certificate-modal" class="modal-backdrop">
+        <div class="modal-card certificate-card" style="max-width: 680px; background: #faf6ee; border: 3px double #b45309; box-shadow: 0 25px 60px rgba(0,0,0,0.45); border-radius: 12px; padding: 28px 36px; position: relative; overflow: hidden;">
+            <!-- 古典宣纸回纹边框底纹 -->
+            <div style="position:absolute; top:8px; left:8px; right:8px; bottom:8px; border: 1px solid #d97706; pointer-events:none; border-radius:8px;"></div>
+            <div style="position:absolute; top:12px; left:12px; right:12px; bottom:12px; border: 1px dashed rgba(180,83,9,0.3); pointer-events:none; border-radius:6px;"></div>
+
+            <!-- 顶部装饰与关闭按钮 -->
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; position:relative; z-index:2;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span style="font-size:22px;">📜</span>
+                    <span style="font-size:13px; letter-spacing:4px; color:#92400e; font-weight:bold; font-family:var(--font-serif);">宋·淳熙十年 考亭讲筵特颁</span>
+                </div>
+                <button class="modal-close-btn" onclick="galGameEngine.closeCertificate()" style="font-size:18px;">✕</button>
+            </div>
+
+            <!-- 证书核心抬头 -->
+            <div style="text-align:center; margin-bottom:18px; position:relative; z-index:2;">
+                <div style="font-size:12px; letter-spacing:6px; color:#b45309; margin-bottom:4px; font-family:var(--font-serif);">建宁府建阳县考亭书院</div>
+                <h2 style="font-size:26px; font-weight:900; color:#451a03; font-family:'STKaiti', 'KaiTi', var(--font-serif); letter-spacing:3px; margin:0 0 6px 0;">
+                    圣学传道研学结业文凭
+                </h2>
+                <div style="display:inline-block; padding:2px 14px; background:linear-gradient(90deg, #fef3c7, #fde68a); border:1px solid #d97706; border-radius:14px; font-size:12.5px; color:#78350f; font-weight:bold;">
+                    考亭理学传人 · 特优精进证书
+                </div>
+            </div>
+
+            <!-- 正文叙述 -->
+            <div style="line-height:1.9; color:#292524; font-size:14.5px; font-family:'STKaiti', 'KaiTi', var(--font-serif); margin-bottom:18px; text-indent:2em; background:rgba(255,255,255,0.7); padding:16px 20px; border-radius:8px; border:1px solid #fef08a; position:relative; z-index:2;">
+                学子 <strong id="cert-student-name" style="color:#b45309; font-size:16px; text-decoration:underline; text-decoration-color:#d97706; text-underline-offset:4px;">考亭精进学子</strong> 尊奉师训，研习本院武夷理学讲筵全六程：
+                <span style="color:#92400e; font-weight:600;">《隐屏结庐》、《九曲寻源》、《岩壑瀹茗》、《崇安社仓》、《鹅湖论道》、《万物条理》</span>。
+                在堂期间，沉潜笃敬，即物穷理，虚心涵泳，深造自得。经诸讲试炼研判，功德圆满，特赐结业！
+            </div>
+
+            <!-- 评定与批语区 -->
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:18px; position:relative; z-index:2;">
+                <div style="background:#fff; border:1px solid #e2d9c8; border-radius:8px; padding:12px 16px;">
+                    <div style="font-size:12.5px; color:#78350f; font-weight:bold; margin-bottom:6px;">📊 研学学力评定：</div>
+                    <div style="font-size:13.5px; color:#44403c; line-height:1.6;">
+                        <div>🧠 穷理悟性：<strong id="cert-score-enlightenment" style="color:#b45309; font-size:16px;">98</strong> / 100 <span style="color:#16a34a; font-size:12px;">(圆融融彻)</span></div>
+                        <div>🙏 居敬存诚：<strong id="cert-score-reverence" style="color:#b45309; font-size:16px;">96</strong> / 100 <span style="color:#16a34a; font-size:12px;">(主敬存诚)</span></div>
+                        <div>🏅 结业等第：<strong style="color:#b91c1c;">特优 · 升堂入室</strong></div>
+                    </div>
+                </div>
+                <div style="background:#fff; border:1px solid #e2d9c8; border-radius:8px; padding:12px 16px;">
+                    <div style="font-size:12.5px; color:#78350f; font-weight:bold; margin-bottom:6px;">✍️ 考亭先生朱熹手书考语：</div>
+                    <div style="font-size:12.5px; color:#57534e; line-height:1.5; font-style:italic;">
+                        “涵养须用敬，进学在致知。今日观尔体认条理，气象明润。愿尔出山之后，知行并进，下学上达，不负源头活水也！仁兄其勉之！”
+                    </div>
+                </div>
+            </div>
+
+            <!-- 底部落款与印章 -->
+            <div style="display:flex; justify-content:space-between; align-items:flex-end; border-top:1px solid #e2d9c8; padding-top:14px; position:relative; z-index:2;">
+                <div style="font-size:12px; color:#78350f; font-family:var(--font-serif);">
+                    <div>研学结业纪年：<span id="cert-date-text">宋庆元四年 · 岁次戊午春</span></div>
+                    <div style="color:#a8a29e; font-size:11px; margin-top:2px;">考亭学筵统字第 1198 号 · 武夷学院图书馆宋明理学特藏监制</div>
+                </div>
+
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <!-- 红色大印章 1：考亭书院山长之印 -->
+                    <div style="width:58px; height:58px; border:2px solid #b91c1c; background:rgba(185,28,28,0.06); color:#b91c1c; font-weight:bold; font-size:12px; line-height:1.15; display:flex; align-items:center; justify-content:center; text-align:center; font-family:'STKaiti', KaiTi, serif; transform:rotate(-4deg); box-shadow:0 2px 6px rgba(185,28,28,0.2);">
+                        考亭书院<br>山长之印
+                    </div>
+                    <!-- 红色大印章 2：文公朱熹之印 -->
+                    <div style="width:58px; height:58px; border:2px solid #b91c1c; background:rgba(185,28,28,0.06); color:#b91c1c; font-weight:bold; font-size:12px; line-height:1.15; display:flex; align-items:center; justify-content:center; text-align:center; font-family:'STKaiti', KaiTi, serif; transform:rotate(3deg); box-shadow:0 2px 6px rgba(185,28,28,0.2);">
+                        考亭先生<br>朱熹信印
+                    </div>
+                </div>
+            </div>
+
+            <!-- 底部操作按钮栏 -->
+            <div style="display:flex; justify-content:center; gap:14px; margin-top:20px; position:relative; z-index:2;">
+                <button class="btn btn-primary" onclick="galGameEngine.printCertificate()" style="padding:8px 22px; font-size:13.5px; background:linear-gradient(135deg, #b45309, #78350f);">
+                    🖨️ 打印 / 保存结业文凭
+                </button>
+                <button class="btn btn-secondary" onclick="galGameEngine.restartAllChapters()" style="padding:8px 18px; font-size:13px;">
+                    🔄 重温武夷六讲
+                </button>
+                <button class="btn btn-secondary" onclick="galGameEngine.closeCertificate()" style="padding:8px 18px; font-size:13px;">
+                    返回讲堂
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==============================================
          弹窗 3：设置与声音风骨
          ============================================== -->
     <div id="settings-modal" class="modal-backdrop">
@@ -1048,7 +1383,7 @@
                 </div>
                 <div class="setting-item">
                     <label>🔊 自动朗读回答：</label>
-                    <button class="toggle-pill-btn off" id="modal-tts-toggle" onclick="toggleAutoTTS()">已关闭</button>
+                    <button class="toggle-pill-btn" id="modal-tts-toggle" onclick="toggleAutoTTS()">已开启</button>
                 </div>
                 <div class="setting-item">
                     <label>🌐 局域网/手机端访问地址：</label>
@@ -1291,13 +1626,14 @@
                     <!-- 快捷寄语推荐标签 -->
                     <div class="letter-quick-ideas-row">
                         <span class="quick-idea-label">快捷寄语：</span>
+                        <button type="button" class="quick-idea-chip" onclick="quickFillLetterIdea('倾慕心仪佳人')">💌 倾慕心仪佳人情笺</button>
                         <button type="button" class="quick-idea-chip" onclick="quickFillLetterIdea('勉励同窗立志')">📌 劝勉同窗立志读书</button>
                         <button type="button" class="quick-idea-chip" onclick="quickFillLetterIdea('自励修身戒急戒躁')">📌 自励修身戒急戒躁</button>
                         <button type="button" class="quick-idea-chip" onclick="quickFillLetterIdea('感恩师长教诲')">📌 感恩师友春风化雨</button>
                         <button type="button" class="quick-idea-chip" onclick="quickFillLetterIdea('探讨知行并进')">📌 探讨格物知行并进</button>
                     </div>
                     <div class="letter-textarea-wrap">
-                        <textarea id="letter-content-input" class="song-letter-textarea" rows="5" placeholder="写下汝欲寄托之思，例如：同窗好友近来读书有些懈怠迷茫，我想写一封信勉励他重新立下高远志向，踏实治学，循序渐进，莫负大好光阴。"></textarea>
+                        <textarea id="letter-content-input" class="song-letter-textarea" rows="5" placeholder="写下汝欲寄托之思，例如：我喜欢了一个女孩，想请先生代拟一封典雅温婉的宋风情札；或勉励同窗立志修德，莫负韶华。"></textarea>
                     </div>
                     <div class="letter-sign-bottom">
                         <span class="letter-sender-label">门生后学 托付寄语</span>
@@ -1385,6 +1721,187 @@
     </div>
 
     <!-- ==============================================
+         弹窗 6：武夷学院逸夫图书馆 · 线下典籍预约借阅单
+         ============================================== -->
+    <div id="reservation-modal" class="modal-backdrop" onclick="closeReservationModal(event)">
+        <div class="modal-card reservation-modal-card" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div class="modal-title-group" style="display:flex; align-items:center; gap:8px;">
+                    <span class="modal-icon" style="font-size:20px;">🏛️</span>
+                    <h3 class="modal-title" style="margin:0; font-size:16.5px; font-weight:700;">武夷学院图书馆 · 课本专属官方借阅预约直达中心</h3>
+                    <span class="modal-badge-tag" style="background:#0284c7; color:#fff; font-size:11px; padding:2px 8px; border-radius:10px; font-weight:700;">Space v4.2.29 直联</span>
+                </div>
+                <button class="modal-close-btn" onclick="closeReservationModal()">✕</button>
+            </div>
+
+            <div class="modal-body" style="padding:16px 20px;">
+                <!-- 官方借阅预约流程说明卡片 -->
+                <div style="background:#f0fdf4; border:1.5px solid #86efac; border-radius:10px; padding:14px 18px; margin-bottom:16px;">
+                    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span style="font-size:22px;">🏛️</span>
+                            <strong style="color:#166534; font-size:15px;">武夷学院图书馆 · 课本专属官方预约指南</strong>
+                        </div>
+                        <span style="font-size:11px; background:#dcfce7; color:#15803d; padding:2px 8px; border-radius:10px; font-weight:700; border:1px solid #86efac;">OPAC后台直通</span>
+                    </div>
+                    <p style="margin:0 0 10px; font-size:12.5px; color:#15803d; line-height:1.7;">
+                        根据武夷学院图书馆借阅规程，借阅预约需对准具体课本在官方馆藏系统中发起。<br>
+                        您在下方点击任意课本的<strong>【🏛️ 直达官方预约系统（对应本书）➔】</strong>按钮，即可<strong>精准直达该课本在武夷学院图书馆的官方专属预约界面</strong>；在打开的页面中直接点击蓝色<strong>【预约】</strong>按钮，即可进入统一身份认证/借阅证登录界面完成预约，随后凭证到馆取书。
+                    </p>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap; font-size:12px; color:#166534; background:#fff; padding:8px 12px; border-radius:6px; border:1px solid #bbf7d0;">
+                        <span>① 选定课本点击直达 ➔</span>
+                        <span>② 点击馆藏页面蓝色【预约】按钮 ➔</span>
+                        <span>③ 登录读者学号 ➔</span>
+                        <span>④ 锁定架位并到馆取书</span>
+                    </div>
+                </div>
+
+                <!-- 待预约/精选课本列表 -->
+                <div class="res-booklist-section" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px 16px; margin-bottom:16px;">
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+                        <h4 style="margin:0; font-size:14px; color:#0f172a; font-weight:700;">📚 理学核心典籍与精选课本官方预约列表</h4>
+                        <span style="font-size:12px; color:#64748b;">实时索书号 · 对应本书直达</span>
+                    </div>
+
+                    <!-- 分类切换标签 -->
+                    <div class="opac-modal-cat-tabs" id="opac-modal-cat-pills">
+                        <button type="button" class="opac-cat-tab active" data-cat="sishu" onclick="switchOpacModalCategory('sishu', this)">① 四书章句 (5部)</button>
+                        <button type="button" class="opac-cat-tab" data-cat="daotong" onclick="switchOpacModalCategory('daotong', this)">② 理学道统 (4部)</button>
+                        <button type="button" class="opac-cat-tab" data-cat="jingshi" onclick="switchOpacModalCategory('jingshi', this)">③ 经史政理 (3部)</button>
+                        <button type="button" class="opac-cat-tab" data-cat="wenxue_meng" onclick="switchOpacModalCategory('wenxue_meng', this)">④ 骚体蒙学 (3部)</button>
+                        <button type="button" class="opac-cat-tab" data-cat="wuyi_spec" onclick="switchOpacModalCategory('wuyi_spec', this)">🏛️ 闽北文库 (6部)</button>
+                    </div>
+
+                    <div id="res-books-container" class="res-books-container" style="max-height:360px; overflow-y:auto; display:flex; flex-direction:column; gap:10px;">
+                        <div style="padding:10px 12px; background:rgba(255,255,255,0.7); border-radius:6px; border:1px solid #e2e8f0;">
+                            <div style="font-size:12px; color:#64748b; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+                                <span>💡 <strong>① 四书章句类 · 进学之阶</strong>【共 5 部典籍，点击可直接直达武夷学院图书馆该课本官方专属预约界面】：</span>
+                                <span style="font-size:11px; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:4px; font-weight:700;">Space v4.2.29 直通</span>
+                            </div>
+                            <div style="display:flex; flex-direction:column; gap:8px;">
+                                <!-- 1. 大学章句 -->
+                                <div class="res-category-book-item" style="display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-radius:6px; border:1px solid #e2e8f0; background:#f8fafc; transition:all 0.2s; flex-wrap:wrap; gap:8px;">
+                                    <div style="display:flex; flex-direction:column; gap:4px; flex:1; min-width:240px;">
+                                        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                                            <strong style="font-size:13.5px; color:#0f172a; font-family:var(--font-serif);">《大学章句》</strong>
+                                            <span class="borrow-status-pill available">🟢 租借情况：在架可借【实时在架3册】</span>
+                                        </div>
+                                        <div style="font-size:11.5px; color:#64748b; display:flex; gap:12px; flex-wrap:wrap;">
+                                            <span>索书号：<code style="color:#b45309; font-weight:700;">B222.12/Z90：1</code></span>
+                                            <span>馆藏：总馆 - 流通书库</span>
+                                            <span>著者：宋·朱熹 章句</span>
+                                        </div>
+                                    </div>
+                                    <div style="display:flex; align-items:center; gap:8px;">
+                                        <button type="button" onclick="openFulltextFromProvenance('daxue', '《大学章句》', '大学之道在明明德', '01_大学章句.txt', '经一章')" style="background:#fff; color:#475569; border:1px solid #cbd5e1; font-size:11.5px; font-weight:600; padding:5px 10px; border-radius:5px; cursor:pointer;" title="在电子阅览器中翻阅此典籍全文">
+                                            📖 翻阅
+                                        </button>
+                                        <a href="https://wyutsg.wuyiu.edu.cn/space/searchDetailLocal/m1ac8664b61c03d8a5c8a35571d676d66" target="_blank" rel="noopener noreferrer" style="background:linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color:#fff; text-decoration:none; padding:6px 14px; border-radius:5px; font-size:12px; font-weight:700; display:inline-flex; align-items:center; gap:4px; box-shadow:0 2px 4px rgba(2,132,199,0.3);" title="直达武夷学院图书馆该课本官方预约界面">
+                                            🏛️ 直达该课本官方预约 ➔
+                                        </a>
+                                    </div>
+                                </div>
+                                <!-- 2. 中庸章句 -->
+                                <div class="res-category-book-item" style="display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-radius:6px; border:1px solid #e2e8f0; background:#f8fafc; transition:all 0.2s; flex-wrap:wrap; gap:8px;">
+                                    <div style="display:flex; flex-direction:column; gap:4px; flex:1; min-width:240px;">
+                                        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                                            <strong style="font-size:13.5px; color:#0f172a; font-family:var(--font-serif);">《中庸章句》</strong>
+                                            <span class="borrow-status-pill available">🟢 租借情况：在架可借【实时在架3册】</span>
+                                        </div>
+                                        <div style="font-size:11.5px; color:#64748b; display:flex; gap:12px; flex-wrap:wrap;">
+                                            <span>索书号：<code style="color:#b45309; font-weight:700;">B222.12/Z90：1</code></span>
+                                            <span>馆藏：总馆 - 流通书库</span>
+                                            <span>著者：宋·朱熹 章句</span>
+                                        </div>
+                                    </div>
+                                    <div style="display:flex; align-items:center; gap:8px;">
+                                        <button type="button" onclick="openFulltextFromProvenance('zhongyong', '《中庸章句》', '天命之谓性', '02_中庸章句.txt', '第一章')" style="background:#fff; color:#475569; border:1px solid #cbd5e1; font-size:11.5px; font-weight:600; padding:5px 10px; border-radius:5px; cursor:pointer;" title="在电子阅览器中翻阅此典籍全文">
+                                            📖 翻阅
+                                        </button>
+                                        <a href="https://wyutsg.wuyiu.edu.cn/space/searchDetailLocal/m1ac8664b61c03d8a5c8a35571d676d66" target="_blank" rel="noopener noreferrer" style="background:linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color:#fff; text-decoration:none; padding:6px 14px; border-radius:5px; font-size:12px; font-weight:700; display:inline-flex; align-items:center; gap:4px; box-shadow:0 2px 4px rgba(2,132,199,0.3);" title="直达武夷学院图书馆该课本官方预约界面">
+                                            🏛️ 直达该课本官方预约 ➔
+                                        </a>
+                                    </div>
+                                </div>
+                                <!-- 3. 论语集注 -->
+                                <div class="res-category-book-item" style="display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-radius:6px; border:1px solid #e2e8f0; background:#f8fafc; transition:all 0.2s; flex-wrap:wrap; gap:8px;">
+                                    <div style="display:flex; flex-direction:column; gap:4px; flex:1; min-width:240px;">
+                                        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                                            <strong style="font-size:13.5px; color:#0f172a; font-family:var(--font-serif);">《论语集注》</strong>
+                                            <span class="borrow-status-pill borrowed">🔴 租借情况：特藏借出【支持线上预约】</span>
+                                        </div>
+                                        <div style="font-size:11.5px; color:#64748b; display:flex; gap:12px; flex-wrap:wrap;">
+                                            <span>索书号：<code style="color:#b45309; font-weight:700;">B222.22/Z90</code></span>
+                                            <span>馆藏：特藏室 · 宋明理学专柜</span>
+                                            <span>著者：宋·朱熹 集注</span>
+                                        </div>
+                                    </div>
+                                    <div style="display:flex; align-items:center; gap:8px;">
+                                        <button type="button" onclick="openFulltextFromProvenance('lunyu', '《论语集注》', '学而时习之', '03_论语集注.txt', '学而第一')" style="background:#fff; color:#475569; border:1px solid #cbd5e1; font-size:11.5px; font-weight:600; padding:5px 10px; border-radius:5px; cursor:pointer;" title="在电子阅览器中翻阅此典籍全文">
+                                            📖 翻阅
+                                        </button>
+                                        <a href="https://wyutsg.wuyiu.edu.cn/space/searchDetailLocal/m94a1e22d43113bea41afbb3b3fb15046" target="_blank" rel="noopener noreferrer" style="background:linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color:#fff; text-decoration:none; padding:6px 14px; border-radius:5px; font-size:12px; font-weight:700; display:inline-flex; align-items:center; gap:4px; box-shadow:0 2px 4px rgba(2,132,199,0.3);" title="直达武夷学院图书馆该课本官方预约界面">
+                                            🏛️ 直达该课本官方预约 ➔
+                                        </a>
+                                    </div>
+                                </div>
+                                <!-- 4. 孟子集注 -->
+                                <div class="res-category-book-item" style="display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-radius:6px; border:1px solid #e2e8f0; background:#f8fafc; transition:all 0.2s; flex-wrap:wrap; gap:8px;">
+                                    <div style="display:flex; flex-direction:column; gap:4px; flex:1; min-width:240px;">
+                                        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                                            <strong style="font-size:13.5px; color:#0f172a; font-family:var(--font-serif);">《孟子集注》</strong>
+                                            <span class="borrow-status-pill available">🟢 租借情况：在架可借【实时在架2册】</span>
+                                        </div>
+                                        <div style="font-size:11.5px; color:#64748b; display:flex; gap:12px; flex-wrap:wrap;">
+                                            <span>索书号：<code style="color:#b45309; font-weight:700;">B222.52/Z90/1</code></span>
+                                            <span>馆藏：总馆 - 流通书库</span>
+                                            <span>著者：宋·朱熹 集注</span>
+                                        </div>
+                                    </div>
+                                    <div style="display:flex; align-items:center; gap:8px;">
+                                        <button type="button" onclick="openFulltextFromProvenance('mengzi', '《孟子集注》', '仁义礼智根于心', '04_孟子集注.txt', '梁惠王章句上')" style="background:#fff; color:#475569; border:1px solid #cbd5e1; font-size:11.5px; font-weight:600; padding:5px 10px; border-radius:5px; cursor:pointer;" title="在电子阅览器中翻阅此典籍全文">
+                                            📖 翻阅
+                                        </button>
+                                        <a href="https://wyutsg.wuyiu.edu.cn/space/searchDetailLocal/m51f8f17f5b8a91bfc2c86da36d289bc9" target="_blank" rel="noopener noreferrer" style="background:linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color:#fff; text-decoration:none; padding:6px 14px; border-radius:5px; font-size:12px; font-weight:700; display:inline-flex; align-items:center; gap:4px; box-shadow:0 2px 4px rgba(2,132,199,0.3);" title="直达武夷学院图书馆该课本官方预约界面">
+                                            🏛️ 直达该课本官方预约 ➔
+                                        </a>
+                                    </div>
+                                </div>
+                                <!-- 5. 四书章句集注 -->
+                                <div class="res-category-book-item" style="display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-radius:6px; border:1px solid #e2e8f0; background:#f8fafc; transition:all 0.2s; flex-wrap:wrap; gap:8px;">
+                                    <div style="display:flex; flex-direction:column; gap:4px; flex:1; min-width:240px;">
+                                        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                                            <strong style="font-size:13.5px; color:#0f172a; font-family:var(--font-serif);">《四书章句集注》</strong>
+                                            <span class="borrow-status-pill available">🟢 租借情况：在架可借【实时在架1册】</span>
+                                        </div>
+                                        <div style="font-size:11.5px; color:#64748b; display:flex; gap:12px; flex-wrap:wrap;">
+                                            <span>索书号：<code style="color:#b45309; font-weight:700;">B222.12/Z90:10</code></span>
+                                            <span>馆藏：总馆 - 流通书库</span>
+                                            <span>著者：宋·朱熹 著</span>
+                                        </div>
+                                    </div>
+                                    <div style="display:flex; align-items:center; gap:8px;">
+                                        <button type="button" onclick="openFulltextFromProvenance('sishu', '《四书章句集注》', '为己之学', '05_四书或问.txt', '四书总论')" style="background:#fff; color:#475569; border:1px solid #cbd5e1; font-size:11.5px; font-weight:600; padding:5px 10px; border-radius:5px; cursor:pointer;" title="在电子阅览器中翻阅此典籍全文">
+                                            📖 翻阅
+                                        </button>
+                                        <a href="https://wyutsg.wuyiu.edu.cn/space/searchDetailLocal/mc7034ec9f084a8217d312a7fbb9d0960" target="_blank" rel="noopener noreferrer" style="background:linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color:#fff; text-decoration:none; padding:6px 14px; border-radius:5px; font-size:12px; font-weight:700; display:inline-flex; align-items:center; gap:4px; box-shadow:0 2px 4px rgba(2,132,199,0.3);" title="直达武夷学院图书馆该课本官方预约界面">
+                                            🏛️ 直达该课本官方预约 ➔
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:flex-end;">
+                    <button type="button" class="action-pill-btn outline" onclick="closeReservationModal()">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==============================================
          弹窗 5：先生引路引导过渡动画  · 请随老夫前往——
          ============================================== -->
     <div id="guide-transition-modal" class="modal-backdrop guide-modal-backdrop" style="display:none !important;">
@@ -1411,12 +1928,184 @@
     <script src="/static/libs/OrbitControls.js?v=5.0.0"></script>
     <script src="/static/libs/GLTFLoader.js?v=5.0.0"></script>
     <!-- 考亭书院第一人称 GalGame 引擎 -->
-    <script src="/static/galgame_engine.js?v=8.0.0"></script>
+    <script src="/static/galgame_engine.js?v=8.0.6"></script>
     <!-- 沧洲藏书阁 3D 沉浸式互动图书馆 -->
-    <script src="/static/library_3d.js?v=8.0.0"></script>
+    <script src="/static/library_3d.js?v=8.3.0"></script>
     <!-- 考亭先生无界 3D 连贯视频数字人系统 -->
     <script src="/static/avatar_3d_engine.js?v=8.0.0"></script>
     <!-- 交互与多模块独立控制器 -->
-    <script src="/static/app.js?v=8.0.0"></script>
+    <script src="/static/app.js?v=20260929_1130"></script>
+    <!-- 考亭墨竹动态微风落叶动效引擎 -->
+    <script src="/static/bamboo_leaves.js?v=1.0.1"></script>
+
+    <!-- 典籍分类切换引擎（内联确保无缓存延迟、即点即换） -->
+    <script>
+    (function() {
+        const CATS = {
+            sishu: {
+                id: "sishu",
+                name: "① 四书章句类 · 进学之阶",
+                books: [
+                    { key: "daxue", title: "《大学章句》", author: "宋·朱熹 章句 · 传世善本", callNumber: "B222.12/Z90：1", location: "总馆 - 流通书库", tag: "进学第一关", borrowStatus: "🟢 租借情况：在架可借【实时在架3册】", isAvailable: true, bibId: "m1ac8664b61c03d8a5c8a35571d676d66", txtFile: "01_大学章句.txt", snippet: "大学之道在明明德", chapter: "经一章" },
+                    { key: "zhongyong", title: "《中庸章句》", author: "宋·朱熹 章句 · 宋本中庸", callNumber: "B222.12/Z90：1", location: "总馆 - 流通书库", tag: "性命心法", borrowStatus: "🟢 租借情况：在架可借【实时在架3册】", isAvailable: true, bibId: "m1ac8664b61c03d8a5c8a35571d676d66", txtFile: "02_中庸章句.txt", snippet: "天命之谓性", chapter: "第一章" },
+                    { key: "lunyu", title: "《论语集注》", author: "宋·朱熹 集注 · 考亭讲筵", callNumber: "B222.22/Z90", location: "特藏室 · 宋明理学专柜", tag: "仁义践履", borrowStatus: "🔴 租借情况：特藏借出【支持线上预约】", isAvailable: false, bibId: "m94a1e22d43113bea41afbb3b3fb15046", txtFile: "03_论语集注.txt", snippet: "学而时习之", chapter: "学而第一" },
+                    { key: "mengzi", title: "《孟子集注》", author: "宋·朱熹 集注 · 性善阐微", callNumber: "B222.52/Z90/1", location: "总馆 - 流通书库", tag: "义利辨析", borrowStatus: "🟢 租借情况：在架可借【实时在架2册】", isAvailable: true, bibId: "m51f8f17f5b8a91bfc2c86da36d289bc9", txtFile: "04_孟子集注.txt", snippet: "仁义礼智根于心", chapter: "梁惠王章句上" },
+                    { key: "sishu", title: "《四书章句集注》", author: "宋·朱熹 著 · 中华书局典藏版", callNumber: "B222.12/Z90:10", location: "总馆 - 流通书库", tag: "理学金梯", borrowStatus: "🟢 租借情况：在架可借【实时在架1册】", isAvailable: true, bibId: "mc7034ec9f084a8217d312a7fbb9d0960", txtFile: "05_四书或问.txt", snippet: "为己之学", chapter: "四书总论" }
+                ]
+            },
+            daotong: {
+                id: "daotong",
+                name: "② 理学道统类 · 性理心法",
+                books: [
+                    { key: "jinsi", title: "《近思录》", author: "宋·朱熹、吕祖谦 编 · 北宋五子心传", callNumber: "B244.74/Z30", location: "二楼社科书库", tag: "性理大成", borrowStatus: "🟢 租借情况：在架可借【实时在架2册】", isAvailable: true, bibId: "ma9ed44adcd8699c1c919d7fe122b33cf", txtFile: "07_近思录.txt", snippet: "学者先须立志", chapter: "卷之一·道体" },
+                    { key: "yulei", title: "《朱子语类》", author: "宋·黎靖德 编 · 考亭门生实录", callNumber: "B244.71/L42", location: "特藏室 · 宋明理学专柜", tag: "讲筵实录", borrowStatus: "🔴 租借情况：特藏借出【支持线上预约】", isAvailable: false, bibId: "m910fe206f504321ab8075f4425a6561e", txtFile: "01_朱子语类.txt", snippet: "未有天地之先毕竟也只是先有此理", chapter: "卷一·理气上" },
+                    { key: "taiji", title: "《太极图说解》", author: "宋·朱熹 著 · 周敦颐 原著", callNumber: "B244.25/Z29", location: "总馆 - 流通书库", tag: "理气元旨", borrowStatus: "🟢 租借情况：在架可借【实时在架1册】", isAvailable: true, bibId: "m03a229fed172c6c4457a9d25d0e3472e", txtFile: "11_太极图说解.txt", snippet: "无极而太极", chapter: "图说本义" },
+                    { key: "ximing", title: "《西铭解》", author: "宋·朱熹 著 · 张载 原著", callNumber: "B222/T94：46", location: "六楼古籍特藏室", tag: "民胞物与", borrowStatus: "🔴 租借情况：特藏借出【支持线上预约】", isAvailable: false, bibId: "m329c4bf8aac402ba94c27628fa60915b", txtFile: "12_西铭解.txt", snippet: "民吾同胞物吾与也", chapter: "西铭解义" }
+                ]
+            },
+            jingshi: {
+                id: "jingshi",
+                name: "③ 经史政理类 · 春秋史鉴",
+                books: [
+                    { key: "gangmu", title: "《资治通鉴纲目》", author: "宋·朱熹 著 · 春秋义法史学丰碑", callNumber: "K204.3/Z90:4", location: "总馆 - 流通书库", tag: "史学义旨", borrowStatus: "🟢 租借情况：在架可借【实时在架4册】", isAvailable: true, bibId: "m847dd131dfc2f3cd792a696d5fc70bff", txtFile: "13_资治通鉴纲目.txt", snippet: "以纲提领以目纪实", chapter: "纲目序例" },
+                    { key: "shijizhuan", title: "《诗集传》", author: "宋·朱熹 著 · 经学诗义集大成", callNumber: "I222.2/Z90", location: "六楼古籍特藏室", tag: "经学诗义", borrowStatus: "🔴 租借情况：特藏借出【支持线上预约】", isAvailable: false, bibId: "m09f06ea84a2100925179748950beff70", txtFile: "08_诗集传.txt", snippet: "关关雎鸠在河之洲", chapter: "国风·周南" },
+                    { key: "zhouyi", title: "《周易本义》", author: "宋·朱熹 著 · 象数义理双融", callNumber: "B221.5/L30", location: "总馆 - 流通书库", tag: "象数义理", borrowStatus: "🟢 租借情况：在架可借【实时在架2册】", isAvailable: true, bibId: "m733ba27d4b6949cbdefd37ffe4fd2f80", txtFile: "09_周易本义.txt", snippet: "天行健君子以自强不息", chapter: "乾卦" }
+                ]
+            },
+            wenxue_meng: {
+                id: "wenxue_meng",
+                name: "④ 骚体蒙学类 · 家风规矩",
+                books: [
+                    { key: "chuci", title: "《楚辞集注》", author: "宋·朱熹 著 · 屈宋骚韵忠愤之思", callNumber: "I222.3/Z90:2", location: "总馆 - 流通书库", tag: "文学骚韵", borrowStatus: "🟢 租借情况：在架可借【实时在架2册】", isAvailable: true, bibId: "mc81bc1fef94dd6cdc04a36d4466f66be", txtFile: "10_楚辞集注.txt", snippet: "帝高阳之苗裔兮", chapter: "离骚经" },
+                    { key: "tongmeng", title: "《童蒙须知》", author: "宋·朱熹 著 · 考亭幼童规训", callNumber: "B222/T94：44", location: "六楼古籍特藏室", tag: "蒙学初阶", borrowStatus: "🔴 租借情况：特藏借出【支持线上预约】", isAvailable: false, bibId: "me19479abe54bb4b8467c82ec016450aa", txtFile: "14_童蒙须知.txt", snippet: "衣服饮食步趋坐立", chapter: "衣服冠履" },
+                    { key: "xuegui", title: "《白鹿洞书院学规》", author: "宋·朱熹 著 · 千年学规之祖", callNumber: "TU-092.2/L70:3", location: "总馆 - 流通书库", tag: "书院规条", borrowStatus: "🟢 租借情况：在架可借【实时在架1册】", isAvailable: true, bibId: "m01a9861554abb51f11ba8d5c015131c8", txtFile: "15_白鹿洞书院学规.txt", snippet: "父子有亲君臣有义", chapter: "学规箴戒" }
+                ]
+            },
+            wuyi_spec: {
+                id: "wuyi_spec",
+                name: "🏛️ 武夷学院特色馆 · 闽北文库",
+                books: [
+                    { key: "wuyi_shici", title: "《朱子的诗和远方：武夷山水理学诗歌专著》", author: "张建光 著 · 海峡文艺出版社", callNumber: "I207.227.442/Z43", location: "六楼特藏室【闽北文库】", tag: "闽北文献专架", borrowStatus: "🟢 租借情况：特藏现架【支持借阅预约】", isAvailable: true, bibId: "m5590f490b8512b928c22c8a630f2f93b", txtFile: "02_朱子的诗和远方_武夷山水理学诗歌专著.txt", snippet: "半亩方塘一鉴开", chapter: "第一章" },
+                    { key: "wuyi_chaosheng", title: "《朝圣朱子：武夷山五夫故里特色专著》", author: "张建光 著 · 特色地方文献", callNumber: "B244.7/Z46", location: "六楼特藏室【闽北文库】", tag: "五夫朱子专柜", borrowStatus: "🟢 租借情况：在架可借【实时在架5册】", isAvailable: true, bibId: "m769fa97c35a89c0a3624980a21003904", txtFile: "03_朝圣朱子_武夷山五夫故里特色专著.txt", snippet: "紫阳楼前绿竹青松", chapter: "第一章" },
+                    { key: "wuyi_century", title: "《世纪之交的朱子学：协同创新文丛》", author: "潘飞声、张品端 主编", callNumber: "B244.75/X39:2", location: "二楼社科书库", tag: "社科书库精选", borrowStatus: "🟢 租借情况：在架可借【精装1套在架】", isAvailable: true, bibId: "md0bec348de5285f8b72b7bd977276ee9", txtFile: "01_世纪之交的朱子学_朱子文化协同创新文丛.txt", snippet: "世纪之交的朱子学研究", chapter: "第一章" },
+                    { key: "wuyi_fujian", title: "《朱子三代与政和：闽北朱氏家风》", author: "政和县朱子文化研究会 编", callNumber: "B244.75/G49:1", location: "六楼特藏室【闽北理学专架】", tag: "闽北家风专架", borrowStatus: "🟢 租借情况：在架可借【实时在架1册】", isAvailable: true, bibId: "mcd9b1f2e032950ae0d77ce38a1bb4770", txtFile: "06_朱子三代与政和_闽北朱氏家风与历史渊源.txt", snippet: "政和朱氏家风清廉自守", chapter: "第一章" },
+                    { key: "wuyi_kaoting", title: "《第二届考亭论坛专辑：理学研讨集》", author: "武夷学院朱子学研究中心 编", callNumber: "B244.75/L43:1", location: "六楼特藏室【闽北文库】", tag: "考亭论丛专柜", borrowStatus: "🟢 租借情况：在架可借【实时在架2册】", isAvailable: true, bibId: "m2b6005a499aa4f3f50aa0f01f5adc36f", txtFile: "04_第二届考亭论坛专辑_考亭书院理学研讨集.txt", snippet: "考亭论坛汇集海内外学者", chapter: "序言" },
+                    { key: "wuyi_haiwai", title: "《朱子文化在海外：国际传播与影响》", author: "武夷学院朱子学研究中心 编", callNumber: "B244.75/D40", location: "六楼特藏室【国际朱子学柜】", tag: "国际传播专架", borrowStatus: "🟢 租借情况：在架可借【实时在架2册】", isAvailable: true, bibId: "m9750078ba9d212e3b9a8c8ddd7e281f2", txtFile: "05_朱子文化在海外_武夷学院朱子学研究中心.txt", snippet: "朱子之学东渐日本朝鲜", chapter: "序言" }
+                ]
+            }
+        };
+
+        window.HOME_SHOWCASE_CATEGORIES = CATS;
+
+        window.switchHomeShowcaseCategory = function(catId, btn) {
+            document.querySelectorAll("#home-showcase-cat-pills .home-cat-pill").forEach(p => p.classList.remove("active"));
+            if (btn) {
+                btn.classList.add("active");
+            } else {
+                const target = document.querySelector(`#home-showcase-cat-pills [onclick*="'${catId}'"]`);
+                if (target) target.classList.add("active");
+            }
+            window.renderHomeShowcaseBooks(catId);
+        };
+
+        window.renderHomeShowcaseBooks = function(catId) {
+            const grid = document.getElementById("home-showcase-books-grid");
+            if (!grid) return;
+            const cat = CATS[catId] || CATS.sishu;
+            grid.innerHTML = (cat.books || []).map(b => {
+                const isBusy = !b.isAvailable || b.borrowStatus.includes("借出");
+                const pillClass = isBusy ? "borrowed" : "available";
+                const safeTitle = (b.title || "").replace(/'/g, "\\'");
+                const safeSnippet = (b.snippet || "").replace(/'/g, "\\'");
+                const safeFile = (b.txtFile || "").replace(/'/g, "\\'");
+                const safeChap = (b.chapter || "").replace(/'/g, "\\'");
+
+                return `
+                    <div class="lib-book-card">
+                        <div class="lbc-tag">${b.tag || "典籍"}</div>
+                        <div class="lbc-title">${b.title}</div>
+                        <div class="lbc-author">${b.author}</div>
+                        <div class="lbc-callno">索书号：<code>${b.callNumber}</code></div>
+                        <div class="lbc-loc">馆藏：${b.location}</div>
+                        <div class="lbc-borrow-row">
+                            <span class="borrow-status-pill ${pillClass}">${b.borrowStatus}</span>
+                        </div>
+                        <div class="lbc-actions">
+                            <button type="button" class="lbc-btn read" onclick="openFulltextFromProvenance('${b.key}', '${safeTitle}', '${safeSnippet}', '${safeFile}', '${safeChap}')">📖 翻阅电子版</button>
+                            <button type="button" class="lbc-btn reserve" onclick="openReservationModal('${b.key}')">🔖 OPAC预约借阅</button>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+        };
+
+        window.switchOpacModalCategory = function(catId, btn, highlightKey) {
+            document.querySelectorAll("#opac-modal-cat-pills .opac-cat-tab").forEach(t => t.classList.remove("active"));
+            if (btn) {
+                btn.classList.add("active");
+            } else {
+                const target = document.querySelector(`#opac-modal-cat-pills [data-cat="${catId}"]`);
+                if (target) target.classList.add("active");
+            }
+            window.renderReservationBooksList(catId, highlightKey);
+        };
+
+        window.renderReservationBooksList = function(targetCategory, highlightKey) {
+            const container = document.getElementById("res-books-container");
+            if (!container) return;
+            const catId = targetCategory || "sishu";
+            const cat = CATS[catId] || CATS.sishu;
+            const books = cat.books || [];
+
+            container.innerHTML = `
+                <div style="padding:10px 12px; background:rgba(255,255,255,0.7); border-radius:6px; border:1px solid #e2e8f0;">
+                    <div style="font-size:12px; color:#64748b; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+                        <span>💡 <strong>${cat.name}</strong>（共 ${books.length} 部典籍，点击可直接直达武夷学院图书馆该课本官方专属预约界面）：</span>
+                        <span style="font-size:11px; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:4px; font-weight:700;">Space v4.2.29 直通</span>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:8px;">
+                        ${books.map(b => {
+                            const isHighlighted = (highlightKey && highlightKey === b.key);
+                            const isBusy = !b.isAvailable || b.borrowStatus.includes("借出");
+                            const pillClass = isBusy ? "borrowed" : "available";
+                            const highlightClass = isHighlighted ? "res-book-highlighted" : "";
+                            const highlightBorder = isHighlighted ? "border:2px solid #0284c7; background:#f0f9ff; box-shadow:0 0 0 3px rgba(2,132,199,0.15);" : "border:1px solid #e2e8f0; background:#f8fafc;";
+                            const directUrl = "https://wyutsg.wuyiu.edu.cn/space/searchDetailLocal/" + b.bibId;
+                            const safeTitle = (b.title || "").replace(/'/g, "\\'");
+                            const safeSnippet = (b.snippet || "").replace(/'/g, "\\'");
+                            const safeFile = (b.txtFile || "").replace(/'/g, "\\'");
+                            const safeChap = (b.chapter || "").replace(/'/g, "\\'");
+
+                            return `
+                                <div class="res-category-book-item ${highlightClass}" style="display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-radius:6px; ${highlightBorder} transition:all 0.2s; flex-wrap:wrap; gap:8px;">
+                                    <div style="display:flex; flex-direction:column; gap:4px; flex:1; min-width:240px;">
+                                        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                                            <strong style="font-size:13.5px; color:#0f172a; font-family:var(--font-serif);">${b.title}</strong>
+                                            <span class="borrow-status-pill ${pillClass}">${b.borrowStatus}</span>
+                                            ${isHighlighted ? '<span style="font-size:11px; background:#0284c7; color:#fff; padding:1px 6px; border-radius:3px; font-weight:700;">★ 当前选定课本</span>' : ''}
+                                        </div>
+                                        <div style="font-size:11.5px; color:#64748b; display:flex; gap:12px; flex-wrap:wrap;">
+                                            <span>索书号：<code style="color:#b45309; font-weight:700;">${b.callNumber}</code></span>
+                                            <span>馆藏：${b.location}</span>
+                                            <span>著者：${b.author}</span>
+                                        </div>
+                                    </div>
+                                    <div style="display:flex; align-items:center; gap:8px;">
+                                        <button type="button" onclick="openFulltextFromProvenance('${b.key}', '${safeTitle}', '${safeSnippet}', '${safeFile}', '${safeChap}')" style="background:#fff; color:#475569; border:1px solid #cbd5e1; font-size:11.5px; font-weight:600; padding:5px 10px; border-radius:5px; cursor:pointer;" title="在电子阅览器中翻阅此典籍全文">
+                                            📖 翻阅
+                                        </button>
+                                        <a href="${directUrl}" target="_blank" rel="noopener noreferrer" style="background:linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color:#fff; text-decoration:none; padding:6px 14px; border-radius:5px; font-size:12px; font-weight:700; display:inline-flex; align-items:center; gap:4px; box-shadow:0 2px 4px rgba(2,132,199,0.3);" title="直达武夷学院图书馆该课本官方预约界面">
+                                            🏛️ 直达该课本官方预约 ➔
+                                        </a>
+                                    </div>
+                                </div>
+                            `;
+                        }).join("")}
+                    </div>
+                </div>
+            `;
+        };
+    })();
+    </script>
 </body>
 </html>

@@ -94,39 +94,61 @@ const chatSessions = {
     }
 };
 
-// 2. 考亭讲筵课程讲义数据库
+// 2. 考亭讲筵课程讲义数据库 (与六大研学章程一一对应)
 const courseList = [
     {
-        badge: "治学总纲",
-        title: "《读书六法精讲》",
-        summary: "朱子四十载校订群经所凝练之治学金针，专治学者浮躁求速、死记硬背之弊。",
-        original: "“读书之法有六：一曰循序渐进，二曰熟读精思，三曰虚心涵泳，四曰切己体察，五曰着紧用力，六曰居敬持志。”",
-        commentary: "以二书并观，则历落相瞒；以一书兼旬，则融液精明。小立课程，微加积叠。字求其训，句索其旨。未得乎前，不敢求乎后；未通乎上，不敢求乎下。",
-        thinking: "学者且省察：今日看书是否贪多求快、走马观花？可曾字字推敲、使意融于心？"
+        chapterId: "wuyi_jingshe",
+        badge: "精舍初筵 · 开山立教",
+        title: "《武夷精舍杂咏并序》· 聚徒开山",
+        summary: "淳熙十年卜居武夷隐屏峰下，辟仁智堂、隐求室数楹，避俗嚣之扰，聚徒穷理，立道南正脉。",
+        original: "“琴书五十载，隐屏云雾深。淳熙十年，予卜居武夷隐屏峰下，结构精舍数楹，题曰武夷精舍。诸生环居，相与读书讲道。山川幽胜，天柱玉立，清溪抱门。群仙不可见，山阿万竹青。”",
+        commentary: "闹市之中，人心易于随境流荡、气浮心粗；借武夷山川清虚深秀之气，使学者收敛放心、居敬穷理，于静中涵养本心，方有从容入圣之基。此乃先生聚徒开山、接续洙泗之宏旨。",
+        thinking: "学者今日治学，心神是否常为世俗喧嚣所夺？如何收摄身心，于日常居处中筑就自家一片‘武夷精舍’？"
     },
     {
-        badge: "初学入德",
-        title: "《大学章句》三纲八目",
-        summary: "先读《大学》以定其规模。宋代理学立学之总纲领，为学与成己之蓝图。",
-        original: "“大学之道，在明明德，在亲民，在止于至善。知止而后有定，定而后能静，静而后能安，安而后能虑，虑而后能得。”",
-        commentary: "明明德者，去其人欲之蔽，以复其天命之初也。三纲领提其领，格致诚正修齐治平八条目举其细。由浅入深，由内圣而达外王。",
-        thinking: "学者且反躬：吾胸次之中，今日可有私欲障蔽本心？当从何事何处去穷格此理？"
+        chapterId: "jiuqu_zhaoge",
+        badge: "泛舟溯理 · 循序渐进",
+        title: "《武夷棹歌》· 循序寻源",
+        summary: "朱子借九曲溪泛舟溯流之景，喻读书穷理‘循序渐进、由浅入深’之工夫，由一曲登仙渐进至九曲寻源。",
+        original: "“武夷山上有仙灵，山下寒流曲曲清。欲识高深深几许？九曲溪边理自明。一曲溪边上钓船，九曲源头别有天。读书六法：一曰循序渐进，二曰熟读精思，三曰虚心涵泳，四曰切己体察，五曰着紧用力，六曰居敬持志。”",
+        commentary: "为学如撑上水船，一篙不可放缓。泛舟九曲，必自一曲始，渐进至于九曲平旷之处。未得乎前，不敢求乎后；未通乎上，不敢求乎下。字求其训，句索其旨，方得源头活水。",
+        thinking: "仁兄平日开卷，是否贪多求快、走马观花？若未通首卷即急窥末卷，学问何以能‘源清流长’？"
     },
     {
-        badge: "规训立范",
-        title: "《白鹿洞书院学规》",
-        summary: "考亭先生重修庐山白鹿洞书院手订揭示，千年华夏书院教化之金科玉律。",
-        original: "“父子有亲，君臣有义，夫妇有别，长幼有序，朋友有信。为学之序：博学之，审问之，慎思之，明辨之，笃行之。处事之要：正其义不谋其利，明其道不计其功。”",
-        commentary: "学者之所以学者，将以求明夫天叙天秩之大经，以为修身齐家治国平天下之用耳。非徒记诵词章以干利禄也！",
-        thinking: "面对功利与道义抉择，吾能否秉持‘正其义不谋其利’之浩然节操？"
+        chapterId: "wuyi_tea",
+        badge: "敬以直内 · 日用工夫",
+        title: "《朱子家礼·瀹茗工夫》· 茶理存诚",
+        summary: "以武夷岩茶之品瀹、火候与清和，阐释‘主敬存诚、事事物物皆有天理’的日常省察与持守工夫。",
+        original: "“客至则具茶，整肃几席，涤盏烹泉。水之清冽，火之徐候，茶叶之升降，莫非理之所寓。主敬存诚，心无旁骛，于一啜一饮间体认天理流行，不使毫厘私欲夹杂其中。”",
+        commentary: "敬字功夫，是贯通动静之枢纽。煮茗非玩物适情，乃于至微至细之日用事伦中，察理之所当然与所以然。整齐严肃，敬以直内，方能使虚灵不昧之本心常惺惺。",
+        thinking: "格物穷理岂在悬空冥想？在日常举止、饮食应接之间，如何做到‘敬以直内，义以方外’？"
     },
     {
-        badge: "理学梯航",
-        title: "《近思录》道体精微",
-        summary: "考亭先生与吕祖谦编选周敦颐、程颢、程颐、张载四子之言，宋代理学之阶梯。",
-        original: "“万物皆有一理，至赜而不可乱。学者当于喜怒哀乐未发之前体认气象，于事物交接之际存守天理。”",
-        commentary: "老夫与东莱吕伯恭取北宋四子言论精粹，分门别类为十四卷。学者读四书六经若觉宏肆无阶，得此一编，便知由何门而入。",
-        thinking: "学者日常起居应接之时，可曾体认过‘未发之中’与‘已发之和’？"
+        chapterId: "wufu_shecang",
+        badge: "经世济民 · 实学笃行",
+        title: "《崇安县五夫社仓记》· 义利兼通",
+        summary: "乾道四年大饥，朱子躬行赈恤，在崇安五夫里创设社仓法，开创中国民间自治储粮济困之千秋典范。",
+        original: "“乾道四年，建宁府崇安县大饥。予劝诸豪右出粟以振饥民。后建社仓于五夫里，春秋敛散，息米折半，岁丰则免息。不耗官帑，不累闾阎，经画有方，万世永赖。”",
+        commentary: "五夫社仓历十四年而储谷达数万石，全活数郡生灵。儒者之学，绝非空谈心性之虚术，必当开物成务、兼济天下。正其义以谋万民之利，明其道以成济世之功，此真儒知行合一之至验。",
+        thinking: "当世学者常病‘明理者不达时变，任事者不察义理’。五夫社仓法如何启示我们在求学与实践中兼顾义理与民生实效？"
+    },
+    {
+        chapterId: "ehu_debate",
+        badge: "理学论辩 · 尊德问道",
+        title: "《鹅湖之会·答陆子静》· 道问学与尊德性",
+        summary: "淳熙二年鹅湖寺世纪论辩，朱陆异同，探究‘泛观博览以格物致知’与‘发明本心以立大本’之同异互补。",
+        original: "“鹅湖之会，伯恭招陆子静、子寿兄弟来聚。陆子以‘易简功夫终久大，支离事业竟浮沉’相诮。予答之曰：若不道问学、穷理致知，心何所据？尊德性而道问学，二者相济，不可偏废。”",
+        commentary: "尊德性乃立本体，道问学乃致实用。若但空守本心而废博学审问，则流于禅宗之蹈空狂诞；若泛观万物而忘存养德性，则失于支离繁碎。朱子之学，立基于切实体察，两端互发，方臻至纯。",
+        thinking: "为学修身之际，‘尊德性’（立志发明本心）与‘道问学’（博学读书穷理）二者，仁兄平日如何兼筹并进？"
+    },
+    {
+        chapterId: "daxue_gewu",
+        badge: "穷理致知 · 终极宇宙观",
+        title: "《大学章句·格物致知补传》· 理一分殊",
+        summary: "朱子倾尽毕生心血补缀《大学》格致亡章，提出‘月印万川、即物穷理’之集大成理学认识论。",
+        original: "“所谓致知在格物者，言欲致吾之知，在即物而穷其理也。盖人心之灵莫不有知，而天下之物莫不有理。至于用力之久，而一旦豁然贯通焉，则众物之表里精粗无不到，而吾心之全提大用无不明矣。”",
+        commentary: "理一分殊，月印万川。天地万物虽千差万别，皆本于同一天理。今日格一件，明日格一件，积久力深，心物交融，私意尽除，则万事万物之必然之则与本原之道自然豁然贯通，止于至善。",
+        thinking: "在纷繁纷杂的万事万物面前，学者当如何从小处切近处下手穷理，方能期待有朝一日‘豁然贯通’？"
     }
 ];
 
@@ -151,6 +173,263 @@ let currentTTSButton = null;
 let activePlayId = 0;
 let isVoicePlaying = false;
 let isVoicePaused = false;
+
+// 4.1 考亭书院雅乐 (网络宋韵古典BGM播放器 · 默认播放《晨风琴韵》 · 循环重复播放)
+const BGM_PLAYLIST = [
+    {
+        id: "guzheng_morning",
+        title: "《晨风琴韵》",
+        subtitle: "古筝清音 · 武夷空山新雨",
+        src: "/static/audio/guzheng_morning.mp3",
+        desc: "空山灵雨，晨光初透。筝韵如泉水淙淙，令人神清气爽，涤除尘虑。"
+    },
+    {
+        id: "liu_shui",
+        title: "《高山流水》",
+        subtitle: "古琴天籁 · 伯牙子期知音名曲",
+        src: "/static/audio/liu_shui.ogg",
+        desc: "宋代理学大儒会讲论道，必以琴棋书画为修身陶冶之具。流水汤汤，太古遗音。"
+    },
+    {
+        id: "pingsha_luoyan",
+        title: "《平沙落雁》",
+        subtitle: "潇湘水云 · 逸士清幽之境",
+        src: "/static/audio/pingsha_luoyan.ogg",
+        desc: "秋高气爽，风静沙平，云程万里，天际飞鸣。借鸿鹄之远志，写逸士之胸襟。"
+    },
+    {
+        id: "zuiyu_changwan",
+        title: "《醉渔唱晚》",
+        subtitle: "沧浪濯足 · 渔歌互答清音",
+        src: "/static/audio/zuiyu_changwan.ogg",
+        desc: "笑傲烟波，濯足沧浪。隐屏九曲之间，晚霞与孤鹜齐飞，尽显山水自得之趣。"
+    },
+    {
+        id: "yangguan_sandie",
+        title: "《阳关三叠》",
+        subtitle: "唐宋琴歌 · 文士风骨与故人情谊",
+        src: "/static/audio/yangguan_sandie.ogg",
+        desc: "劝君更尽一杯酒，西出阳关无故人。曲调委婉缠绵，回环复沓，感人至深。"
+    }
+];
+
+let currentBgmIndex = 0; // 默认首曲《晨风琴韵》
+let bgmAudio = null;
+let isBgmPlaying = false;
+let bgmVolume = 0.40;
+
+function initBgmPlayer() {
+    if (!bgmAudio) {
+        bgmAudio = new Audio();
+        bgmAudio.loop = true; // 循环重复播放
+        bgmAudio.volume = bgmVolume;
+
+        bgmAudio.onplay = () => {
+            isBgmPlaying = true;
+            updateBgmUI();
+        };
+
+        bgmAudio.onpause = () => {
+            isBgmPlaying = false;
+            updateBgmUI();
+        };
+
+        bgmAudio.onended = () => {
+            bgmAudio.currentTime = 0;
+            bgmAudio.play().catch(() => {});
+        };
+
+        bgmAudio.onerror = (e) => {
+            console.warn("BGM加载或播放异常:", e);
+            isBgmPlaying = false;
+            updateBgmUI();
+        };
+    }
+}
+
+function updateBgmUI() {
+    const navItem = document.getElementById("nav-bgm-toggle");
+    const badge = document.getElementById("nav-bgm-badge");
+    const modalPlayBtn = document.getElementById("bgm-modal-play-btn");
+    const currentTitle = document.getElementById("bgm-current-title");
+    const currentDesc = document.getElementById("bgm-current-desc");
+    const playerIcon = document.getElementById("bgm-player-icon");
+    const track = BGM_PLAYLIST[currentBgmIndex] || BGM_PLAYLIST[0];
+
+    if (badge) {
+        if (isBgmPlaying) {
+            badge.textContent = "播放中";
+            badge.style.background = "#d97706";
+            badge.style.color = "#ffffff";
+        } else {
+            badge.textContent = "静音";
+            badge.style.background = "#e2e8f0";
+            badge.style.color = "#475569";
+        }
+    }
+
+    if (navItem) {
+        if (isBgmPlaying) {
+            navItem.classList.add("active");
+        } else {
+            navItem.classList.remove("active");
+        }
+    }
+
+    if (modalPlayBtn) {
+        modalPlayBtn.innerHTML = isBgmPlaying ? "⏸ 暂停雅乐" : "▶ 播放雅乐";
+    }
+
+    if (currentTitle) {
+        currentTitle.textContent = `${track.title} · ${track.subtitle}`;
+    }
+
+    if (currentDesc) {
+        currentDesc.textContent = isBgmPlaying ? `太古遗音 · 正在循环重复播放中` : `太古遗音 · 默认选中（点击上方按钮播放）`;
+    }
+
+    if (playerIcon) {
+        playerIcon.textContent = isBgmPlaying ? "🎶" : "🎵";
+    }
+
+    renderBgmPlaylist();
+}
+
+function renderBgmPlaylist() {
+    const listEl = document.getElementById("bgm-playlist-container");
+    if (!listEl) return;
+
+    listEl.innerHTML = BGM_PLAYLIST.map((item, idx) => {
+        const isCurrent = idx === currentBgmIndex;
+        return `
+            <div onclick="playBgmTrack(${idx})" style="display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-radius:8px; border:1px solid ${isCurrent ? '#b45309' : '#e2e8f0'}; background:${isCurrent ? '#fef3c7' : '#ffffff'}; cursor:pointer; transition:all 0.2s;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <span style="font-size:16px;">${isCurrent && isBgmPlaying ? '🔊' : '🎵'}</span>
+                    <div>
+                        <div style="font-size:13.5px; font-weight:bold; color:${isCurrent ? '#78350f' : '#1e293b'}; font-family:var(--font-serif);">${item.title} <span style="font-size:12px; font-weight:normal; color:#64748b;">${item.subtitle}</span></div>
+                        <div style="font-size:11.5px; color:#64748b; margin-top:2px;">${item.desc}</div>
+                    </div>
+                </div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <span style="font-size:11px; padding:2px 8px; border-radius:10px; background:${isCurrent ? '#d97706' : '#f1f5f9'}; color:${isCurrent ? '#ffffff' : '#64748b'};">${isCurrent && isBgmPlaying ? '播放中 (循环)' : (isCurrent ? '默认选中' : '点击切换')}</span>
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
+function playBgmTrack(index) {
+    initBgmPlayer();
+    currentBgmIndex = index;
+    const track = BGM_PLAYLIST[currentBgmIndex];
+    bgmAudio.src = track.src;
+    bgmAudio.currentTime = 0;
+    bgmAudio.play().then(() => {
+        isBgmPlaying = true;
+        updateBgmUI();
+        if (typeof showToast === 'function') {
+            showToast(`正在播放：${track.title}`);
+        }
+    }).catch(err => {
+        console.warn("BGM播放需用户交互:", err);
+        if (typeof showToast === 'function') {
+            showToast(`请点击【播放雅乐】开启背景音乐`);
+        }
+        updateBgmUI();
+    });
+}
+
+function toggleAcademyBGM() {
+    initBgmPlayer();
+    const track = BGM_PLAYLIST[currentBgmIndex];
+    if (!bgmAudio.src || bgmAudio.src.indexOf(track.src) === -1) {
+        bgmAudio.src = track.src;
+    }
+
+    if (isBgmPlaying) {
+        bgmAudio.pause();
+        isBgmPlaying = false;
+        updateBgmUI();
+        if (typeof showToast === 'function') {
+            showToast("书院雅乐已暂停");
+        }
+    } else {
+        bgmAudio.play().then(() => {
+            isBgmPlaying = true;
+            updateBgmUI();
+            if (typeof showToast === 'function') {
+                showToast(`书院雅乐已开启（循环播放）：${track.title}`);
+            }
+        }).catch(err => {
+            console.warn("BGM播放受阻:", err);
+            updateBgmUI();
+        });
+    }
+}
+
+function tryAutoPlayBgm() {
+    initBgmPlayer();
+    const track = BGM_PLAYLIST[currentBgmIndex];
+    if (!bgmAudio.src || bgmAudio.src.indexOf(track.src) === -1) {
+        bgmAudio.src = track.src;
+    }
+    const p = bgmAudio.play();
+    if (p !== undefined) {
+        p.then(() => {
+            isBgmPlaying = true;
+            updateBgmUI();
+        }).catch(() => {
+            // 被浏览器策略限制，在首次用户手势点击或按键时启动
+            isBgmPlaying = false;
+            updateBgmUI();
+            const startOnInteraction = () => {
+                if (!isBgmPlaying && bgmAudio) {
+                    bgmAudio.play().then(() => {
+                        isBgmPlaying = true;
+                        updateBgmUI();
+                    }).catch(() => {});
+                }
+                document.removeEventListener('click', startOnInteraction);
+                document.removeEventListener('keydown', startOnInteraction);
+                document.removeEventListener('touchstart', startOnInteraction);
+            };
+            document.addEventListener('click', startOnInteraction, { once: true });
+            document.addEventListener('keydown', startOnInteraction, { once: true });
+            document.addEventListener('touchstart', startOnInteraction, { once: true });
+        });
+    }
+}
+
+function nextBgmTrack() {
+    const nextIdx = (currentBgmIndex + 1) % BGM_PLAYLIST.length;
+    playBgmTrack(nextIdx);
+}
+
+function prevBgmTrack() {
+    const prevIdx = (currentBgmIndex - 1 + BGM_PLAYLIST.length) % BGM_PLAYLIST.length;
+    playBgmTrack(prevIdx);
+}
+
+function setBgmVolume(val) {
+    bgmVolume = parseFloat(val);
+    if (bgmAudio) bgmAudio.volume = bgmVolume;
+    const valEl = document.getElementById("bgm-volume-val");
+    if (valEl) valEl.textContent = `${Math.round(bgmVolume * 100)}%`;
+}
+
+function openBgmModal() {
+    initBgmPlayer();
+    const modal = document.getElementById("bgm-modal");
+    if (modal) {
+        modal.classList.add("active");
+        updateBgmUI();
+    }
+}
+
+function closeBgmModal() {
+    const modal = document.getElementById("bgm-modal");
+    if (modal) modal.classList.remove("active");
+}
 
 // 5. 对话流式生成与强制停止控制器 (防止超长输出与内存溢出导致系统崩溃)
 const activeAbortControllers = {};
@@ -227,6 +506,12 @@ function handleSendOrStop(moduleKey) {
 document.addEventListener("DOMContentLoaded", () => {
     loadKnowledgeStats();
     drawDailyQuote();
+    initBgmPlayer();
+    updateBgmUI();
+    tryAutoPlayBgm();
+    loadReservationBooklist();
+    preloadOpacBooks();
+    renderHomeShowcaseBooks('sishu');
     if (window.avatarEngine) {
         window.avatarEngine.init();
     }
@@ -587,73 +872,15 @@ async function sendQuery(moduleKey, queryOverride) {
 }
 
 // ========================================================
-// 实时语音毫秒级极速朗诵与切换控制器【Web Speech API 零延时出声】
+// 实时语音朗诵控制器【统一唯一考亭大儒声线 zh-CN-YunjianNeural，杜绝杂乱声线】
 // ========================================================
 function speakInstantText(text, btnElement) {
-    if (!('speechSynthesis' in window)) {
-        playVoice(text, btnElement);
-        return;
+    // 坚决彻底停用并静音浏览器杂乱内置多音色，确保全局纯正考亭大儒唯一音色
+    if ('speechSynthesis' in window) {
+        try { window.speechSynthesis.cancel(); } catch (e) {}
     }
-    try {
-        window.speechSynthesis.cancel();
-    } catch (e) {}
-
-    let cleanText = text
-        .replace(/[#*`_>~]/g, "")
-        .replace(/\[.*?\]/g, "")
-        .replace(/[\(（].*?[\)）]/g, "")
-        .replace(/【.*?】/g, "")
-        .replace(/📜|💡|🎯|✨|🌟|🏮|🌅|☀️|🌙|🎓|⏳|🏞️/g, "")
-        .replace(/\s+/g, " ")
-        .trim();
-
-    if (cleanText.length > 350) {
-        cleanText = cleanText.substring(0, 350) + "。余言且待仁兄细味。";
-    }
-
-    if (!cleanText) return;
-
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.lang = "zh-CN";
-    utterance.rate = 0.95;
-    utterance.pitch = 0.92;
-
-    const voices = window.speechSynthesis.getVoices();
-    const zhVoices = voices.filter(v => v.lang && (v.lang.includes("zh") || v.lang.includes("cmn")));
-    const preferredVoice = zhVoices.find(v => v.name.includes("Yunxi") || v.name.includes("Kangkang") || v.name.includes("Male") || v.name.includes("Sha")) || zhVoices[0];
-    if (preferredVoice) {
-        utterance.voice = preferredVoice;
-    }
-
-    if (btnElement) {
-        btnElement.classList.add("playing");
-        const icon = btnElement.querySelector(".tts-icon");
-        const label = btnElement.querySelector(".tts-text");
-        if (icon) icon.textContent = "🔊";
-        if (label) label.textContent = "夫子开示中...";
-    }
-
-    if (window.avatarEngine) {
-        avatarEngine.setState("speaking");
-    }
-
-    utterance.onend = () => {
-        if (btnElement) {
-            btnElement.classList.remove("playing");
-            const label = btnElement.querySelector(".tts-text");
-            if (label) label.textContent = "聆听先生讲学";
-        }
-        if (window.avatarEngine) {
-            avatarEngine.setState("idle");
-        }
-    };
-
-    utterance.onerror = (e) => {
-        console.warn("实时语音异常，降级至服务端音频:", e);
-        playVoice(text, btnElement);
-    };
-
-    window.speechSynthesis.speak(utterance);
+    // 统一交由 playVoice 调度 Edge-TTS 考亭大儒专属音色
+    playVoice(text, btnElement, "yunjian");
 }
 
 function toggleInstantTTS() {
@@ -835,7 +1062,7 @@ function exitTaskFlow() {
 }
 
 function selectThesisDirection(topic) {
-    sendTaskFlowQuery(`后学欲撰写理学学术论文，选题方向拟定为【${topic}】。请先生从论点破题、核心理学范畴与四段式论证大纲予以全面指导，并在末尾询问后学是否需要老夫提供本校特藏古籍与专著之具体文献及OPAC索书号。`);
+    sendTaskFlowQuery(`【论文专修·步骤一】后学欲撰写理学学术论文，选题方向拟定为【${topic}】。请先生从立论破题、核心问题意识予以指导，并直接列出武夷学院逸夫图书馆特藏专柜之具体内容文献、原典文句引据及OPAC索书号，完成步骤一指导。`);
 }
 
 function selectPoetrySample(key) {
@@ -923,21 +1150,43 @@ function updateTaskFlowChips(fullText) {
     if (!chipsBar) return;
 
     if (currentTaskFlow === "thesis") {
-        if (fullText.includes("具体文献") || fullText.includes("索书号") || fullText.includes("是否需要老夫提供")) {
+        if (fullText.includes("步骤六") || fullText.includes("终审评语") || fullText.includes("终审通过") || fullText.includes("答辩委员会") || fullText.includes("准予开题")) {
             chipsBar.innerHTML = `
-                <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('需要文献，请先生列出本校特藏古籍之具体文献及逸夫图书馆六楼OPAC索书号。')">📚 需要本校特藏具体文献</button>
-                <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('暂不需要文献，请先生继续深入剖析论证脉络与核心论点。')">⏭️ 暂不需要，探讨框架</button>
-            `;
-        } else if (fullText.includes("是否满意") || fullText.includes("还需要老夫") || fullText.includes("某一章节")) {
-            chipsBar.innerHTML = `
-                <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('十分满意，无需补充，感谢先生指引门径！')">✅ 十分满意，无需补充</button>
-                <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('请先生指点如何撰写本论题之引言与结语。')">✍️ 探讨引言与结论</button>
-                <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('请先生深入剖析论文核心范畴之间的辩证关系。')">🔍 深入剖析核心概念</button>
-            `;
-        } else if (fullText.includes("嘉作") || fullText.includes("增辉考亭文脉") || fullText.includes("大器") || fullText.includes("满意")) {
-            chipsBar.innerHTML = `
-                <button class="taskflow-quick-chip" onclick="exitTaskFlow()">🎓 研撰圆满，退出专修</button>
+                <button class="taskflow-quick-chip" onclick="exitTaskFlow()">🎓 开题圆满，导出总纲</button>
                 <button class="taskflow-quick-chip" onclick="startTaskFlow('thesis')">🔄 开启其他论文题目</button>
+                <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('【质询深探】请先生针对答辩第一问‘本体在先与时间在先’再作深入点拨。')">💬 深探答辩第一问</button>
+            `;
+        } else if (fullText.includes("步骤五") || fullText.includes("学术前沿") || fullText.includes("创新点提炼") || fullText.includes("文献综述撰拟")) {
+            chipsBar.innerHTML = `
+                <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('【论文专修·步骤六】论点与文献综述已备！请先生移步考亭讲席，举行毕业答辩模拟质询并出具开题终审评语！')">🎓 推进至步骤六：毕业答辩模拟质询与开题总纲</button>
+                <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('请先生为文献综述部分补充更多当代理学前沿专著文献。')">📖 补充现当代前沿专著</button>
+                <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('请先生针对本题提炼更多跨学科生态伦理之创新点。')">💡 深入挖掘前沿创新点</button>
+            `;
+        } else if (fullText.includes("步骤四") || fullText.includes("四章节") || fullText.includes("分章写作") || fullText.includes("论证细纲")) {
+            chipsBar.innerHTML = `
+                <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('【论文专修·步骤五】四章节大纲已定！请先生指导学术前沿创新点提炼与权威文献综述撰写规范！')">🔬 推进至步骤五：学术前沿创新点与文献综述撰拟</button>
+                <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('请先生详细指导本论文引言与结语的写作技法。')">✍️ 探讨引言与结语撰写</button>
+                <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('请先生为第二章核心概念考证细化具体的论证段落。')">📑 细化第二章论证段落</button>
+            `;
+        } else if (fullText.includes("步骤三") || fullText.includes("范畴辩证") || fullText.includes("学术争鸣") || fullText.includes("学术辩难")) {
+            chipsBar.innerHTML = `
+                <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('【论文专修·步骤四】核心范畴辩难已通！请先生开列四章节系统论证细纲与分章正文写作要领！')">✍️ 推进至步骤四：四章节论证细纲与分章写作</button>
+                <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('请先生深入剖析陈来先生与冯友兰先生在此论题上的学术分歧。')">🔍 深入剖析学界论争</button>
+                <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('请先生指导如何有力回应清代考据学家对理学的批评。')">🛡️ 回应后儒学术批评</button>
+            `;
+        } else if (fullText.includes("步骤二") || fullText.includes("文句考证") || fullText.includes("文献精研") || fullText.includes("字词训诂")) {
+            chipsBar.innerHTML = `
+                <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('【论文专修·步骤三】原文考证甚为精审！请先生指导核心哲学范畴辩证与学术史争鸣！')">⚖️ 推进至步骤三：核心哲学范畴辩证与学术争鸣</button>
+                <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('请先生对方才所引《朱子语类》‘毕竟也只是理’做更深一层的本体义理剖析。')">📖 深究核心原文义理</button>
+                <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('换一批特藏典籍文献，需要考亭先生调阅更多本校特藏古籍。')">📚 调换一批特藏古籍</button>
+            `;
+        } else {
+            // 步骤一或默认初始状态
+            chipsBar.innerHTML = `
+                <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('【论文专修·步骤二】步骤一文献定位已明！请先生开启步骤二，对特藏核心原文文句进行逐句考据与深细训诂！')">📜 推进至步骤二：特藏文献精研与文句考证</button>
+                <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('换一批特藏文献，请先生从武夷学院逸夫图书馆更换其他批次文献典籍。')">📚 更换一批特藏文献</button>
+                <button class="taskflow-quick-chip" onclick="sendTaskFlowQuery('请先生为本选题进一步阐发核心问题意识与立论深意。')">💡 深化本题问题意识</button>
+                <button class="taskflow-quick-chip" onclick="startTaskFlow('thesis')">🔄 重新自选论题方向</button>
             `;
         }
     } else if (currentTaskFlow === "scenery") {
@@ -968,23 +1217,86 @@ function updateTaskFlowChips(fullText) {
 }
 
 // ========================================================
-// 考亭讲筵 GalGame 研学交互辅助函数
+// 考亭讲筵 GalGame 研学交互辅助函数与讲义桥接
 // ========================================================
+function ensureGalGameEngineSyllabusBridge() {
+    if (!window.galGameEngine) {
+        window.galGameEngine = {};
+    }
+    if (typeof window.galGameEngine.updateSyllabusDrawer !== "function") {
+        window.galGameEngine.updateSyllabusDrawer = function(chapterId) {
+            if (!chapterId) chapterId = window.galGameEngine.currentChapterId || "wuyi_jingshe";
+            const c = courseList.find(item => item.chapterId === chapterId) || courseList[0];
+            if (!c) return;
+            const badgeEl = document.getElementById("course-badge");
+            const titleEl = document.getElementById("course-title");
+            const summaryEl = document.getElementById("course-summary");
+            const originalEl = document.getElementById("course-original");
+            const commentaryEl = document.getElementById("course-commentary");
+            const thinkingEl = document.getElementById("course-thinking");
+
+            if (badgeEl) badgeEl.textContent = c.badge;
+            if (titleEl) titleEl.textContent = c.title;
+            if (summaryEl) summaryEl.textContent = c.summary;
+            if (originalEl) originalEl.textContent = c.original;
+            if (commentaryEl) commentaryEl.textContent = c.commentary;
+            if (thinkingEl) thinkingEl.textContent = c.thinking;
+
+            const pills = document.querySelectorAll(".drawer-chapter-pill");
+            pills.forEach(pill => {
+                const cAttr = pill.getAttribute("data-chapter") || "";
+                const onclickVal = pill.getAttribute("onclick") || "";
+                if (cAttr === chapterId || onclickVal.includes(`'${chapterId}'`) || onclickVal.includes(`"${chapterId}"`)) {
+                    pill.classList.add("active");
+                } else {
+                    pill.classList.remove("active");
+                }
+            });
+        };
+    }
+    if (typeof window.galGameEngine.switchSyllabusChapter !== "function") {
+        window.galGameEngine.switchSyllabusChapter = function(chapterId) {
+            if (window.galGameEngine.updateSyllabusDrawer) {
+                window.galGameEngine.updateSyllabusDrawer(chapterId);
+            }
+            if (typeof window.galGameEngine.loadChapter === "function") {
+                window.galGameEngine.loadChapter(chapterId, 0);
+            }
+        };
+    }
+    window.updateSyllabusDrawer = window.updateSyllabusDrawer || window.galGameEngine.updateSyllabusDrawer;
+    window.switchSyllabusChapter = window.switchSyllabusChapter || window.galGameEngine.switchSyllabusChapter;
+}
+ensureGalGameEngineSyllabusBridge();
+
 function switchGalGameChapter(chapterId, btnEl) {
+    ensureGalGameEngineSyllabusBridge();
     if (btnEl) {
         document.querySelectorAll(".chapter-tab-pill").forEach(p => p.classList.remove("active"));
         btnEl.classList.add("active");
     }
     if (window.galGameEngine) {
-        window.galGameEngine.loadChapter(chapterId, 0);
+        if (typeof window.galGameEngine.loadChapter === "function") {
+            window.galGameEngine.loadChapter(chapterId, 0);
+        }
+        if (typeof window.galGameEngine.updateSyllabusDrawer === "function") {
+            window.galGameEngine.updateSyllabusDrawer(chapterId);
+        }
     }
 }
 
 function toggleGalGameSyllabusDrawer() {
+    ensureGalGameEngineSyllabusBridge();
     const drawer = document.getElementById("galgame-syllabus-drawer");
     if (!drawer) return;
     const isHidden = drawer.style.display === "none" || !drawer.style.display;
     drawer.style.display = isHidden ? "flex" : "none";
+    if (isHidden && window.galGameEngine) {
+        const curId = window.galGameEngine.currentChapterId || "wuyi_jingshe";
+        if (typeof window.galGameEngine.updateSyllabusDrawer === "function") {
+            window.galGameEngine.updateSyllabusDrawer(curId);
+        }
+    }
 }
 
 function selectCourse(index) {
@@ -1000,12 +1312,23 @@ function selectCourse(index) {
     });
 
     // 填充讲义文本
-    document.getElementById("course-badge").textContent = c.badge;
-    document.getElementById("course-title").textContent = c.title;
-    document.getElementById("course-summary").textContent = c.summary;
-    document.getElementById("course-original").textContent = c.original;
-    document.getElementById("course-commentary").textContent = c.commentary;
-    document.getElementById("course-thinking").textContent = c.thinking;
+    const badgeEl = document.getElementById("course-badge");
+    const titleEl = document.getElementById("course-title");
+    const summaryEl = document.getElementById("course-summary");
+    const originalEl = document.getElementById("course-original");
+    const commentaryEl = document.getElementById("course-commentary");
+    const thinkingEl = document.getElementById("course-thinking");
+
+    if (badgeEl) badgeEl.textContent = c.badge;
+    if (titleEl) titleEl.textContent = c.title;
+    if (summaryEl) summaryEl.textContent = c.summary;
+    if (originalEl) originalEl.textContent = c.original;
+    if (commentaryEl) commentaryEl.textContent = c.commentary;
+    if (thinkingEl) thinkingEl.textContent = c.thinking;
+
+    if (c.chapterId && window.galGameEngine) {
+        window.galGameEngine.loadChapter(c.chapterId, 0);
+    }
 }
 
 function askAboutCurrentCourse() {
@@ -1527,35 +1850,18 @@ async function handleFileUpload(input) {
     }
 }
 
-// 彻底清除所有中英文圆括号及其内容，并杜绝朱熹与朱子字样泄漏
+// 彻底清除所有中英文圆括号，替换为典雅破折号，绝不误伤正文与典籍原名
 function cleanParentheses(text) {
     if (!text) return "";
-    let prev = null;
     let t = text;
-    // 循环消除嵌套或多段中英文圆括号
-    while (prev !== t) {
-        prev = t;
-        t = t.replace(/[\(（][^()（）]*?[\)）]/gs, "");
-    }
-    // 消除流式输出尚未闭合的括号尾巴
-    t = t.replace(/[\(（][^()（）\n]*$/g, "");
-    // 消除空括号残留
-    t = t.replace(/[\(（]\s*[\)）]/g, "");
 
-    // 前端二次安全屏障：彻底清除朱熹与朱子
-    t = t.replace(/《朱子语类》|《朱子语录》/g, "《考亭语类》");
-    t = t.replace(/《朱子读书法》/g, "《考亭读书法》");
-    t = t.replace(/《朱文公文集》|《朱子文集》/g, "《考亭文集》");
-    t = t.replace(/《朱子家训》/g, "《考亭家训》");
-    t = t.replace(/朱子学派|朱子学/g, "考亭理学");
-    t = t.replace(/朱子文化/g, "考亭理学文化");
-    t = t.replace(/朱子读书法/g, "考亭读书法");
-    t = t.replace(/朱子语类|朱子语录/g, "考亭语类");
-    t = t.replace(/朱子文集|朱文公文集/g, "考亭文集");
+    // 1. 将圆括号替换为文人破折号，绝不误删括号内的大段精辟义理
+    t = t.replace(/[（\(]([^\n()（）]{1,80})[）\)]/g, "——$1——");
+    t = t.replace(/[（\(\)）]/g, "");
+
+    // 2. 保护传世典籍真实馆藏原名（如《朱子语类》《朱子读书法》《朱子文集》等）
+    // 3. 将人名直呼温和转为宗师尊称
     t = t.replace(/朱文公|朱夫子|朱老师|朱爷爷/g, "考亭先生");
-    t = t.replace(/朱熹/g, "老夫");
-    t = t.replace(/朱子/g, "老夫");
-    t = t.replace(/老夫老夫+/g, "老夫");
     return t;
 }
 
@@ -1581,6 +1887,20 @@ function renderMarkdown(md) {
     html = html.replace(/\n\n/g, '<br><br>');
     html = html.replace(/\n/g, '<br>');
 
+    // 转换正文引注角标 【1】 或 [1] 或 ① 为绿色圆圈徽标（完全匹配茶典智能体样式）
+    const circledNums = { '①': 1, '②': 2, '③': 3, '④': 4, '⑤': 5, '⑥': 6, '⑦': 7, '⑧': 8, '⑨': 9 };
+    html = html.replace(/[①②③④⑤⑥⑦⑧⑨]/g, (match) => {
+        const num = circledNums[match];
+        return `<span class="cite-ref-badge" data-ref="${num}" onclick="window.scrollToProvenanceRef(${num})" title="查看武夷学院馆藏原典引注 [${num}]">${num}</span>`;
+    });
+    html = html.replace(/(?:【([0-9]{1,2})】|\[([0-9]{1,2})\])(?!\d)/g, (match, p1, p2) => {
+        const num = p1 || p2;
+        return `<span class="cite-ref-badge" data-ref="${num}" onclick="window.scrollToProvenanceRef(${num})" title="查看武夷学院馆藏原典引注 [${num}]">${num}</span>`;
+    });
+
+    // 强化武夷学院自建特色库馆藏溯源与线下预约卡片
+    html = enrichCitationWithOpac(html);
+
     return html;
 }
 
@@ -1592,6 +1912,1734 @@ function escapeHtml(str) {
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
 }
+
+// ========================================================
+// 武夷学院图书馆 OPAC (Space v4.2.29) 典籍库与线下预约管理器
+// ========================================================
+const OPAC_BOOKS_REGISTRY = {
+    sishu: { id: "sishu", title: "《四书章句集注》", callNumber: "B222.12/Z90:10", location: "总馆 - 流通书库", copiesDesc: "纸本馆藏 1 册 / 实时在架可借 1 册", status: "可借", isBorrowable: true, bibId: "mc7034ec9f084a8217d312a7fbb9d0960" },
+    daxue: { id: "daxue", title: "《大学章句》", callNumber: "B222.12/Z90：1", location: "总馆 - 流通书库", copiesDesc: "纸本馆藏 3 册 / 实时在架可借 3 册", status: "可借", isBorrowable: true, bibId: "m1ac8664b61c03d8a5c8a35571d676d66" },
+    lunyu: { id: "lunyu", title: "《论语集注》", callNumber: "B222.22/Z90", location: "特藏室 · 宋明理学专柜", copiesDesc: "纸本馆藏 2 册 / 借出 (建议预约)", status: "借出", isBorrowable: false, bibId: "m94a1e22d43113bea41afbb3b3fb15046" },
+    mengzi: { id: "mengzi", title: "《孟子集注》", callNumber: "B222.52/Z90/1", location: "总馆 - 流通书库", copiesDesc: "纸本馆藏 2 册 / 实时在架可借 2 册", status: "可借", isBorrowable: true, bibId: "m51f8f17f5b8a91bfc2c86da36d289bc9" },
+    zhongyong: { id: "zhongyong", title: "《中庸章句》", callNumber: "B222.12/Z90：1", location: "总馆 - 流通书库", copiesDesc: "纸本馆藏 3 册 / 实时在架可借 3 册", status: "可借", isBorrowable: true, bibId: "m1ac8664b61c03d8a5c8a35571d676d66" },
+    jinsi: { id: "jinsi", title: "《近思录》", callNumber: "B244.74/Z30", location: "总馆 - 流通书库", copiesDesc: "纸本馆藏 2 册 / 实时在架可借 2 册", status: "可借", isBorrowable: true, bibId: "ma9ed44adcd8699c1c919d7fe122b33cf" },
+    yulei: { id: "yulei", title: "《朱子语类》", callNumber: "B244.71/L42", location: "特藏室 · 宋明理学专柜", copiesDesc: "纸本馆藏 1 册 / 借出 (建议预约)", status: "借出", isBorrowable: false, bibId: "m910fe206f504321ab8075f4425a6561e" },
+    taiji: { id: "taiji", title: "《太极图说解》", callNumber: "B244.25/Z29", location: "总馆 - 流通书库", copiesDesc: "纸本馆藏 1 册 / 实时在架可借 1 册", status: "可借", isBorrowable: true, bibId: "m03a229fed172c6c4457a9d25d0e3472e" },
+    ximing: { id: "ximing", title: "《西铭解》", callNumber: "B222/T94：46", location: "六楼古籍特藏室", copiesDesc: "纸本馆藏 1 册 / 借出 (建议预约)", status: "借出", isBorrowable: false, bibId: "m329c4bf8aac402ba94c27628fa60915b" },
+    gangmu: { id: "gangmu", title: "《资治通鉴纲目》", callNumber: "K204.3/Z90:4", location: "总馆 - 流通书库", copiesDesc: "纸本馆藏 4 册 / 实时在架可借 4 册", status: "可借", isBorrowable: true, bibId: "m847dd131dfc2f3cd792a696d5fc70bff" },
+    shijizhuan: { id: "shijizhuan", title: "《诗集传》", callNumber: "I222.2/Z90", location: "特藏室 · 古籍专柜", copiesDesc: "纸本馆藏 1 册 / 借出 (建议预约)", status: "借出", isBorrowable: false, bibId: "m09f06ea84a2100925179748950beff70" },
+    zhouyi: { id: "zhouyi", title: "《周易本义》", callNumber: "B221.5/L30", location: "总馆 - 流通书库", copiesDesc: "纸本馆藏 2 册 / 实时在架可借 2 册", status: "可借", isBorrowable: true, bibId: "m733ba27d4b6949cbdefd37ffe4fd2f80" },
+    chuci: { id: "chuci", title: "《楚辞集注》", callNumber: "I222.3/Z90:2", location: "总馆 - 流通书库", copiesDesc: "纸本馆藏 2 册 / 实时在架可借 2 册", status: "可借", isBorrowable: true, bibId: "mc81bc1fef94dd6cdc04a36d4466f66be" },
+    tongmeng: { id: "tongmeng", title: "《童蒙须知》", callNumber: "B222/T94：44", location: "六楼古籍特藏室", copiesDesc: "纸本馆藏 1 册 / 借出 (建议预约)", status: "借出", isBorrowable: false, bibId: "me19479abe54bb4b8467c82ec016450aa" },
+    xuegui: { id: "xuegui", title: "《白鹿洞书院学规》", callNumber: "TU-092.2/L70:3", location: "总馆 - 流通书库", copiesDesc: "纸本馆藏 1 册 / 实时在架可借 1 册", status: "可借", isBorrowable: true, bibId: "m01a9861554abb51f11ba8d5c015131c8" },
+    wuyi_kaoting: { id: "wuyi_kaoting", title: "《第二届考亭论坛专辑》", callNumber: "B244.75/L43:1", location: "特藏室 · 闽北文库", copiesDesc: "纸本馆藏 2 册 / 实时在架可借 2 册", status: "可借", isBorrowable: true, bibId: "m2b6005a499aa4f3f50aa0f01f5adc36f" },
+    wuyi_chaosheng: { id: "wuyi_chaosheng", title: "《朝圣朱子》", callNumber: "B244.7/Z46", location: "特藏部 / 闽北地方文献", copiesDesc: "纸本馆藏 6 册 / 实时在架可借 5 册", status: "可借", isBorrowable: true, bibId: "m769fa97c35a89c0a3624980a21003904" },
+    wuyi_dongjing: { id: "wuyi_dongjing", title: "《武夷精舍志》", callNumber: "B222/T94:71", location: "六楼古籍特藏室", copiesDesc: "纸本馆藏 1 册 / 现架特藏", status: "借出", isBorrowable: false, bibId: "mfbad133c1b671b185a1e58b0939666e1" },
+    wuyi_haiwai: { id: "wuyi_haiwai", title: "《朱子文化在海外》", callNumber: "B244.75/D40", location: "特藏室 · 国际朱子学柜", copiesDesc: "纸本馆藏 2 册 / 实时在架可借 2 册", status: "可借", isBorrowable: true, bibId: "m9750078ba9d212e3b9a8c8ddd7e281f2" },
+    wuyi_shici: { id: "wuyi_shici", title: "《朱子的诗和远方》", callNumber: "I207.227.442/Z43", location: "六楼古籍特藏室", copiesDesc: "纸本馆藏 1 册 / 现架阅览", status: "可借", isBorrowable: true, bibId: "m5590f490b8512b928c22c8a630f2f93b" },
+    wuyi_fujian: { id: "wuyi_fujian", title: "《福建朱子学》", callNumber: "B244.75/G49:1", location: "特藏室 · 闽北理学专架", copiesDesc: "纸本馆藏 2 册 / 实时在架可借 1 册", status: "可借", isBorrowable: true, bibId: "mcd9b1f2e032950ae0d77ce38a1bb4770" },
+    wuyi_century: { id: "wuyi_century", title: "《世纪之交的朱子学》", callNumber: "B244.75/X39:2", location: "特藏室 · 协同创新专柜", copiesDesc: "精装上中下三册 / 实时在架可借 1 册", status: "可借", isBorrowable: true, bibId: "md0bec348de5285f8b72b7bd977276ee9" }
+};
+
+window.opacBooksCache = { ...OPAC_BOOKS_REGISTRY };
+
+function matchOpacBookKey(title) {
+    if (!title) return "daxue";
+    const clean = title.replace(/[《》·\s]/g, "").toLowerCase();
+    for (const [k, b] of Object.entries(OPAC_BOOKS_REGISTRY)) {
+        const bClean = b.title.replace(/[《》·\s]/g, "").toLowerCase();
+        if (clean.includes(bClean) || bClean.includes(clean)) return k;
+    }
+    if (clean.includes("大学")) return "daxue";
+    if (clean.includes("中庸")) return "zhongyong";
+    if (clean.includes("论语")) return "lunyu";
+    if (clean.includes("孟子")) return "mengzi";
+    if (clean.includes("四书")) return "sishu";
+    if (clean.includes("语类")) return "yulei";
+    if (clean.includes("近思录")) return "jinsi";
+    if (clean.includes("太极")) return "taiji";
+    if (clean.includes("西铭")) return "ximing";
+    if (clean.includes("纲目") || clean.includes("通鉴")) return "gangmu";
+    if (clean.includes("诗集传") || clean.includes("诗经")) return "shijizhuan";
+    if (clean.includes("周易") || clean.includes("易")) return "zhouyi";
+    if (clean.includes("楚辞")) return "chuci";
+    if (clean.includes("童蒙") || clean.includes("家训")) return "tongmeng";
+    if (clean.includes("白鹿") || clean.includes("学规")) return "xuegui";
+    if (clean.includes("考亭") || clean.includes("论坛")) return "wuyi_kaoting";
+    if (clean.includes("朝圣")) return "wuyi_chaosheng";
+    if (clean.includes("海外")) return "wuyi_haiwai";
+    if (clean.includes("诗和远方") || clean.includes("诗词")) return "wuyi_shici";
+    if (clean.includes("福建")) return "wuyi_fujian";
+    if (clean.includes("世纪")) return "wuyi_century";
+    return "daxue";
+}
+
+// ========================================================
+// 武夷学院逸夫图书馆特色馆藏溯源渲染器（完全对齐茶文化智能体规制）
+// ========================================================
+function renderLibraryProvenanceBlock(rawContent) {
+    if (!rawContent) return "";
+    const lines = rawContent.split(/<br\s*\/?>|\n/).map(l => l.trim()).filter(Boolean);
+    const items = [];
+    let disclaimer = "注：以上资料均为武夷学院逸夫图书馆特色馆藏收录典籍，是否为在架纸质藏书请以 OPAC 实时查询为准。";
+    let relatedTopic = "宋明理学特色库 · 检索理学文献题录";
+    let relatedBooks = "";
+
+    for (const l of lines) {
+        const plain = l.replace(/<[^>]+>/g, "").trim();
+        const m = plain.match(/^([0-9]{1,2})\s+(.+)/);
+        if (m) {
+            items.push({ num: m[1], text: m[2] });
+        } else if (plain.startsWith("注：") || plain.startsWith("注:")) {
+            disclaimer = plain;
+        } else if (plain.startsWith("•") || plain.startsWith("-") || plain.startsWith("*")) {
+            relatedTopic = plain.replace(/^[•\-\*\s]+/, "");
+        } else if (plain.includes("检索到：") || plain.includes("检索到:")) {
+            relatedBooks = plain;
+        }
+    }
+
+    if (items.length === 0) {
+        const titleMatches = Array.from(rawContent.matchAll(/《([^》]+)》/g), m => m[1].trim());
+        titleMatches.forEach((t, i) => {
+            items.push({ num: String(i + 1), text: `《${t}》 | 来源：武夷学院图书馆宋明理学特色库` });
+        });
+    }
+
+    const itemRowsHtml = items.map(item => {
+        const num = item.num;
+        const text = item.text;
+        const segments = text.split("|").map(s => s.trim()).filter(Boolean);
+        const titlePart = segments[0] || "《考亭理学典籍》";
+        const titleMatch = titlePart.match(/《([^》]+)》/);
+        const stdTitle = titleMatch ? `《${titleMatch[1]}》` : titlePart;
+        const bookKey = matchOpacBookKey(stdTitle);
+        const opacEntry = (window.opacBooksCache && window.opacBooksCache[bookKey]) || OPAC_BOOKS_REGISTRY[bookKey] || {};
+
+        let author = "";
+        let callNumber = opacEntry.callNumber || "B244.7/1";
+        let location = opacEntry.location || "逸夫图书馆六楼特藏室";
+        let sourceDb = "武夷学院图书馆宋明理学特色库";
+        let bibId = opacEntry.bibId || "";
+        let isBorrowable = (opacEntry.status !== "借出");
+
+        segments.slice(1).forEach(seg => {
+            if (seg.startsWith("著者：") || seg.startsWith("著者:")) author = seg.replace(/^著者[：:]/, "").trim();
+            else if (seg.startsWith("索书号：") || seg.startsWith("索书号:")) callNumber = seg.replace(/^索书号[：:]/, "").trim();
+            else if (seg.startsWith("馆藏地点：") || seg.startsWith("馆藏地点:")) location = seg.replace(/^馆藏地点[：:]/, "").trim();
+            else if (seg.startsWith("来源：") || seg.startsWith("来源:")) sourceDb = seg.replace(/^来源[：:]/, "").trim();
+        });
+
+        const detailUrl = bibId ? `https://wyutsg.wuyiu.edu.cn/space/searchDetailLocal/${bibId}` : "https://wyutsg.wuyiu.edu.cn/space/index";
+        const safeTitle = escapeHtml(stdTitle).replace(/'/g, "\\'");
+        const safeCall = escapeHtml(callNumber).replace(/'/g, "\\'");
+        const statusClass = isBorrowable ? "status-ok" : "status-busy";
+        const statusText = isBorrowable ? "🟢 实时在架可借" : "🔴 借出·可预约";
+
+        return `
+        <div class="prov-item-row" id="prov-ref-item-${num}">
+            <span class="prov-num-circle">${num}</span>
+            <div class="prov-item-body">
+                <div class="prov-item-line">
+                    <strong class="prov-book-title">${escapeHtml(stdTitle)}</strong>
+                    ${author ? `<span class="prov-divider">|</span><span class="prov-meta-field">著者：${escapeHtml(author)}</span>` : ""}
+                    <span class="prov-divider">|</span>
+                    <span class="prov-meta-field">索书号：<code class="prov-meta-callno">${escapeHtml(callNumber)}</code></span>
+                    <span class="prov-divider">|</span>
+                    <span class="prov-meta-field">馆藏地点：${escapeHtml(location)}</span>
+                    <span class="prov-divider">|</span>
+                    <span class="prov-meta-source">来源：${escapeHtml(sourceDb)}</span>
+                </div>
+                <div class="prov-item-actions">
+                    <a href="${detailUrl}" target="_blank" rel="noopener noreferrer" class="prov-btn prov-opac-btn" title="直达武夷学院图书馆${escapeHtml(stdTitle)}官方预约系统">
+                        🏛️ 直达OPAC实体借阅预约 ➔
+                    </a>
+                    <button type="button" class="prov-btn prov-read-btn" onclick="window.openFulltextFromProvenance('${bookKey}', '${safeTitle}', '', '', '')" title="在电子阅览器中翻阅全书">
+                        📖 翻阅全卷
+                    </button>
+                    <span class="prov-status-tag ${statusClass}">${statusText}</span>
+                </div>
+            </div>
+        </div>
+        `;
+    }).join("");
+
+    const opacLinkHtml = `<a href="https://wyutsg.wuyiu.edu.cn/space/index" target="_blank" rel="noopener noreferrer" class="prov-opac-link">OPAC 实时查询</a>`;
+    let cleanDisclaimer = escapeHtml(disclaimer).replace(/OPAC\s*查询|OPAC\s*实时查询/g, opacLinkHtml);
+    if (!cleanDisclaimer.includes("OPAC")) {
+        cleanDisclaimer += `（请以 ${opacLinkHtml} 为准）`;
+    }
+
+    const relatedBooksList = Array.from(relatedBooks.matchAll(/《([^》]+)》/g), m => m[1].trim());
+    if (relatedBooksList.length === 0) {
+        items.forEach(it => {
+            const m = it.text.match(/《([^》]+)》/);
+            if (m && !relatedBooksList.includes(m[1])) relatedBooksList.push(m[1]);
+        });
+    }
+    const tagsHtml = relatedBooksList.map(bt => {
+        const k = matchOpacBookKey(bt);
+        const sTitle = `《${escapeHtml(bt).replace(/'/g, "\\'")}》`;
+        return `<span class="prov-book-tag" onclick="window.openFulltextFromProvenance('${k}', '${sTitle}', '', '', '')" title="点击阅读《${escapeHtml(bt)}》">《${escapeHtml(bt)}》</span>`;
+    }).join("");
+
+    return `
+    <div class="prov-library-card">
+        <div class="prov-header-tag">【参考资料】</div>
+        <div class="prov-items-container">
+            ${itemRowsHtml}
+        </div>
+        <div class="prov-disclaimer-box">
+            ${cleanDisclaimer}
+        </div>
+        <div class="prov-related-section">
+            <div class="prov-related-title">相关资源 · 点击直达或扫码打开</div>
+            <div class="prov-related-topic">
+                <span class="prov-bullet">•</span>
+                <span class="prov-topic-name">${escapeHtml(relatedTopic)}</span>
+            </div>
+            <div class="prov-related-tags">
+                <span class="prov-tags-label">检索到：</span>
+                ${tagsHtml || '<span class="prov-meta-field">武夷学院自建宋明理学特色馆藏</span>'}
+            </div>
+        </div>
+    </div>
+    `;
+}
+
+window.scrollToProvenanceRef = function(refNum) {
+    const el = document.getElementById(`prov-ref-item-${refNum}`);
+    if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        el.classList.add('prov-item-highlight');
+        setTimeout(() => el.classList.remove('prov-item-highlight'), 1800);
+    }
+};
+
+function enrichCitationWithOpac(html) {
+    if (!html) return "";
+
+    // 1. 如果包含【参考资料】，按全新武夷学院逸夫图书馆特色馆藏溯源规制渲染
+    if (html.includes("【参考资料】")) {
+        const parts = html.split(/【参考资料】/);
+        const bodyPart = parts[0];
+        const provPart = parts.slice(1).join("【参考资料】");
+        return bodyPart.trim() + renderLibraryProvenanceBlock(provPart);
+    }
+
+    if (!html.includes("【典籍原典出处】") && !html.includes("OPAC")) {
+        return html;
+    }
+
+    const citationRegex = /(?:<br>|\n|^)\s*📜\s*(?:&lt;strong&gt;|<strong>)?【典籍原典出处】(?:&lt;\/strong&gt;|<\/strong>)?[：:\s]*([\s\S]*?)(?:<br>|\n)+\s*🏛️\s*(?:&lt;strong&gt;|<strong>)?【(?:武夷学院|武夷学院图书馆|武夷学院馆藏).*?OPAC.*?】(?:&lt;\/strong&gt;|<\/strong>)?[：:\s]*([\s\S]*?)(?=(?:<br>\s*<br>|$))/i;
+
+    if (citationRegex.test(html)) {
+        html = html.replace(citationRegex, function(match, srcPart, opacPart) {
+            const rawSrc = srcPart.replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, "").trim();
+            const rawOpac = opacPart.replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, "").trim();
+
+            // 提取所有被引用的典籍书名（支持多本引证逐一展示）
+            const titleMatches = Array.from(rawSrc.matchAll(/《([^》]+)》/g), m => m[1].trim());
+
+            if (titleMatches.length > 1) {
+                // 多本书籍：一本一本来，逐一呈现独立状态与操作
+                const bookCards = titleMatches.map((titleWithChap, idx) => {
+                    const bookTitle = `《${titleWithChap}》`;
+                    const bookKey = matchOpacBookKey(titleWithChap);
+                    const opacEntry = (window.opacBooksCache && window.opacBooksCache[bookKey]) || OPAC_BOOKS_REGISTRY[bookKey] || {};
+
+                    let callNumber = opacEntry.callNumber || "B222.12/Z90：1";
+                    let location = opacEntry.location || "逸夫图书馆六楼特藏专区";
+                    let bibId = opacEntry.bibId || "";
+                    let copiesDesc = opacEntry.copiesDesc || "实时在架可借";
+                    let isBorrowable = opacEntry.isBorrowable !== false;
+                    if (opacEntry.status === "借出") isBorrowable = false;
+
+                    // 检索 rawOpac 中是否有该书专门的索书号或在架状态
+                    const baseName = titleWithChap.split(/[·\s]/)[0].replace(/[《》]/g, "").trim();
+                    const opacLines = rawOpac.split(/\n|；|;/).map(l => l.trim()).filter(Boolean);
+                    const matchedOpacLine = opacLines.find(line => line.includes(baseName) || (opacEntry.title && line.includes(opacEntry.title.replace(/[《》]/g, ""))));
+
+                    if (matchedOpacLine) {
+                        const callMatch = matchedOpacLine.match(/索书号\s*([A-Za-z0-9\.\:\/：\-]+)/);
+                        if (callMatch) callNumber = callMatch[1].trim();
+                        const bibMatch = matchedOpacLine.match(/藏书编码\s*([a-zA-Z0-9]+)/);
+                        if (bibMatch) bibId = bibMatch[1].trim();
+                        if (matchedOpacLine.includes("借出")) isBorrowable = false;
+                        else if (matchedOpacLine.includes("可借")) isBorrowable = true;
+                        const locMatch = matchedOpacLine.match(/^([^索]+?)\s*索书号/);
+                        if (locMatch && locMatch[1].trim()) location = locMatch[1].replace(/^[0-9\.\s《》]+/, "").trim();
+                    }
+
+                    const statusClass = isBorrowable ? "status-ok" : "status-busy";
+                    const statusLabel = isBorrowable ? "🟢 可借 (实时在架)" : "🔴 借出 (建议预约)";
+                    const detailUrl = (opacEntry && opacEntry.detailUrl) || (bibId ? `https://wyutsg.wuyiu.edu.cn/space/searchDetailLocal/${bibId}` : "https://wyutsg.wuyiu.edu.cn/space/index");
+
+                    const safeTitle = escapeHtml(bookTitle).replace(/'/g, "\\'");
+                    const safeCall = escapeHtml(callNumber).replace(/'/g, "\\'");
+                    const safeLoc = escapeHtml(location).replace(/'/g, "\\'");
+                    const safeBib = escapeHtml(bibId).replace(/'/g, "\\'");
+                    const safeChap = escapeHtml(titleWithChap.includes("·") ? titleWithChap.split("·")[1].trim() : "").replace(/'/g, "\\'");
+
+                    return `
+                    <div class="opac-multi-book-item" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:12px 14px; margin-bottom:10px; box-shadow:0 1px 3px rgba(0,0,0,0.03);">
+                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; gap:8px; flex-wrap:wrap;">
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span style="font-size:11px; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:4px; font-weight:700;">典籍 [${idx + 1}/${titleMatches.length}]</span>
+                                <strong style="color:#0f172a; font-size:14px; font-family:var(--font-serif);">${escapeHtml(bookTitle)}</strong>
+                            </div>
+                            <span class="opac-status-badge ${statusClass}" style="font-size:11px; padding:2px 8px;">${statusLabel}</span>
+                        </div>
+                        <div class="opac-card-meta-grid" style="margin-bottom:10px;">
+                            <div class="opac-meta-item">
+                                <span class="meta-label">📌 索书号：</span>
+                                <code class="meta-callno">${escapeHtml(callNumber)}</code>
+                            </div>
+                            <div class="opac-meta-item">
+                                <span class="meta-label">📍 馆藏地点：</span>
+                                <span class="meta-value">${escapeHtml(location)}</span>
+                            </div>
+                            <div class="opac-meta-item">
+                                <span class="meta-label">📗 馆藏副本：</span>
+                                <span class="meta-value">${escapeHtml(copiesDesc)}</span>
+                            </div>
+                        </div>
+                        <div class="opac-card-actions-row">
+                            <a href="${detailUrl}" target="_blank" rel="noopener noreferrer" class="opac-action-btn opac-direct-reserve-btn" style="background:linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color:#fff; font-weight:700; border:none; text-decoration:none; padding:7px 15px; border-radius:6px; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 6px rgba(2,132,199,0.3); font-size:12.5px;" title="直达武夷学院图书馆${escapeHtml(bookTitle)}官方页面，点击页面内蓝色【预约】按钮即可登录并提交预约">
+                                🏛️ 直达武夷学院官方预约系统（对应本书）➔
+                            </a>
+                            <button type="button" class="opac-action-btn opac-fulltext-btn" style="background:#fff7ed; color:#b45309; border:1px solid #fed7aa; padding:7px 14px; border-radius:6px; font-weight:600; cursor:pointer;" onclick="window.openFulltextFromProvenance('${bookKey}', '${safeTitle}', '', '', '${safeChap}')" title="进入阅览器翻阅全卷并定位章节">
+                                📖 翻阅全卷
+                            </button>
+                            <button type="button" class="opac-action-btn opac-refresh-btn" onclick="window.refreshCitationOpacStatus(this, '${safeTitle}')" style="background:#fff; color:#0f766e; border:1px solid #0f766e; font-size:12px; padding:6px 12px; border-radius:6px; cursor:pointer;" title="强制直连武夷学院OPAC后台获取当前最新借阅在架数据">
+                                🔄 实时同步架位
+                            </button>
+                        </div>
+                    </div>
+                    `;
+                }).join("");
+
+                return `
+                <div class="opac-citation-card">
+                    <div class="opac-card-header">
+                        <div class="opac-card-title-group">
+                            <span class="opac-icon">🏛️</span>
+                            <span class="opac-card-heading">武夷学院图书馆 · 实时OPAC馆藏与原典溯源（共引证 ${titleMatches.length} 部典籍 · 逐本考据）</span>
+                        </div>
+                        <span class="opac-status-badge status-ok">📚 逐本查核在架</span>
+                    </div>
+                    <div class="opac-card-multi-list" style="margin-top:10px;">
+                        ${bookCards}
+                    </div>
+                    <div style="background:#f0fdf4; border:1px solid #86efac; border-radius:6px; padding:10px 14px; margin-top:10px; font-size:12px; color:#166534; line-height:1.65;">
+                        <strong>🏛️ 武夷学院图书馆 · 课本专属官方预约指引：</strong><br>
+                        ① <strong>精准直达对应课本</strong>：点击上方<strong>【🏛️ 直达武夷学院官方预约系统（对应本书）➔】</strong>按钮，即可直接打开武夷学院智慧图书馆针对该课本的官方专属详情页（含真实索书号与在架副本）。<br>
+                        ② <strong>直接进入预约登录</strong>：在打开的图书馆页面左下方，直接点击蓝色<strong>【预约】</strong>按钮，系统将直接唤起武夷学院统一身份认证/借阅证登录界面；读者输入学号登录后，直接完成该课本的在线预约与到馆取书。
+                    </div>
+                </div>
+                `;
+            }
+
+            // 单部书籍渲染
+            let bookTitle = "";
+            if (titleMatches.length === 1) {
+                bookTitle = `《${titleMatches[0]}》`;
+            } else {
+                const titleMatch = rawSrc.match(/《([^》]+)》/);
+                if (titleMatch) {
+                    bookTitle = `《${titleMatch[1]}》`;
+                } else {
+                    bookTitle = rawSrc.split("·")[0].trim() || "理学经典文献";
+                }
+            }
+
+            const bookKey = matchOpacBookKey(bookTitle);
+            const opacEntry = (window.opacBooksCache && window.opacBooksCache[bookKey]) || OPAC_BOOKS_REGISTRY[bookKey] || {};
+
+            let callNumber = opacEntry.callNumber || "B222.12/Z90：1";
+            let location = opacEntry.location || "逸夫图书馆六楼特藏专区";
+            let bibId = opacEntry.bibId || "";
+            let copiesDesc = opacEntry.copiesDesc || "实时在架可借";
+            let isBorrowable = opacEntry.isBorrowable !== false && !rawOpac.includes("借出");
+
+            const bibMatch = rawOpac.match(/藏书编码\s*([a-zA-Z0-9]+)/);
+            if (bibMatch) {
+                bibId = bibMatch[1].trim();
+            }
+
+            const cleanOpac = rawOpac.replace(/藏书编码\s*[a-zA-Z0-9]+/g, "").trim();
+
+            if (opacEntry && opacEntry.callNumber) {
+                callNumber = opacEntry.callNumber;
+            } else {
+                const callMatch = cleanOpac.match(/索书号\s*([A-Za-z0-9\.\:\/：\-]+)/);
+                if (callMatch) callNumber = callMatch[1].trim();
+            }
+
+            if (opacEntry && opacEntry.location) {
+                location = opacEntry.location;
+            } else {
+                const locMatch = cleanOpac.match(/^([^索]+?)\s*索书号/);
+                if (locMatch && locMatch[1].trim()) location = locMatch[1].trim();
+            }
+
+            if (opacEntry && opacEntry.status) {
+                isBorrowable = (opacEntry.status === "可借");
+            }
+
+            const statusClass = isBorrowable ? "status-ok" : "status-busy";
+            const statusLabel = isBorrowable ? "🟢 馆藏状态：可借 (实时在架)" : "🔴 馆藏状态：借出 (建议预约)";
+
+            const detailUrl = (opacEntry && opacEntry.detailUrl) || (bibId ? `https://wyutsg.wuyiu.edu.cn/space/searchDetailLocal/${bibId}` : "https://wyutsg.wuyiu.edu.cn/space/index");
+
+            const safeTitle = escapeHtml(bookTitle).replace(/'/g, "\\'");
+            const safeCall = escapeHtml(callNumber).replace(/'/g, "\\'");
+            const safeLoc = escapeHtml(location).replace(/'/g, "\\'");
+            const safeBib = escapeHtml(bibId).replace(/'/g, "\\'");
+            const safeChap = escapeHtml(bookTitle.includes("·") ? bookTitle.split("·")[1].replace(/[《》]/g, "").trim() : "").replace(/'/g, "\\'");
+
+            return `
+            <div class="opac-citation-card">
+                <div class="opac-card-header">
+                    <div class="opac-card-title-group">
+                        <span class="opac-icon">🏛️</span>
+                        <span class="opac-card-heading">武夷学院图书馆 · 实时OPAC馆藏与原典溯源</span>
+                    </div>
+                    <span class="opac-status-badge ${statusClass}">${statusLabel}</span>
+                </div>
+                <div class="opac-card-meta-grid">
+                    <div class="opac-meta-item">
+                        <span class="meta-label">📜 典籍原典：</span>
+                        <span class="meta-value">${escapeHtml(rawSrc)}</span>
+                    </div>
+                    <div class="opac-meta-item">
+                        <span class="meta-label">📌 索书号：</span>
+                        <code class="meta-callno">${escapeHtml(callNumber)}</code>
+                    </div>
+                    <div class="opac-meta-item">
+                        <span class="meta-label">📍 馆藏地点：</span>
+                        <span class="meta-value">${escapeHtml(location)}</span>
+                    </div>
+                    <div class="opac-meta-item">
+                        <span class="meta-label">📗 馆藏副本：</span>
+                        <span class="meta-value">${escapeHtml(copiesDesc)}</span>
+                    </div>
+                </div>
+                <div class="opac-card-actions-row">
+                    <a href="${detailUrl}" target="_blank" rel="noopener noreferrer" class="opac-action-btn opac-direct-reserve-btn" style="background:linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color:#fff; font-weight:700; border:none; text-decoration:none; padding:7px 15px; border-radius:6px; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 6px rgba(2,132,199,0.3); font-size:12.5px;" title="直达武夷学院图书馆${escapeHtml(bookTitle)}官方页面，点击页面内蓝色【预约】按钮即可登录并提交预约">
+                        🏛️ 直达武夷学院官方预约系统（对应本书）➔
+                    </a>
+                    <button type="button" class="opac-action-btn opac-fulltext-btn" style="background:#fff7ed; color:#b45309; border:1px solid #fed7aa; padding:7px 14px; border-radius:6px; font-weight:600; cursor:pointer;" onclick="window.openFulltextFromProvenance('${bookKey}', '${safeTitle}', '', '', '${safeChap}')" title="进入阅览器翻阅全卷并定位章节">
+                        📖 翻阅全卷
+                    </button>
+                    <button type="button" class="opac-action-btn opac-refresh-btn" onclick="window.refreshCitationOpacStatus(this, '${safeTitle}')" style="background:#fff; color:#0f766e; border:1px solid #0f766e; font-size:12px; padding:6px 12px; border-radius:6px; cursor:pointer;" title="强制直连武夷学院OPAC后台获取当前最新借阅在架数据">
+                        🔄 实时同步架位
+                    </button>
+                </div>
+                <div style="background:#f0fdf4; border:1px solid #86efac; border-radius:6px; padding:10px 14px; margin-top:10px; font-size:12px; color:#166534; line-height:1.65;">
+                    <strong>🏛️ 武夷学院图书馆 · 课本专属官方预约指引：</strong><br>
+                    ① <strong>精准直达对应课本</strong>：点击上方<strong>【🏛️ 直达武夷学院官方预约系统（对应本书）➔】</strong>按钮，即可直接打开武夷学院智慧图书馆针对该课本的官方专属详情页（含真实索书号与在架副本）。<br>
+                    ② <strong>直接进入预约登录</strong>：在打开的图书馆页面左下方，直接点击蓝色<strong>【预约】</strong>按钮，系统将直接唤起武夷学院统一身份认证/借阅证登录界面；读者输入学号登录后，直接完成该课本的在线预约与到馆取书。
+                </div>
+            </div>
+            `;
+        });
+    }
+
+    return html;
+}
+
+// 课本专属官方借阅预约直达控制器
+let reservationBooklist = [];
+
+function loadReservationBooklist() {
+    try {
+        localStorage.removeItem("zhuzi_opac_reservations_v1");
+        localStorage.removeItem("zhuzi_my_submitted_reservations_v1");
+    } catch (e) {}
+    reservationBooklist = [];
+    updateReservationBadgeCount();
+}
+
+function saveReservationBooklist() {
+    reservationBooklist = [];
+    updateReservationBadgeCount();
+}
+
+function updateReservationBadgeCount() {
+    document.querySelectorAll(".reservation-badge-count").forEach(el => {
+        el.textContent = "0";
+        el.style.display = "none";
+    });
+}
+
+// ========================================================
+// 读者账号身份管理系统（预约记录严格随登入读者账号动态切换与隔离）
+// ========================================================
+let currentReaderAccount = {
+    isLoggedIn: false,
+    cardId: "",
+    name: "",
+    readerType: "本科生",
+    phone: ""
+};
+
+function loadReaderAccount() {
+    try {
+        const raw = localStorage.getItem("zhuzi_current_reader_v1");
+        if (raw) {
+            const parsed = JSON.parse(raw);
+            if (parsed && typeof parsed.isLoggedIn === "boolean") {
+                currentReaderAccount = parsed;
+            }
+        }
+    } catch (e) {
+        currentReaderAccount = {
+            isLoggedIn: false,
+            cardId: "",
+            name: "",
+            readerType: "本科生",
+            phone: ""
+        };
+    }
+}
+
+function saveReaderAccount() {
+    try {
+        localStorage.setItem("zhuzi_current_reader_v1", JSON.stringify(currentReaderAccount));
+    } catch (e) {}
+    updateReaderAccountUI();
+}
+
+function updateReaderAccountUI() {
+    const isAuth = currentReaderAccount.isLoggedIn && !!currentReaderAccount.cardId;
+
+    // 1. 顶部账号栏
+    const bar = document.getElementById("res-reader-account-bar");
+    if (bar) {
+        if (isAuth) {
+            bar.style.background = "#f0fdf4";
+            bar.style.borderColor = "#86efac";
+            bar.innerHTML = `
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span style="font-size:20px;">👤</span>
+                    <div>
+                        <span style="font-size:12px; color:#166534; font-weight:700;">当前登入借阅账号：</span>
+                        <strong style="font-size:13.5px; color:#0f172a;">${escapeHtml(currentReaderAccount.name || '读者')}</strong>
+                        <span style="font-size:12px; color:#475569;">（学号/证号：<code style="color:#b45309; font-weight:700;">${escapeHtml(currentReaderAccount.cardId)}</code> · <span>${escapeHtml(currentReaderAccount.readerType || '本科生')}</span>）</span>
+                    </div>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <button type="button" onclick="openReaderAccountSwitcherModal()" style="background:#fff; border:1px solid #0f766e; color:#0f766e; font-size:12px; font-weight:700; padding:4px 10px; border-radius:5px; cursor:pointer;" title="切换其他读者学号以查看不同账号的预约单">
+                        🔄 切换读者账号
+                    </button>
+                    <button type="button" onclick="logoutReaderAccount()" style="background:#fee2e2; border:1px solid #fca5a5; color:#b91c1c; font-size:12px; font-weight:700; padding:4px 8px; border-radius:5px; cursor:pointer;" title="退出当前读者账号并重新锁定借阅功能">
+                        登出锁定
+                    </button>
+                </div>
+            `;
+        } else {
+            bar.style.background = "#fff7ed";
+            bar.style.borderColor = "#ea580c";
+            bar.innerHTML = `
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span style="font-size:20px;">🔐</span>
+                    <div>
+                        <span style="font-size:13px; color:#9a3412; font-weight:700;">当前尚未登入读者借阅账号</span>
+                        <span style="font-size:12px; color:#c2410c; margin-left:6px;">（线下借阅功能须登入读者学号后解锁）</span>
+                    </div>
+                </div>
+                <button type="button" onclick="openReaderAccountSwitcherModal()" style="background:#ea580c; border:none; color:#fff; font-size:12px; font-weight:700; padding:5px 14px; border-radius:5px; cursor:pointer; box-shadow:0 2px 4px rgba(234,88,12,0.3);">
+                    🔑 登入读者学号
+                </button>
+            `;
+        }
+    }
+
+    // 2. 借阅功能门禁切换（只有登入了账号的人才可以回到这个界面进行下一步的租借）
+    const loginGate = document.getElementById("res-borrow-login-gate");
+    const unlockedForm = document.getElementById("res-borrow-form-unlocked");
+    if (loginGate && unlockedForm) {
+        if (isAuth) {
+            loginGate.style.display = "none";
+            unlockedForm.style.display = "block";
+        } else {
+            loginGate.style.display = "block";
+            unlockedForm.style.display = "none";
+        }
+    }
+
+    // 3. 填写已解锁表单内的读者信息
+    if (isAuth) {
+        const uName = document.getElementById("unlocked-account-name");
+        const uCard = document.getElementById("unlocked-account-card");
+        const uType = document.getElementById("unlocked-account-type");
+        if (uName) uName.textContent = currentReaderAccount.name || "读者";
+        if (uCard) uCard.textContent = currentReaderAccount.cardId;
+        if (uType) uType.textContent = currentReaderAccount.readerType || "本科生";
+
+        const inputName = document.getElementById("res-reader-name");
+        const inputCard = document.getElementById("res-card-id");
+        const inputType = document.getElementById("res-reader-type");
+        const inputPhone = document.getElementById("res-reader-phone");
+        if (inputName) inputName.value = currentReaderAccount.name || "";
+        if (inputCard) inputCard.value = currentReaderAccount.cardId || "";
+        if (inputType && currentReaderAccount.readerType) inputType.value = currentReaderAccount.readerType;
+        if (inputPhone) inputPhone.value = currentReaderAccount.phone || "";
+    }
+
+    // 4. 更新记录标签与数量（严格按登入账号实时变化）
+    const viewingLabel = document.getElementById("records-viewing-account-label");
+    if (viewingLabel) {
+        if (isAuth) {
+            viewingLabel.textContent = `${currentReaderAccount.name || '读者'} (学号: ${currentReaderAccount.cardId})`;
+        } else {
+            viewingLabel.textContent = "未登入账号 (暂无记录)";
+        }
+    }
+
+    updateReservationRecordsCount();
+}
+
+function openReaderAccountSwitcherModal() {
+    loadReaderAccount();
+    const modal = document.getElementById("reader-account-modal");
+    if (!modal) return;
+
+    const inputCard = document.getElementById("dlg-reader-card-id");
+    const inputName = document.getElementById("dlg-reader-name");
+    const inputType = document.getElementById("dlg-reader-type");
+    const inputPhone = document.getElementById("dlg-reader-phone");
+
+    if (inputCard) inputCard.value = currentReaderAccount.cardId || "";
+    if (inputName) inputName.value = currentReaderAccount.name || "";
+    if (inputType) inputType.value = currentReaderAccount.readerType || "本科生";
+    if (inputPhone) inputPhone.value = currentReaderAccount.phone || "";
+
+    modal.style.display = "flex";
+}
+
+function closeReaderAccountSwitcherModal(e) {
+    if (e && e.target && e.target.id !== "reader-account-modal" && !e.target.classList.contains("modal-close-btn") && e.target.tagName !== "BUTTON") {
+        return;
+    }
+    const modal = document.getElementById("reader-account-modal");
+    if (modal) modal.style.display = "none";
+}
+
+
+
+function submitReaderAccountLogin(e) {
+    if (e) e.preventDefault();
+    const cardId = (document.getElementById("dlg-reader-card-id").value || "").trim();
+    const name = (document.getElementById("dlg-reader-name").value || "").trim();
+    const type = document.getElementById("dlg-reader-type").value;
+    const phone = (document.getElementById("dlg-reader-phone").value || "").trim();
+
+    if (!cardId || !name) {
+        alert("请输入读者学号与姓名");
+        return;
+    }
+
+    switchReaderAccount(cardId, name, type, phone);
+    closeReaderAccountSwitcherModal();
+}
+
+function switchReaderAccount(cardId, name, type, phone) {
+    currentReaderAccount = {
+        isLoggedIn: true,
+        cardId: cardId.trim(),
+        name: name ? name.trim() : "读者",
+        readerType: type || "本科生",
+        phone: phone ? phone.trim() : ""
+    };
+    saveReaderAccount();
+    updateReaderAccountUI();
+    renderMyReservationRecords();
+    showToast(`已成功登入读者账号：${currentReaderAccount.name}（学号：${currentReaderAccount.cardId}）！借阅功能已解锁`);
+}
+
+function logoutReaderAccount() {
+    currentReaderAccount = {
+        isLoggedIn: false,
+        cardId: "",
+        name: "",
+        readerType: "本科生",
+        phone: ""
+    };
+    saveReaderAccount();
+    updateReaderAccountUI();
+    renderMyReservationRecords();
+    showToast("已退出读者借阅账号，借阅权限已锁定");
+}
+
+// 已提交预约记录管理（可随时查看凭据与取消预约）
+function loadSubmittedReservations() {
+    try {
+        const raw = localStorage.getItem("zhuzi_my_submitted_reservations_v1");
+        return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function saveSubmittedReservationsList(list) {
+    try {
+        localStorage.setItem("zhuzi_my_submitted_reservations_v1", JSON.stringify(list));
+    } catch (e) {}
+    updateReservationRecordsCount();
+}
+
+// 获取当前登入读者名下的所有预约记录（严格按当前读者账号过滤）
+function getReservationsForCurrentAccount() {
+    const list = loadSubmittedReservations();
+    if (!currentReaderAccount.isLoggedIn || !currentReaderAccount.cardId) {
+        return [];
+    }
+    const targetCid = currentReaderAccount.cardId.trim();
+    return list.filter(r => {
+        const rCid = (r.card_id || r.readerId || "").toString().trim();
+        return rCid === targetCid;
+    });
+}
+
+function updateReservationRecordsCount() {
+    const accountList = getReservationsForCurrentAccount();
+    const countEl = document.getElementById("res-my-records-count");
+    if (countEl) {
+        countEl.textContent = accountList.length;
+    }
+}
+
+async function syncReservationsFromServer() {
+    try {
+        const res = await fetch("/api/opac/reservations");
+        if (res.ok) {
+            const data = await res.json();
+            if (data.reservations && data.reservations.length > 0) {
+                const localList = loadSubmittedReservations();
+                const mergedMap = {};
+                data.reservations.forEach(r => {
+                    const id = r.reservationId || r.reservation_id;
+                    if (id) {
+                        mergedMap[id] = {
+                            reservation_id: id,
+                            created_at: r.createdAt || r.created_at,
+                            reader_name: r.readerName || r.reader_name,
+                            card_id: r.readerId || r.card_id,
+                            phone: r.phone,
+                            reader_type: r.readerType || r.reader_type || "本科生",
+                            pickup_location: r.pickupLocation || r.pickup_location,
+                            pickup_date: r.pickupDate || r.pickup_date,
+                            valid_until: r.pickupDate ? (r.pickupDate + ' 17:30') : '',
+                            notes: r.notes || "",
+                            books: r.books || [],
+                            status: (r.status === "已取消预约" || r.status === "cancelled") ? "cancelled" : "active"
+                        };
+                    }
+                });
+                localList.forEach(r => {
+                    if (r.reservation_id && !mergedMap[r.reservation_id]) {
+                        mergedMap[r.reservation_id] = r;
+                    }
+                });
+                const mergedList = Object.values(mergedMap);
+                localStorage.setItem("zhuzi_my_submitted_reservations_v1", JSON.stringify(mergedList));
+                updateReservationRecordsCount();
+                if (document.getElementById("res-panel-records") && document.getElementById("res-panel-records").style.display !== "none") {
+                    renderMyReservationRecords();
+                }
+            }
+        }
+    } catch (e) {
+        console.warn("同步服务器预约记录稍缓:", e);
+    }
+}
+
+function switchReservationTab(tab) {
+    const formPanel = document.getElementById("res-panel-form");
+    const recordsPanel = document.getElementById("res-panel-records");
+    const formTabBtn = document.getElementById("tab-btn-res-form");
+    const recordsTabBtn = document.getElementById("tab-btn-res-records");
+
+    if (tab === "records") {
+        if (formPanel) formPanel.style.display = "none";
+        if (recordsPanel) recordsPanel.style.display = "block";
+        if (formTabBtn) {
+            formTabBtn.style.color = "#64748b";
+            formTabBtn.style.borderBottomColor = "transparent";
+            formTabBtn.style.fontWeight = "600";
+        }
+        if (recordsTabBtn) {
+            recordsTabBtn.style.color = "#0f766e";
+            recordsTabBtn.style.borderBottomColor = "#0f766e";
+            recordsTabBtn.style.fontWeight = "700";
+        }
+        renderMyReservationRecords();
+    } else {
+        if (recordsPanel) recordsPanel.style.display = "none";
+        if (formPanel) formPanel.style.display = "block";
+        if (recordsTabBtn) {
+            recordsTabBtn.style.color = "#64748b";
+            recordsTabBtn.style.borderBottomColor = "transparent";
+            recordsTabBtn.style.fontWeight = "600";
+        }
+        if (formTabBtn) {
+            formTabBtn.style.color = "#0f766e";
+            formTabBtn.style.borderBottomColor = "#0f766e";
+            formTabBtn.style.fontWeight = "700";
+        }
+        renderReservationBooksList();
+    }
+}
+
+// 直达武夷学院图书馆相应课本专属官方预约系统
+function directJumpToBookReservation(bookKeyOrTitle, directBibId = null) {
+    let bibId = directBibId;
+    let title = bookKeyOrTitle || "《大学章句》";
+    if (!bibId) {
+        const bookKey = matchOpacBookKey(title);
+        const b = (window.opacBooksCache && window.opacBooksCache[bookKey]) || OPAC_BOOKS_REGISTRY[bookKey] || {};
+        bibId = b.bibId || "m1ac8664b61c03d8a5c8a35571d676d66";
+        title = b.title || title;
+    }
+    const targetUrl = `https://wyutsg.wuyiu.edu.cn/space/searchDetailLocal/${bibId}`;
+    window.open(targetUrl, "_blank");
+    showToast(`🏛️ 正在为您直达武夷学院图书馆${title}官方专属预约系统...`, 4000);
+}
+window.directJumpToBookReservation = directJumpToBookReservation;
+
+function quickReserveThisBook(bookKey, bookTitle) {
+    const b = (window.opacBooksCache && window.opacBooksCache[bookKey]) || OPAC_BOOKS_REGISTRY[bookKey] || {};
+    const bibId = b.bibId || "m1ac8664b61c03d8a5c8a35571d676d66";
+    const title = bookTitle || b.title || "《大学章句》";
+    directJumpToBookReservation(title, bibId);
+}
+
+function quickReserveFromCitation(bookTitle, callNumber, location, bibId) {
+    directJumpToBookReservation(bookTitle, bibId);
+}
+
+function removeReservationBook(id) {
+    reservationBooklist = reservationBooklist.filter(b => b.id !== id && b.callNumber !== id);
+    saveReservationBooklist();
+    renderReservationBooksList();
+    showToast("已从预约书单移除");
+}
+
+function clearReservationBooklist() {
+    reservationBooklist = [];
+    saveReservationBooklist();
+    renderReservationBooksList();
+    showToast("预约书单已清空");
+}
+
+// ========================================================
+// 首页特藏馆藏与OPAC预约联动：五大分类书目库 (21部典籍全景)
+// ========================================================
+const HOME_SHOWCASE_CATEGORIES = {
+    sishu: {
+        id: "sishu",
+        name: "① 四书章句类 · 进学之阶",
+        count: "5部",
+        books: [
+            {
+                key: "daxue",
+                title: "《大学章句》",
+                author: "宋·朱熹 章句 · 传世善本",
+                callNumber: "B222.12/Z90：1",
+                location: "总馆 - 流通书库",
+                tag: "进学第一关",
+                status: "馆内在架 · 支持借阅预约",
+                bibId: "m1ac8664b61c03d8a5c8a35571d676d66",
+                txtFile: "01_大学章句.txt",
+                snippet: "大学之道，在明明德，在亲民，在止于至善。",
+                chapter: "经一章"
+            },
+            {
+                key: "zhongyong",
+                title: "《中庸章句》",
+                author: "宋·朱熹 章句 · 宋本中庸",
+                callNumber: "B222.12/Z90：1",
+                location: "总馆 - 流通书库",
+                tag: "性命心法",
+                status: "馆内在架 · 支持借阅预约",
+                bibId: "m1ac8664b61c03d8a5c8a35571d676d66",
+                txtFile: "02_中庸章句.txt",
+                snippet: "天命之谓性，率性之谓道，修道之谓教。",
+                chapter: "第一章"
+            },
+            {
+                key: "lunyu",
+                title: "《论语集注》",
+                author: "宋·朱熹 集注 · 考亭讲筵",
+                callNumber: "B222.22/Z90",
+                location: "特藏室 · 宋明理学专柜",
+                tag: "仁义践履",
+                status: "特藏专柜 · 实时借出(建议预约)",
+                isBusy: true,
+                bibId: "m94a1e22d43113bea41afbb3b3fb15046",
+                txtFile: "03_论语集注.txt",
+                snippet: "学而时习之，不亦说乎？有朋自远方来，不亦乐乎？",
+                chapter: "学而第一"
+            },
+            {
+                key: "mengzi",
+                title: "《孟子集注》",
+                author: "宋·朱熹 集注 · 性善阐微",
+                callNumber: "B222.52/Z90/1",
+                location: "总馆 - 流通书库",
+                tag: "义利辨析",
+                status: "馆内在架 · 支持借阅预约",
+                bibId: "m51f8f17f5b8a91bfc2c86da36d289bc9",
+                txtFile: "04_孟子集注.txt",
+                snippet: "仁义礼智根于心，其生色也，睟然见于面。",
+                chapter: "梁惠王章句上"
+            },
+            {
+                key: "sishu",
+                title: "《四书章句集注》",
+                author: "宋·朱熹 著 · 中华书局典藏版",
+                callNumber: "B222.12/Z90:10",
+                location: "总馆 - 流通书库",
+                tag: "理学金梯",
+                status: "馆内在架 · 支持借阅预约",
+                bibId: "mc7034ec9f084a8217d312a7fbb9d0960",
+                txtFile: "05_四书或问.txt",
+                snippet: "为己之学，进学在致知，涵养须用敬。",
+                chapter: "四书总论"
+            }
+        ]
+    },
+    daotong: {
+        id: "daotong",
+        name: "② 理学道统类 · 性理心法",
+        count: "4部",
+        books: [
+            {
+                key: "jinsi",
+                title: "《近思录》",
+                author: "宋·朱熹、吕祖谦 编 · 北宋五子心传",
+                callNumber: "B244.74/Z30",
+                location: "二楼社科书库",
+                tag: "性理大成",
+                status: "馆内在架 · 支持借阅预约",
+                bibId: "ma9ed44adcd8699c1c919d7fe122b33cf",
+                txtFile: "07_近思录.txt",
+                snippet: "学者先须立志，问学进德之基。",
+                chapter: "卷之一·道体"
+            },
+            {
+                key: "yulei",
+                title: "《朱子语类》",
+                author: "宋·黎靖德 编 · 考亭门生实录",
+                callNumber: "B244.71/L42",
+                location: "特藏室 · 宋明理学专柜",
+                tag: "讲筵实录",
+                status: "特藏专柜 · 实时借出(建议预约)",
+                isBusy: true,
+                bibId: "m910fe206f504321ab8075f4425a6561e",
+                txtFile: "01_朱子语类.txt",
+                snippet: "理气心性探微，未有天地之先，毕竟也只是先有此理。",
+                chapter: "卷一·理气上"
+            },
+            {
+                key: "taiji",
+                title: "《太极图说解》",
+                author: "宋·朱熹 著 · 周敦颐 原著",
+                callNumber: "B244.25/Z29",
+                location: "总馆 - 流通书库",
+                tag: "理气元旨",
+                status: "馆内在架 · 支持借阅预约",
+                bibId: "m03a229fed172c6c4457a9d25d0e3472e",
+                txtFile: "11_太极图说解.txt",
+                snippet: "无极而太极。太极动而生阳，动极而静，静而生阴。",
+                chapter: "图说本义"
+            },
+            {
+                key: "ximing",
+                title: "《西铭解》",
+                author: "宋·朱熹 著 · 张载 原著",
+                callNumber: "B222/T94：46",
+                location: "六楼古籍特藏室",
+                tag: "民胞物与",
+                status: "特藏专柜 · 实时借出(建议预约)",
+                isBusy: true,
+                bibId: "m329c4bf8aac402ba94c27628fa60915b",
+                txtFile: "12_西铭解.txt",
+                snippet: "乾称父，坤称母；予兹藐焉，乃混然中处。民吾同胞，物吾与也。",
+                chapter: "西铭解义"
+            }
+        ]
+    },
+    jingshi: {
+        id: "jingshi",
+        name: "③ 经史政理类 · 春秋史鉴",
+        count: "3部",
+        books: [
+            {
+                key: "gangmu",
+                title: "《资治通鉴纲目》",
+                author: "宋·朱熹 著 · 春秋义法史学丰碑",
+                callNumber: "K204.3/Z90:4",
+                location: "总馆 - 流通书库",
+                tag: "史学义旨",
+                status: "馆内在架 · 支持借阅预约",
+                bibId: "m847dd131dfc2f3cd792a696d5fc70bff",
+                txtFile: "13_资治通鉴纲目.txt",
+                snippet: "资治通鉴纲目，以纲提领，以目纪实，彰善瘅恶。",
+                chapter: "纲目序例"
+            },
+            {
+                key: "shijizhuan",
+                title: "《诗集传》",
+                author: "宋·朱熹 著 · 经学诗义集大成",
+                callNumber: "I222.2/Z90",
+                location: "六楼古籍特藏室",
+                tag: "经学诗义",
+                status: "特藏专柜 · 实时借出(建议预约)",
+                isBusy: true,
+                bibId: "m09f06ea84a2100925179748950beff70",
+                txtFile: "08_诗集传.txt",
+                snippet: "关关雎鸠，在河之洲。窈窕淑女，君子好逑。",
+                chapter: "国风·周南"
+            },
+            {
+                key: "zhouyi",
+                title: "《周易本义》",
+                author: "宋·朱熹 著 · 象数义理双融",
+                callNumber: "B221.5/L30",
+                location: "总馆 - 流通书库",
+                tag: "象数义理",
+                status: "馆内在架 · 支持借阅预约",
+                bibId: "m733ba27d4b6949cbdefd37ffe4fd2f80",
+                txtFile: "09_周易本义.txt",
+                snippet: "天行健，君子以自强不息。地势坤，君子以厚德载物。",
+                chapter: "周易本义·乾卦"
+            }
+        ]
+    },
+    wenxue_meng: {
+        id: "wenxue_meng",
+        name: "④ 骚体蒙学类 · 家风规矩",
+        count: "3部",
+        books: [
+            {
+                key: "chuci",
+                title: "《楚辞集注》",
+                author: "宋·朱熹 著 · 屈宋骚韵忠愤之思",
+                callNumber: "I222.3/Z90:2",
+                location: "总馆 - 流通书库",
+                tag: "文学骚韵",
+                status: "馆内在架 · 支持借阅预约",
+                bibId: "mc81bc1fef94dd6cdc04a36d4466f66be",
+                txtFile: "10_楚辞集注.txt",
+                snippet: "帝高阳之苗裔兮，朕皇考曰伯庸。摄提贞于孟陬兮，惟庚寅吾以降。",
+                chapter: "离骚经"
+            },
+            {
+                key: "tongmeng",
+                title: "《童蒙须知》",
+                author: "宋·朱熹 著 · 考亭幼童规训",
+                callNumber: "B222/T94：44",
+                location: "六楼古籍特藏室",
+                tag: "蒙学初阶",
+                status: "特藏专柜 · 实时借出(建议预约)",
+                isBusy: true,
+                bibId: "me19479abe54bb4b8467c82ec016450aa",
+                txtFile: "14_童蒙须知.txt",
+                snippet: "凡为人子弟，当谨守礼节。衣服饮食、步趋坐立，皆当自守其规。",
+                chapter: "衣服冠履"
+            },
+            {
+                key: "xuegui",
+                title: "《白鹿洞书院学规》",
+                author: "宋·朱熹 著 · 千年学规之祖",
+                callNumber: "TU-092.2/L70:3",
+                location: "总馆 - 流通书库",
+                tag: "书院规条",
+                status: "馆内在架 · 支持借阅预约",
+                bibId: "m01a9861554abb51f11ba8d5c015131c8",
+                txtFile: "15_白鹿洞书院学规.txt",
+                snippet: "父子有亲，君臣有义，夫妇有别，长幼有序，朋友有信。五教之目也。",
+                chapter: "学规箴戒"
+            }
+        ]
+    },
+    wuyi_spec: {
+        id: "wuyi_spec",
+        name: "🏛️ 武夷学院特色馆 · 闽北文库",
+        count: "6部",
+        books: [
+            {
+                key: "wuyi_shici",
+                title: "《朱子的诗和远方：武夷山水理学诗歌专著》",
+                author: "张建光 著 · 海峡文艺出版社",
+                callNumber: "I207.227.442/Z43",
+                location: "六楼特藏室（闽北文库）",
+                tag: "闽北文献专架",
+                status: "馆内在架 · 支持借阅预约",
+                bibId: "m5590f490b8512b928c22c8a630f2f93b",
+                txtFile: "02_朱子的诗和远方_武夷山水理学诗歌专著.txt",
+                snippet: "半亩方塘一鉴开，天光云影共徘徊。问渠那得清如许？为有源头活水来。",
+                chapter: "第一章：半亩方塘与源头活水"
+            },
+            {
+                key: "wuyi_chaosheng",
+                title: "《朝圣朱子：武夷山五夫故里特色专著》",
+                author: "张建光 著 · 特色地方文献",
+                callNumber: "B244.7/Z46",
+                location: "六楼特藏室（闽北文库）",
+                tag: "五夫朱子专柜",
+                status: "馆内在架 · 支持借阅预约",
+                bibId: "m769fa97c35a89c0a3624980a21003904",
+                txtFile: "03_朝圣朱子_武夷山五夫故里特色专著.txt",
+                snippet: "紫阳楼前，绿竹青松。五夫故里，文公讲道之始。",
+                chapter: "第一章：紫阳楼"
+            },
+            {
+                key: "wuyi_century",
+                title: "《世纪之交的朱子学：协同创新文丛》",
+                author: "潘飞声、张品端 主编",
+                callNumber: "B244.75/X39:2",
+                location: "二楼社科书库",
+                tag: "社科书库精选",
+                status: "馆内在架 · 支持借阅预约",
+                bibId: "md0bec348de5285f8b72b7bd977276ee9",
+                txtFile: "01_世纪之交的朱子学_朱子文化协同创新文丛.txt",
+                snippet: "世纪之交的朱子学研究，考辨精微，会通古今。",
+                chapter: "第一章"
+            },
+            {
+                key: "wuyi_fujian",
+                title: "《朱子三代与政和：闽北朱氏家风》",
+                author: "政和县朱子文化研究会 编",
+                callNumber: "B244.75/G49:1",
+                location: "六楼特藏室（闽北理学专架）",
+                tag: "闽北家风专架",
+                status: "馆内在架 · 支持借阅预约",
+                bibId: "mcd9b1f2e032950ae0d77ce38a1bb4770",
+                txtFile: "06_朱子三代与政和_闽北朱氏家风与历史渊源.txt",
+                snippet: "政和朱氏家风，清廉自守，忠孝传家。",
+                chapter: "第一章"
+            },
+            {
+                key: "wuyi_kaoting",
+                title: "《第二届考亭论坛专辑：理学研讨集》",
+                author: "武夷学院朱子学研究中心 编",
+                callNumber: "B244.75/L43:1",
+                location: "六楼特藏室（闽北文库）",
+                tag: "考亭论丛专柜",
+                status: "馆内在架 · 支持借阅预约",
+                bibId: "m2b6005a499aa4f3f50aa0f01f5adc36f",
+                txtFile: "04_第二届考亭论坛专辑_考亭书院理学研讨集.txt",
+                snippet: "考亭论坛汇集海内外学者，探求理学新命。",
+                chapter: "考亭论坛前言"
+            },
+            {
+                key: "wuyi_haiwai",
+                title: "《朱子文化在海外：国际传播与影响》",
+                author: "武夷学院朱子学研究中心 编",
+                callNumber: "B244.75/D40",
+                location: "六楼特藏室（国际朱子学柜）",
+                tag: "国际传播专架",
+                status: "馆内在架 · 支持借阅预约",
+                bibId: "m9750078ba9d212e3b9a8c8ddd7e281f2",
+                txtFile: "05_朱子文化在海外_武夷学院朱子学研究中心.txt",
+                snippet: "朱子之学，东渐日本朝鲜，远播欧美，润物无声。",
+                chapter: "序言"
+            }
+        ]
+    }
+};
+
+function getCategoryForBookKey(bookKey) {
+    if (!bookKey) return "sishu";
+    for (const [catId, cat] of Object.entries(HOME_SHOWCASE_CATEGORIES)) {
+        if (cat.books.some(b => b.key === bookKey)) {
+            return catId;
+        }
+    }
+    return "sishu";
+}
+
+let currentHomeShowcaseCategory = "sishu";
+
+function switchHomeShowcaseCategory(catId, btn) {
+    currentHomeShowcaseCategory = catId;
+    const pillsContainer = document.getElementById("home-showcase-cat-pills");
+    if (pillsContainer) {
+        pillsContainer.querySelectorAll(".home-cat-pill").forEach(p => p.classList.remove("active"));
+    }
+    if (btn) {
+        btn.classList.add("active");
+    } else if (pillsContainer) {
+        const targetBtn = pillsContainer.querySelector(`[onclick*="'${catId}'"]`);
+        if (targetBtn) targetBtn.classList.add("active");
+    }
+    renderHomeShowcaseBooks(catId);
+}
+
+function renderHomeShowcaseBooks(catId = "sishu") {
+    const grid = document.getElementById("home-showcase-books-grid");
+    if (!grid) return;
+    const cat = (window.HOME_SHOWCASE_CATEGORIES && window.HOME_SHOWCASE_CATEGORIES[catId]) || (HOME_SHOWCASE_CATEGORIES[catId] || HOME_SHOWCASE_CATEGORIES.sishu);
+    const books = cat.books || [];
+
+    grid.innerHTML = books.map(b => {
+        const isBusy = !b.isAvailable || (b.borrowStatus && b.borrowStatus.includes("借出")) || (b.status && b.status.includes("借出"));
+        const pillClass = isBusy ? "borrowed" : "available";
+        const borrowText = b.borrowStatus || (isBusy ? "🔴 租借情况：特藏借出【支持线上预约】" : "🟢 租借情况：在架可借【实时在架】");
+        const safeTitle = escapeHtml(b.title).replace(/'/g, "\\'");
+        const safeSnippet = escapeHtml(b.snippet || "").replace(/'/g, "\\'");
+        const safeFile = escapeHtml(b.txtFile || "").replace(/'/g, "\\'");
+        const safeChap = escapeHtml(b.chapter || "").replace(/'/g, "\\'");
+
+        return `
+            <div class="lib-book-card">
+                <div class="lbc-tag">${escapeHtml(b.tag || "典籍")}</div>
+                <div class="lbc-title">${escapeHtml(b.title)}</div>
+                <div class="lbc-author">${escapeHtml(b.author)}</div>
+                <div class="lbc-callno">索书号：<code>${escapeHtml(b.callNumber)}</code></div>
+                <div class="lbc-loc">馆藏：${escapeHtml(b.location)}</div>
+                <div class="lbc-borrow-row">
+                    <span class="borrow-status-pill ${pillClass}">${escapeHtml(borrowText)}</span>
+                </div>
+                <div class="lbc-actions">
+                    <button type="button" class="lbc-btn read" onclick="openFulltextFromProvenance('${b.key}', '${safeTitle}', '${safeSnippet}', '${safeFile}', '${safeChap}')">📖 翻阅电子版</button>
+                    <button type="button" class="lbc-btn reserve" onclick="openReservationModal('${b.key}')">🔖 OPAC预约借阅</button>
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
+let currentOpacModalCategory = "sishu";
+
+function switchOpacModalCategory(catId, btn, highlightKey = null) {
+    currentOpacModalCategory = catId;
+    const pills = document.getElementById("opac-modal-cat-pills");
+    if (pills) {
+        pills.querySelectorAll(".opac-cat-tab").forEach(tab => tab.classList.remove("active"));
+        if (btn) {
+            btn.classList.add("active");
+        } else {
+            const target = pills.querySelector(`[data-cat="${catId}"]`);
+            if (target) target.classList.add("active");
+        }
+    }
+    renderReservationBooksList(catId, highlightKey);
+}
+
+function openReservationModal(activeBookKey = null) {
+    loadReaderAccount();
+    loadReservationBooklist();
+    syncReservationsFromServer();
+    updateReaderAccountUI();
+    const modal = document.getElementById("reservation-modal");
+    if (!modal) return;
+
+    let targetCategory = "sishu";
+    if (activeBookKey) {
+        targetCategory = getCategoryForBookKey(activeBookKey);
+    } else {
+        targetCategory = currentOpacModalCategory || "sishu";
+    }
+
+    // 默认展示填写表单面板并渲染对应分类
+    switchReservationTab("form");
+    switchOpacModalCategory(targetCategory, null, activeBookKey);
+
+    const dateInput = document.getElementById("res-pickup-date");
+    if (dateInput && !dateInput.value) {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        dateInput.value = tomorrow.toISOString().split("T")[0];
+    }
+
+    const voucherCard = document.getElementById("res-voucher-card");
+    if (voucherCard) voucherCard.style.display = "none";
+    const submitStatus = document.getElementById("res-submit-status");
+    if (submitStatus) submitStatus.textContent = "";
+
+    modal.classList.add("active");
+
+    // 若有高亮书籍，滚动平滑聚焦
+    if (activeBookKey) {
+        setTimeout(() => {
+            const highlightedEl = document.querySelector("#res-books-container .res-book-highlighted");
+            if (highlightedEl) {
+                highlightedEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            }
+        }, 150);
+    }
+}
+
+function closeReservationModal(e) {
+    if (e && e.target && e.target.id !== "reservation-modal" && !e.target.classList.contains("modal-close-btn")) {
+        return;
+    }
+    const modal = document.getElementById("reservation-modal");
+    if (modal) modal.classList.remove("active");
+}
+
+function renderReservationBooksList(targetCategory = null, highlightKey = null) {
+    const container = document.getElementById("res-books-container");
+    if (!container) return;
+
+    const catId = targetCategory || currentOpacModalCategory || "sishu";
+    const cat = (window.HOME_SHOWCASE_CATEGORIES && window.HOME_SHOWCASE_CATEGORIES[catId]) || (HOME_SHOWCASE_CATEGORIES[catId] || HOME_SHOWCASE_CATEGORIES.sishu);
+    const books = cat.books || [];
+
+    container.innerHTML = `
+        <div style="padding:10px 12px; background:rgba(255,255,255,0.7); border-radius:6px; border:1px solid #e2e8f0;">
+            <div style="font-size:12px; color:#64748b; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+                <span>💡 <strong>${escapeHtml(cat.name)}</strong>【共 ${books.length} 部典籍，点击可直接直达武夷学院图书馆该课本官方专属预约界面】：</span>
+                <span style="font-size:11px; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:4px; font-weight:700;">Space v4.2.29 直通</span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+                ${books.map(b => {
+                    const isHighlighted = (highlightKey && highlightKey === b.key);
+                    const isBusy = !b.isAvailable || (b.borrowStatus && b.borrowStatus.includes("借出")) || (b.status && b.status.includes("借出"));
+                    const pillClass = isBusy ? "borrowed" : "available";
+                    const borrowText = b.borrowStatus || (isBusy ? "🔴 租借情况：特藏借出【支持线上预约】" : "🟢 租借情况：在架可借【实时在架】");
+                    const highlightClass = isHighlighted ? "res-book-highlighted" : "";
+                    const highlightBorder = isHighlighted ? "border:2px solid #0284c7; background:#f0f9ff; box-shadow:0 0 0 3px rgba(2,132,199,0.15);" : "border:1px solid #e2e8f0; background:#f8fafc;";
+                    const directUrl = `https://wyutsg.wuyiu.edu.cn/space/searchDetailLocal/${b.bibId}`;
+                    const safeTitle = escapeHtml(b.title).replace(/'/g, "\\'");
+                    const safeSnippet = escapeHtml(b.snippet || "").replace(/'/g, "\\'");
+                    const safeFile = escapeHtml(b.txtFile || "").replace(/'/g, "\\'");
+                    const safeChap = escapeHtml(b.chapter || "").replace(/'/g, "\\'");
+
+                    return `
+                        <div class="res-category-book-item ${highlightClass}" style="display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-radius:6px; ${highlightBorder} transition:all 0.2s; flex-wrap:wrap; gap:8px;">
+                            <div style="display:flex; flex-direction:column; gap:4px; flex:1; min-width:240px;">
+                                <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                                    <strong style="font-size:13.5px; color:#0f172a; font-family:var(--font-serif);">${escapeHtml(b.title)}</strong>
+                                    <span class="borrow-status-pill ${pillClass}">${escapeHtml(borrowText)}</span>
+                                    ${isHighlighted ? `<span style="font-size:11px; background:#0284c7; color:#fff; padding:1px 6px; border-radius:3px; font-weight:700;">★ 当前选定课本</span>` : ''}
+                                </div>
+                                <div style="font-size:11.5px; color:#64748b; display:flex; gap:12px; flex-wrap:wrap;">
+                                    <span>索书号：<code style="color:#b45309; font-weight:700;">${escapeHtml(b.callNumber)}</code></span>
+                                    <span>馆藏：${escapeHtml(b.location)}</span>
+                                    <span>著者：${escapeHtml(b.author)}</span>
+                                </div>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <button type="button" onclick="openFulltextFromProvenance('${b.key}', '${safeTitle}', '${safeSnippet}', '${safeFile}', '${safeChap}')" style="background:#fff; color:#475569; border:1px solid #cbd5e1; font-size:11.5px; font-weight:600; padding:5px 10px; border-radius:5px; cursor:pointer;" title="在电子阅览器中翻阅此典籍全文">
+                                    📖 翻阅
+                                </button>
+                                <a href="${directUrl}" target="_blank" rel="noopener noreferrer" style="background:linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color:#fff; text-decoration:none; padding:6px 14px; border-radius:5px; font-size:12px; font-weight:700; display:inline-flex; align-items:center; gap:4px; box-shadow:0 2px 4px rgba(2,132,199,0.3);" title="直达武夷学院图书馆${escapeHtml(b.title)}页面，点击页面内蓝色【预约】按钮即可登录学号并提交预约">
+                                    🏛️ 直达该课本官方预约 ➔
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                }).join("")}
+            </div>
+        </div>
+    `;
+}
+
+function renderMyReservationRecords() {
+    const container = document.getElementById("res-my-records-container");
+    if (!container) return;
+
+    renderKnownAccountsChips();
+
+    if (!currentReaderAccount.isLoggedIn || !currentReaderAccount.cardId) {
+        container.innerHTML = `
+            <div style="padding:42px 20px; text-align:center; color:#64748b; font-size:13px; background:#fff; border-radius:12px; border:1px solid #e2e8f0; box-shadow:0 4px 14px rgba(0,0,0,0.03);">
+                <div style="width:60px; height:60px; background:#fff7ed; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:28px; margin-bottom:14px; border:1.5px solid #fed7aa;">
+                    🔐
+                </div>
+                <h3 style="margin:0 0 10px; font-size:16.5px; font-weight:700; color:#9a3412;">
+                    未登入借阅账号 · 暂无法查看预约记录
+                </h3>
+                <p style="color:#c2410c; font-size:13px; max-width:460px; margin:0 auto 22px; line-height:1.7;">
+                    典籍借阅预约凭据与逸夫图书馆架位锁定严格<strong>根据登入的读者账号专属存储与隔离</strong>。<strong>只有登入了账号的读者，方可回到这个界面查阅名下的预约记录与凭据。</strong>
+                </p>
+                <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
+                    <a href="https://wyutsg.wuyiu.edu.cn/space/login" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:6px; background:#ea580c; color:#fff; font-size:13px; font-weight:700; padding:10px 22px; border-radius:6px; text-decoration:none; box-shadow:0 2px 5px rgba(234,88,12,0.3);">
+                        <span>🌐 前往图书馆书目检索系统登入 ➔</span>
+                    </a>
+                    <button type="button" onclick="openReaderAccountSwitcherModal()" class="action-pill-btn" style="display:inline-flex; align-items:center; gap:6px; background:#0f766e; color:#fff; font-size:13px; font-weight:700; padding:10px 22px; border:none; border-radius:6px; cursor:pointer; box-shadow:0 2px 5px rgba(15,118,110,0.3);">
+                        <span>👤 验证读者账号并回到此界面 ➔</span>
+                    </button>
+                </div>
+            </div>
+        `;
+        return;
+    }
+
+    const list = getReservationsForCurrentAccount();
+    if (!list || list.length === 0) {
+        container.innerHTML = `
+            <div style="padding:32px 16px; text-align:center; color:#94a3b8; font-size:13px; background:#fff; border-radius:8px; border:1px dashed #cbd5e1;">
+                <div style="font-size:36px; margin-bottom:8px;">📭</div>
+                <strong style="color:#0f172a; font-size:14px; display:block; margin-bottom:4px;">读者账号【${escapeHtml(currentReaderAccount.cardId)} · ${escapeHtml(currentReaderAccount.name)}】暂无预约记录</strong>
+                在预约表单提交后，该学号名下的所有线下取书凭据与特藏室架位锁定信息将实时保存在此，随时可点击取消。
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = list.map((item, idx) => {
+        const isCancelled = item.status === "cancelled" || item.status === "已取消预约";
+        const statusBadge = isCancelled 
+            ? `<span style="background:#fee2e2; color:#b91c1c; font-size:11px; padding:2px 8px; border-radius:4px; font-weight:700;">⚪ 已取消预约 (架位已释放)</span>`
+            : `<span style="background:#dcfce7; color:#15803d; font-size:11px; padding:2px 8px; border-radius:4px; font-weight:700;">🟢 架位已锁定待取</span>`;
+
+        const booksHtml = (item.books || []).map(b => `
+            <div style="font-size:12px; color:#334155; margin-top:3px; background:#f8fafc; padding:4px 8px; border-radius:4px; border:1px solid #e2e8f0;">
+                📖 <strong>${escapeHtml(b.title)}</strong> · 索书号：<code style="color:#b45309; font-weight:700;">${escapeHtml(b.callNumber)}</code> · 馆藏：${escapeHtml(b.location)}
+            </div>
+        `).join("");
+
+        return `
+            <div class="my-res-item-card" style="background:#ffffff; border:1px solid ${isCancelled ? '#e2e8f0' : '#bbf7d0'}; border-radius:8px; padding:12px 14px; opacity:${isCancelled ? '0.75' : '1'}; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; flex-wrap:gap; gap:6px;">
+                    <div>
+                        <strong style="color:#0f172a; font-size:13.5px; font-family:monospace;">${escapeHtml(item.reservation_id)}</strong>
+                        <span style="font-size:11px; color:#64748b; margin-left:8px;">提交于 ${escapeHtml(item.created_at || "")}</span>
+                    </div>
+                    ${statusBadge}
+                </div>
+                <div style="font-size:12.5px; color:#475569; line-height:1.6; margin-bottom:8px;">
+                    <div>👤 <strong>读者：</strong>${escapeHtml(item.reader_name)}（证号：${escapeHtml(item.card_id)} · ${escapeHtml(item.reader_type || "本科生")}） · 📞 ${escapeHtml(item.phone)}</div>
+                    <div>📍 <strong>取书场馆：</strong><span style="color:#b45309; font-weight:700;">${escapeHtml(item.pickup_location)}</span></div>
+                    <div>📅 <strong>预定取书：</strong>${escapeHtml(item.pickup_date)}（架位锁定保留至 ${escapeHtml(item.valid_until || (item.pickup_date + ' 17:30'))}）</div>
+                </div>
+                <div style="margin-top:6px; margin-bottom:8px;">
+                    <div style="font-size:12px; font-weight:700; color:#334155; margin-bottom:3px;">📚 预约借阅典籍清单：</div>
+                    ${booksHtml}
+                </div>
+                ${!isCancelled ? `
+                <div style="display:flex; justify-content:flex-end; gap:8px; border-top:1px dashed #e2e8f0; padding-top:8px; margin-top:8px;">
+                    <button type="button" onclick="cancelReservation('${escapeHtml(item.reservation_id)}')" style="background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5; padding:4px 12px; border-radius:6px; font-size:12px; font-weight:700; cursor:pointer;" title="随时取消预约，释放架位">
+                        ❌ 随时取消此预约
+                    </button>
+                </div>
+                ` : ''}
+            </div>
+        `;
+    }).join("");
+}
+
+function renderKnownAccountsChips() {
+    // 已按读者规程移除所有模拟测试账号标签
+}
+
+async function cancelReservation(reservationId) {
+    if (!reservationId) return;
+    if (!confirm(`确认取消预约单【${reservationId}】吗？取消后逸夫图书馆特藏室架位将即刻释放给其他师生。`)) {
+        return;
+    }
+
+    try {
+        const res = await fetch("/api/opac/cancel", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ reservation_id: reservationId })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+            const list = loadSubmittedReservations();
+            const idx = list.findIndex(r => r.reservation_id === reservationId);
+            if (idx !== -1) {
+                list[idx].status = "cancelled";
+                saveSubmittedReservationsList(list);
+            }
+            renderMyReservationRecords();
+            updateReservationRecordsCount();
+            showToast(`已成功取消预约【${reservationId}】，特藏架位已实时释放！`);
+        } else {
+            alert(data.detail || "取消预约未成功，请稍后再试");
+        }
+    } catch (err) {
+        const list = loadSubmittedReservations();
+        const idx = list.findIndex(r => r.reservation_id === reservationId);
+        if (idx !== -1) {
+            list[idx].status = "cancelled";
+            saveSubmittedReservationsList(list);
+        }
+        renderMyReservationRecords();
+        updateReservationRecordsCount();
+        showToast(`已在本地标记取消预约【${reservationId}】`);
+    }
+}
+
+async function submitReservationForm(e) {
+    e.preventDefault();
+    if (!currentReaderAccount.isLoggedIn || !currentReaderAccount.cardId) {
+        alert("借阅预约权限未解锁：请先登入武夷学院读者账号（学号/借书证号）！");
+        return;
+    }
+
+    if (reservationBooklist.length === 0) {
+        alert("请先添加至少一部典籍至预约书单！");
+        return;
+    }
+
+    const loginConfirmed = document.getElementById("res-login-confirmed");
+    if (loginConfirmed && !loginConfirmed.checked) {
+        alert("请先知悉并登入【武夷学院图书馆书目检索系统 (https://wyutsg.wuyiu.edu.cn/space/login)】，勾选确认后方可进行租借预约。");
+        return;
+    }
+
+    const name = (currentReaderAccount.name || document.getElementById("res-reader-name").value).trim();
+    const cardId = (currentReaderAccount.cardId || document.getElementById("res-card-id").value).trim();
+    const readerType = document.getElementById("res-reader-type").value || currentReaderAccount.readerType || "本科生";
+    const phone = document.getElementById("res-reader-phone").value.trim();
+    const pickupLoc = document.getElementById("res-pickup-loc").value;
+    const pickupDate = document.getElementById("res-pickup-date").value;
+    const notes = document.getElementById("res-notes").value.trim();
+
+    const statusEl = document.getElementById("res-submit-status");
+    const submitBtn = document.getElementById("res-submit-btn");
+
+    if (statusEl) {
+        statusEl.textContent = "正在向武夷学院图书馆 OPAC 提交预约并锁定架位...";
+        statusEl.style.color = "#0f766e";
+    }
+    if (submitBtn) submitBtn.disabled = true;
+
+    try {
+        const payload = {
+            reader_name: name,
+            card_id: cardId,
+            phone: phone,
+            reader_type: readerType,
+            pickup_location: pickupLoc,
+            pickup_date: pickupDate,
+            notes: notes,
+            books: reservationBooklist
+        };
+
+        const res = await fetch("/api/opac/reserve", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (res.ok && data.success) {
+            if (statusEl) statusEl.textContent = "";
+            const voucherCard = document.getElementById("res-voucher-card");
+            const voucherCode = document.getElementById("voucher-code");
+            const voucherContent = document.getElementById("voucher-content");
+
+            if (voucherCode) voucherCode.textContent = data.reservation_id;
+            if (voucherContent) {
+                const bookItemsHtml = reservationBooklist.map((b, idx) => `
+                    <div style="background:#fff; border:1px solid #fed7aa; padding:6px 10px; border-radius:4px; margin-top:4px;">
+                        <strong>[典籍 ${idx + 1}] ${escapeHtml(b.title)}</strong><br>
+                        索书号：<code style="font-weight:700; color:#b45309;">${escapeHtml(b.callNumber)}</code> · 馆藏：${escapeHtml(b.location)}
+                    </div>
+                `).join("");
+
+                voucherContent.innerHTML = `
+                    <div style="margin-bottom:8px;">
+                        👤 <strong>预约读者：</strong>${escapeHtml(name)}（证号：${escapeHtml(cardId)} · ${escapeHtml(readerType)}）<br>
+                        📞 <strong>联系方式：</strong>${escapeHtml(phone)}<br>
+                        📍 <strong>取书场馆：</strong><span style="color:#b45309; font-weight:700;">${escapeHtml(pickupLoc)}</span><br>
+                        📅 <strong>预定取书：</strong>${escapeHtml(pickupDate)}（架位锁定保留至 ${escapeHtml(data.valid_until || (pickupDate + ' 17:30'))}）
+                    </div>
+                    <div style="margin-top:6px;">
+                        <strong>📚 本次预约锁定典籍：</strong>
+                        ${bookItemsHtml}
+                    </div>
+                    <div style="margin-top:10px; font-size:11.5px; color:#78350f; background:#fef3c7; padding:6px 10px; border-radius:4px;">
+                        💡 <strong>到馆指引：</strong>请在预定日期凭校园卡或出示本预约单号（<strong>${escapeHtml(data.reservation_id)}</strong>）前往逸夫图书馆取书处直接办理借阅手续。
+                    </div>
+                `;
+            }
+
+            // 保存到提交记录数据库，以便随时查看凭据与取消预约
+            const record = {
+                reservation_id: data.reservation_id,
+                created_at: new Date().toLocaleString(),
+                reader_name: name,
+                card_id: cardId,
+                phone: phone,
+                reader_type: readerType,
+                pickup_location: pickupLoc,
+                pickup_date: pickupDate,
+                valid_until: data.valid_until || (pickupDate + ' 17:30'),
+                notes: notes,
+                books: [...reservationBooklist],
+                status: "active"
+            };
+            const submittedList = loadSubmittedReservations();
+            submittedList.unshift(record);
+            saveSubmittedReservationsList(submittedList);
+
+            // 自动同步并绑定为当前登入读者账号
+            currentReaderAccount = {
+                isLoggedIn: true,
+                cardId: cardId,
+                name: name,
+                readerType: readerType,
+                phone: phone
+            };
+            saveReaderAccount();
+
+            updateReservationRecordsCount();
+
+            if (voucherCard) voucherCard.style.display = "block";
+            showToast("🎉 线下典籍借阅预约单提交成功！已为您锁定架位");
+            clearReservationBooklist();
+        } else {
+            if (statusEl) {
+                statusEl.textContent = data.detail || "预约提交未完成，请检查输入";
+                statusEl.style.color = "#dc2626";
+            }
+        }
+    } catch (err) {
+        if (statusEl) {
+            statusEl.textContent = "网络通讯稍阻，请稍后重试";
+            statusEl.style.color = "#dc2626";
+        }
+    } finally {
+        if (submitBtn) submitBtn.disabled = false;
+    }
+}
+
+function printReservationVoucher() {
+    window.print();
+}
+
+// 实时直连武夷学院图书馆 OPAC 同步引证卡片架位状态
+async function refreshCitationOpacStatus(btn, bookTitle) {
+    if (!btn || !bookTitle) return;
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = "🔄 正在直连后台...";
+
+    try {
+        const res = await fetch(`/api/opac/status?book_title=${encodeURIComponent(bookTitle)}&force=true`);
+        if (!res.ok) throw new Error("获取OPAC状态失败");
+        const data = await res.json();
+
+        // 查找最近的卡片容器（支持单书或多书卡片）
+        const card = btn.closest(".opac-multi-book-item") || btn.closest(".opac-citation-card");
+        if (card) {
+            const badge = card.querySelector(".opac-status-badge");
+            if (badge) {
+                const isAvail = (data.status === "可借");
+                badge.style.background = isAvail ? "#dcfce7" : "#fee2e2";
+                badge.style.color = isAvail ? "#15803d" : "#b91c1c";
+                badge.style.borderColor = isAvail ? "#86efac" : "#fca5a5";
+                badge.textContent = isAvail ? "🟢 可借 (实时在架)" : "🔴 借出 (建议预约)";
+            }
+
+            card.querySelectorAll(".opac-meta-item").forEach(item => {
+                const label = item.querySelector(".meta-label");
+                if (!label) return;
+                const txt = label.textContent || "";
+                if (txt.includes("索书号")) {
+                    const c = item.querySelector(".meta-callno") || item.querySelector("code");
+                    if (c && data.callNumber) c.textContent = data.callNumber;
+                } else if (txt.includes("馆藏地点")) {
+                    const v = item.querySelector(".meta-value");
+                    if (v && data.location) v.textContent = data.location;
+                } else if (txt.includes("馆藏副本")) {
+                    const v = item.querySelector(".meta-value");
+                    if (v && (data.availableCopies !== undefined || data.totalCopies !== undefined)) {
+                        v.textContent = `在馆 ${data.availableCopies || 0} 册 / 共 ${data.totalCopies || 1} 册 (实时)`;
+                    }
+                }
+            });
+        }
+
+        // 更新本地 registry 缓存
+        const key = matchOpacBookKey(bookTitle);
+        if (OPAC_BOOKS_REGISTRY[key]) {
+            OPAC_BOOKS_REGISTRY[key].status = data.status;
+            if (data.callNumber) OPAC_BOOKS_REGISTRY[key].callNumber = data.callNumber;
+            if (data.location) OPAC_BOOKS_REGISTRY[key].location = data.location;
+        }
+
+        showToast(`已成功同步【${bookTitle}】武夷学院后台实时状态：${data.status}！`);
+    } catch (err) {
+        console.error("实时同步OPAC失败:", err);
+        showToast("实时直连学校OPAC稍有网络延迟，请稍后再试");
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+    }
+}
+
+// 实时向学校后台刷新当前线下预约书单中所有典籍的在架借阅状态
+async function refreshReservationListLiveStatus() {
+    loadReservationBooklist();
+    if (!reservationBooklist || reservationBooklist.length === 0) {
+        showToast("预约书单当前为空，请先添加典籍");
+        return;
+    }
+
+    const indicator = document.getElementById("res-live-sync-indicator");
+    if (indicator) {
+        indicator.textContent = "⚡ 正在同步学校OPAC...";
+        indicator.style.background = "#fef3c7";
+        indicator.style.color = "#b45309";
+    }
+
+    try {
+        const titles = reservationBooklist.map(b => b.title);
+        const res = await fetch("/api/opac/batch-status", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ titles: titles, force: true })
+        });
+        if (!res.ok) throw new Error("批量获取状态失败");
+        const data = await res.json();
+        const results = data.results || {};
+
+        let updatedCount = 0;
+        reservationBooklist.forEach(b => {
+            const live = results[b.title];
+            if (live) {
+                b.status = live.status || b.status;
+                if (live.callNumber) b.callNumber = live.callNumber;
+                if (live.location) b.location = live.location;
+                if (live.bibId) b.bibId = live.bibId;
+                updatedCount++;
+            }
+        });
+
+        saveReservationBooklist();
+        renderReservationBooksList();
+
+        const timeStr = new Date().toLocaleTimeString();
+        if (indicator) {
+            indicator.textContent = `⚡ 实时后台直连 (已同步 ${timeStr})`;
+            indicator.style.background = "#dcfce7";
+            indicator.style.color = "#15803d";
+        }
+        showToast(`已成功向武夷学院 OPAC 实时同步 ${updatedCount} 部典籍最新在架数据！`);
+    } catch (err) {
+        console.error("刷新预约书单实时状态失败:", err);
+        if (indicator) {
+            indicator.textContent = "⚡ 实时后台直连";
+            indicator.style.background = "#dcfce7";
+            indicator.style.color = "#15803d";
+        }
+        showToast("与学校OPAC直连稍有延迟，已保持当前状态");
+    }
+}
+
+async function preloadOpacBooks() {
+    try {
+        const res = await fetch("/api/opac/books");
+        if (res.ok) {
+            window.opacBooksCache = await res.json();
+        }
+    } catch (e) {
+        console.warn("OPAC预加载稍缓:", e);
+    }
+}
+
 
 // 雅致吐司提示
 function showToast(msg) {
@@ -1633,11 +3681,14 @@ function showToast(msg) {
 // ========================================================
 let lastLetterReplyText = "";
 let lastLetterOriginalText = "";
+let lastLetterDate = "";
+let lastLetterSeal = "";
 
 function quickFillLetterIdea(themeKey) {
     const input = document.getElementById("letter-content-input");
     if (!input) return;
     const presets = {
+        "倾慕心仪佳人": "我喜欢上了一位温婉贤淑的姑娘，想写一封合乎宋代文人雅正礼仪、意境高古优美的情简，向她真诚倾诉爱慕心意与白首同心之期。",
         "勉励同窗立志": "同窗好友近来读书有些懈怠迷茫，我想写一封信勉励他重新立下高远志向，踏实治学，循序渐进，莫负大好光阴。",
         "自励修身戒急戒躁": "自己最近遇事容易急躁浮动，我想写一封信告诫并警策自己：收敛身心，主敬涵养，慎独存省，戒急戒躁。",
         "感恩师长教诲": "回忆求学求道之路上师长如春风化雨般的关怀与提点，我想写一封信表达深切感恩，并表明知行相须、踏实向学的决心。",
@@ -1702,21 +3753,27 @@ async function sendAncientLetter() {
         });
         const data = await res.json();
         const reply = cleanParentheses(data.reply || "");
+        const dateStr = cleanParentheses(data.date || "宋庆元四年春 门生谨书");
+        const sealStr = cleanParentheses(data.seal || "主敬<br>存诚");
         lastLetterReplyText = reply;
         lastLetterOriginalText = reply;
+        lastLetterDate = dateStr;
+        lastLetterSeal = sealStr;
 
         const composeArea = document.getElementById("letter-compose-area");
         const replyArea = document.getElementById("letter-reply-area");
         const contentEl = document.getElementById("letter-reply-content");
         const dateEl = document.getElementById("letter-reply-date");
+        const sealEl = document.getElementById("letter-seal-stamp");
 
         if (composeArea) composeArea.style.display = "none";
         if (replyArea) replyArea.style.display = "block";
         if (contentEl) contentEl.innerHTML = renderMarkdown(reply);
-        if (dateEl) dateEl.textContent = cleanParentheses(data.date || "宋庆元四年 · 考亭讲筵 晦庵朱熹 代拟手札");
+        if (dateEl) dateEl.textContent = dateStr;
+        if (sealEl) sealEl.innerHTML = sealStr;
 
         // 自动绘制高清宣纸毛笔长卷图片
-        renderLetterToCanvas(reply);
+        renderLetterToCanvas(reply, dateStr, sealStr);
 
         if (autoTTS && reply) {
             playVoice(reply);
@@ -1763,7 +3820,7 @@ function confirmLetterEdit() {
     if (editBox) editBox.style.display = "none";
 
     // 重新绘制并刷新长卷图片
-    renderLetterToCanvas(modified);
+    renderLetterToCanvas(modified, lastLetterDate, lastLetterSeal);
     showToast("已成功更新信札内容与草书手札长卷！");
 }
 
@@ -1772,7 +3829,7 @@ function cancelLetterEdit() {
     if (editBox) editBox.style.display = "none";
 }
 
-function renderLetterToCanvas(text) {
+function renderLetterToCanvas(text, dateStr, sealStr) {
     const canvas = document.getElementById("letter-canvas-render");
     const imgPreview = document.getElementById("letter-image-preview");
     if (!canvas) return;
@@ -1862,7 +3919,8 @@ function renderLetterToCanvas(text) {
     ctx.fillStyle = "#451a03";
     ctx.font = "21px STXingkai, KaiTi, cursive";
     ctx.textAlign = "right";
-    ctx.fillText("宋庆元四年 · 考亭讲筵 考亭先生晦庵 代拟墨札", width - 80, bottomY);
+    const finalDate = cleanParentheses(dateStr || lastLetterDate || "宋庆元四年春 门生谨书");
+    ctx.fillText(finalDate, width - 80, bottomY);
 
     // 6. 经典印信
     const sealX = width - 150;
@@ -1872,16 +3930,21 @@ function renderLetterToCanvas(text) {
     ctx.fillStyle = "#ffffff";
     ctx.font = "bold 16px STKaiti, KaiTi, serif";
     ctx.textAlign = "center";
-    ctx.fillText("考亭", sealX + 24, sealY + 22);
-    ctx.fillText("文公", sealX + 24, sealY + 40);
+
+    // 解析动态印章四字
+    const sealClean = (sealStr || lastLetterSeal || "主敬存诚").replace(/<br\s*\/?>/gi, "").replace(/[\s\n]/g, "");
+    const topSeal = sealClean.slice(0, 2) || "主敬";
+    const btmSeal = sealClean.slice(2, 4) || "存诚";
+    ctx.fillText(topSeal, sealX + 24, sealY + 22);
+    ctx.fillText(btmSeal, sealX + 24, sealY + 40);
 
     const seal2X = sealX + 56;
     ctx.strokeStyle = "#b91c1c";
     ctx.lineWidth = 2;
     ctx.strokeRect(seal2X, sealY, 48, 48);
     ctx.fillStyle = "#b91c1c";
-    ctx.fillText("晦翁", seal2X + 24, sealY + 22);
-    ctx.fillText("之印", seal2X + 24, sealY + 40);
+    ctx.fillText("考亭", seal2X + 24, sealY + 22);
+    ctx.fillText("印信", seal2X + 24, sealY + 40);
 
     // 7. 导出至预览 <img> 标签
     if (imgPreview) {
@@ -1894,7 +3957,7 @@ function downloadLetterImage() {
     if (!canvas) return;
     const dataUrl = canvas.toDataURL("image/png");
     const link = document.createElement("a");
-    link.download = `考亭先生草书尺牍墨宝_${Date.now()}.png`;
+    link.download = `考亭尺牍墨宝_${Date.now()}.png`;
     link.href = dataUrl;
     document.body.appendChild(link);
     link.click();
@@ -1910,7 +3973,7 @@ function playVoiceFromLetter() {
 
 function copyLetterReply() {
     if (!lastLetterReplyText) return;
-    const fullText = `【考亭先生代拟草书尺牍】\n\n${lastLetterReplyText}\n\n—— 晦庵朱熹 代拟墨札`;
+    const fullText = `【考亭尺牍·理学墨韵】\n\n${lastLetterReplyText}\n\n—— ${lastLetterDate || "宋代文人手札"}`;
     if (navigator.clipboard) {
         navigator.clipboard.writeText(fullText).then(() => {
             showToast("先生墨宝尺牍已抄录入剪贴板");
@@ -2243,7 +4306,7 @@ async function executeCorpusSearch(termOverride) {
                                 <span class="result-book-title">${escapeHtml(cleanParentheses(item.book_title || "考亭典籍"))}</span>
                                 <span class="result-chapter-badge">${escapeHtml(cleanParentheses(item.chapter || ""))}</span>
                             </div>
-                            <button class="corpus-read-whole-btn" onclick="openBookFromProvenance('${escapeHtml(item.book_key || "zhuzi_yulei")}')">
+                            <button class="corpus-read-whole-btn" onclick="openFulltextFromProvenance('${escapeHtml(item.book_key || "")}', '${escapeHtml(cleanParentheses(item.book_title || "考亭典籍"))}', '${escapeHtml(cleanParentheses(item.snippet || kw))}', '${escapeHtml(item.filename || "")}', '${escapeHtml(cleanParentheses(item.chapter || ""))}')">
                                 📖 翻阅全卷
                             </button>
                         </div>
@@ -2280,14 +4343,23 @@ function mapToLibraryKey(key) {
     return "yulei";
 }
 
+// 直达具体文献原文阅读器，并黄色高亮特别标注，精准跳至该段落所在章节
+function openFulltextFromProvenance(bookKey, bookTitle, snippet, filename = "", chapter = "") {
+    const finalKey = bookKey || matchOpacBookKey(bookTitle) || "yulei";
+    if (window.library3DEngine) {
+        window.library3DEngine.openFulltextReader(finalKey, bookTitle || "考亭原典特藏", snippet || "", filename || "", chapter || "");
+    } else {
+        switchNav("recommend");
+        setTimeout(() => {
+            if (window.library3DEngine) {
+                window.library3DEngine.openFulltextReader(finalKey, bookTitle || "考亭原典特藏", snippet || "", filename || "", chapter || "");
+            }
+        }, 150);
+    }
+}
+
 function openBookFromProvenance(bookKey) {
-    const mapped = mapToLibraryKey(bookKey);
-    switchNav("recommend");
-    setTimeout(() => {
-        if (window.library3DEngine) {
-            window.library3DEngine.openBookReader(mapped);
-        }
-    }, 150);
+    openFulltextFromProvenance(bookKey, "考亭原典", "");
 }
 
 function renderSourcesCard(bubbleEl, sources) {
@@ -2303,6 +4375,7 @@ function renderSourcesCard(bubbleEl, sources) {
         chapter: cleanParentheses(s.chapter || ""),
         section: cleanParentheses(s.section || ""),
         book_key: s.book_key || "zhuzi_yulei",
+        filename: s.filename || "",
         snippet: cleanParentheses(s.snippet || "")
     }));
 
@@ -2322,8 +4395,8 @@ function renderSourcesCard(bubbleEl, sources) {
                     </div>
                     <div class="rag-snippet-text">${escapeHtml(s.snippet)}</div>
                     <div class="rag-item-footer">
-                        <button class="rag-read-btn" onclick="openBookFromProvenance('${escapeHtml(s.book_key)}')">
-                            📖 翻阅全卷典籍
+                        <button class="rag-read-btn" onclick="openFulltextFromProvenance('${escapeHtml(s.book_key)}', '${escapeHtml(s.title)}', '${escapeHtml(cleanParentheses(s.snippet))}', '${escapeHtml(s.filename)}', '${escapeHtml(cleanParentheses(s.chapter))}');">
+                            📖 翻阅全卷典籍文献（定位并标注）
                         </button>
                     </div>
                 </div>
@@ -2531,3 +4604,43 @@ window.triggerPoetryImageUpload = triggerPoetryImageUpload;
 window.handlePoetryImageFile = handlePoetryImageFile;
 window.toggleInstantTTS = toggleInstantTTS;
 window.speakInstantText = speakInstantText;
+
+// 书院雅乐 BGM 控制器暴露
+window.toggleAcademyBGM = toggleAcademyBGM;
+window.openBgmModal = openBgmModal;
+window.closeBgmModal = closeBgmModal;
+window.playBgmTrack = playBgmTrack;
+window.nextBgmTrack = nextBgmTrack;
+window.prevBgmTrack = prevBgmTrack;
+window.setBgmVolume = setBgmVolume;
+window.initBgmPlayer = initBgmPlayer;
+window.updateBgmUI = updateBgmUI;
+window.tryAutoPlayBgm = tryAutoPlayBgm;
+
+// 武夷学院 OPAC 线下借阅预约管理器暴露
+window.openReservationModal = openReservationModal;
+window.closeReservationModal = closeReservationModal;
+window.quickReserveThisBook = quickReserveThisBook;
+window.quickReserveFromCitation = quickReserveFromCitation;
+window.removeReservationBook = removeReservationBook;
+window.clearReservationBooklist = clearReservationBooklist;
+window.submitReservationForm = submitReservationForm;
+window.printReservationVoucher = printReservationVoucher;
+window.loadReservationBooklist = loadReservationBooklist;
+window.switchReservationTab = switchReservationTab;
+window.renderMyReservationRecords = renderMyReservationRecords;
+window.cancelReservation = cancelReservation;
+window.loadSubmittedReservations = loadSubmittedReservations;
+window.refreshCitationOpacStatus = refreshCitationOpacStatus;
+window.refreshReservationListLiveStatus = refreshReservationListLiveStatus;
+window.openReaderAccountSwitcherModal = openReaderAccountSwitcherModal;
+window.closeReaderAccountSwitcherModal = closeReaderAccountSwitcherModal;
+window.submitReaderAccountLogin = submitReaderAccountLogin;
+window.switchReaderAccount = switchReaderAccount;
+window.logoutReaderAccount = logoutReaderAccount;
+window.getReservationsForCurrentAccount = getReservationsForCurrentAccount;
+window.loadReaderAccount = loadReaderAccount;
+window.HOME_SHOWCASE_CATEGORIES = HOME_SHOWCASE_CATEGORIES;
+window.switchHomeShowcaseCategory = switchHomeShowcaseCategory;
+window.renderHomeShowcaseBooks = renderHomeShowcaseBooks;
+window.switchOpacModalCategory = switchOpacModalCategory;

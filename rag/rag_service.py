@@ -11,6 +11,18 @@ from typing import List, Dict, Any, Optional
 from collections import Counter
 
 
+def is_valid_corpus_filename(fname: str) -> bool:
+    """过滤系统文件、隐藏文件及跨系统解压编码错乱的西里尔/制表符乱码文件"""
+    if not fname.endswith(('.txt', '.md')) or fname.startswith('.'):
+        return False
+    if fname.startswith('README'):
+        return False
+    # 严格过滤由于解压编码错误引入的乱码文件（含西里尔字符、制表符等非正常中文符号）
+    if re.search(r'[\u0400-\u04ff\u2500-\u257f\ufffd]', fname):
+        return False
+    return True
+
+
 class DocumentChunk:
     def __init__(self, doc_id: str, title: str, content: str, source: str, chunk_index: int):
         self.doc_id = doc_id
@@ -132,7 +144,7 @@ class HybridKnowledgeBase:
                 continue
 
             for fname in sorted(os.listdir(corpus_dir)):
-                if fname.endswith(('.txt', '.md')) and not fname.startswith('README'):
+                if is_valid_corpus_filename(fname):
                     fpath = os.path.join(corpus_dir, fname)
                     try:
                         with open(fpath, 'r', encoding='utf-8') as f:
@@ -216,9 +228,9 @@ class HybridKnowledgeBase:
 
     def get_stats(self) -> Dict[str, Any]:
         """获取知识库现状统计"""
-        base_files = [f for f in os.listdir(self.base_corpus_dir) if f.endswith(('.txt', '.md'))] if os.path.exists(self.base_corpus_dir) else []
-        custom_files = [f for f in os.listdir(self.custom_corpus_dir) if f.endswith(('.txt', '.md')) and not f.startswith('README')] if os.path.exists(self.custom_corpus_dir) else []
-        ebooks_files = [f for f in os.listdir(self.ebooks_download_dir) if f.endswith(('.txt', '.md'))] if os.path.exists(self.ebooks_download_dir) else []
+        base_files = [f for f in os.listdir(self.base_corpus_dir) if is_valid_corpus_filename(f)] if os.path.exists(self.base_corpus_dir) else []
+        custom_files = [f for f in os.listdir(self.custom_corpus_dir) if is_valid_corpus_filename(f)] if os.path.exists(self.custom_corpus_dir) else []
+        ebooks_files = [f for f in os.listdir(self.ebooks_download_dir) if is_valid_corpus_filename(f)] if os.path.exists(self.ebooks_download_dir) else []
         return {
             "total_chunks": self.total_docs,
             "base_corpus_count": len(base_files),
