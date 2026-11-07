@@ -1,7 +1,7 @@
 # 考亭云章 · 朱子理学特藏文献智能研习馆
 
 <p align="center">
-  <img src="static/scenery/home_ink_bamboo.jpg" alt="考亭云章" width="750" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
+  <img src="resources/home_ink_bamboo.jpg" alt="考亭云章" width="750" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
 </p>
 
 <p align="center">
