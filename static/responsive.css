@@ -1,0 +1,1872 @@
+/* ============================================================================
+   考亭云章 · 全端响应式适配样式表 (PC Desktop > 1024px 保持原貌)
+   覆盖范围：
+     - 触屏与高刷安全区基础能力
+     - 平板 / 窄屏笔记本 (<= 1024px)：侧边抽屉 + 先生伴读条 + 讲义抽屉 + 书架横滑
+     - 手机竖屏 (<= 767px)：底部 5-Tab 导航 + 双行舒适输入栏 + GalGame 三段竖屏 + 全屏电子阅览器
+     - 小屏手机 (<= 420px) 与手机横屏 (max-height: 500px and orientation: landscape)
+   ============================================================================ */
+
+:root {
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+    --mobile-bottom-nav-h: 58px;
+}
+
+/* 动态视口高度渐进增强，避免 iOS / Android 地址栏伸缩遮挡底部输入栏 */
+@supports (height: 100dvh) {
+    body.app-body,
+    .window-frame {
+        height: 100dvh;
+        max-height: 100dvh;
+    }
+}
+
+/* 防止任意横向撑破与改善滚动流畅度 */
+.app-main-content,
+.content-scroll-wrap,
+.page-view {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.chat-messages-scroll,
+.modal-body,
+.drawer-scroll-body,
+.ft-content,
+.ft-sidebar,
+.corpus-results-scroll {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+}
+
+/* 隐藏滚动条但保留原生平滑横滑手感 */
+.mobile-hscroll-strip {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.mobile-hscroll-strip::-webkit-scrollbar {
+    display: none;
+}
+
+/* 触屏设备取消粘滞 hover 悬停抬起效果 */
+@media (hover: none) {
+    .feature-card:hover,
+    .taskflow-capsule-item:hover,
+    .book-3d-item:hover,
+    .shelf-books-row .book-3d-item:hover .book-3d-mesh,
+    .gal-choice-btn:hover,
+    .prov-book-tag:hover,
+    .opac-jump-btn:hover,
+    .opac-reserve-btn:hover,
+    .taskflow-quick-chip:hover {
+        transform: none !important;
+    }
+}
+
+/* ============================================================================
+   一、平板与中窄屏适配 (<= 1024px)
+   ============================================================================ */
+@media (max-width: 1024px) {
+    /* 消除固定 calc(100vh - 44px) 导致内容顶破安全区或遮挡底栏的问题 */
+    #view-qa.active,
+    #view-class.active,
+    #view-recommend.active {
+        height: 100% !important;
+        max-height: 100% !important;
+        min-height: 0;
+    }
+
+    .dedicated-view-container {
+        height: 100% !important;
+        max-height: 100% !important;
+        min-height: 0;
+    }
+
+    /* 1. 顶部栏左侧汉堡菜单按钮 */
+    .mobile-menu-btn {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        border: 1px solid #d6dce6;
+        background: #ffffff;
+        color: #1e293b;
+        cursor: pointer;
+        flex-shrink: 0;
+        padding: 0;
+    }
+
+    .mobile-menu-btn:active {
+        background: #f1f5f9;
+    }
+
+    /* 2. 侧边栏改造成全文字滑出式抽屉（覆盖 style.css 900px 64px 窄条旧规则） */
+    .mobile-nav-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.48);
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
+        z-index: 1150;
+    }
+
+    .mobile-nav-backdrop.visible {
+        display: block !important;
+    }
+
+    .app-sidebar {
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 274px !important;
+        max-width: 82vw;
+        height: 100vh !important;
+        height: 100dvh !important;
+        padding-top: var(--safe-top);
+        padding-bottom: var(--safe-bottom);
+        transform: translateX(-106%);
+        transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+        z-index: 1200 !important;
+        box-shadow: 6px 0 32px rgba(15, 23, 42, 0.24);
+        overflow-y: auto;
+    }
+
+    .app-sidebar.mobile-open {
+        transform: translateX(0);
+    }
+
+    /* 在抽屉中完整恢复中文导航标题与徽章 */
+    .app-sidebar .brand-name,
+    .app-sidebar .brand-subtag,
+    .app-sidebar .nav-title {
+        display: block !important;
+    }
+
+    .app-sidebar .nav-badge {
+        display: inline-flex !important;
+    }
+
+    .app-sidebar .sidebar-nav {
+        overflow-y: auto;
+        flex: 1;
+        padding-bottom: 16px;
+    }
+
+    .app-sidebar .nav-item {
+        min-height: 44px;
+    }
+
+    .app-sidebar .sidebar-footer-ink {
+        display: none !important;
+    }
+
+    .sidebar-mobile-close-btn {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        margin-left: auto;
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        background: #ffffff;
+        color: #475569;
+        font-size: 15px;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+    /* 3. 考亭答疑：先生立像默认折叠为顶部伴读状态条，点击浮层展开 */
+    .qa-mobile-avatar-strip {
+        display: flex !important;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px;
+        margin: 6px 0 4px;
+        background: linear-gradient(135deg, #fffdf8 0%, #fef7e6 100%);
+        border: 1px solid rgba(197, 155, 76, 0.45);
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(180, 83, 9, 0.06);
+        cursor: pointer;
+        flex-shrink: 0;
+        min-width: 0;
+    }
+
+    .mobile-avatar-thumb-wrap {
+        position: relative;
+        width: 38px;
+        height: 38px;
+        flex-shrink: 0;
+    }
+
+    .mobile-avatar-thumb-img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1.5px solid #c59b4c;
+        display: block;
+    }
+
+    .mobile-strip-dot {
+        position: absolute;
+        right: -1px;
+        bottom: -1px;
+        width: 10px;
+        height: 10px;
+        border: 2px solid #ffffff;
+    }
+
+    .mobile-avatar-strip-info {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .mobile-strip-top-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .mobile-strip-name {
+        font-size: 13px;
+        font-weight: 700;
+        color: #78350f;
+        font-family: var(--font-serif);
+        white-space: nowrap;
+    }
+
+    .mobile-strip-status {
+        font-size: 11px;
+        color: #047857;
+        background: #ecfdf5;
+        border: 1px solid #a7f3d0;
+        padding: 0 6px;
+        border-radius: 8px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .mobile-strip-quote {
+        font-size: 12px;
+        color: #57534e;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-family: var(--font-serif);
+    }
+
+    .mobile-strip-expand-pill {
+        font-size: 11.5px;
+        font-weight: 700;
+        color: #92400e;
+        background: #fef3c7;
+        border: 1px solid #f59e0b;
+        padding: 4px 9px;
+        border-radius: 14px;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    #qa-avatar-stage:not(.mobile-avatar-open) {
+        display: none !important;
+    }
+
+    #qa-avatar-stage.mobile-avatar-open {
+        display: flex !important;
+        position: fixed !important;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: min(350px, 90vw) !important;
+        min-width: 0 !important;
+        max-width: 92vw !important;
+        height: min(500px, 78dvh) !important;
+        z-index: 1250 !important;
+        box-shadow: 0 0 0 100vmax rgba(15, 23, 42, 0.56), 0 24px 60px rgba(0, 0, 0, 0.42) !important;
+    }
+
+    .qa-stage-workspace {
+        gap: 0;
+        padding-top: 2px;
+    }
+
+    .qa-dialogue-pane {
+        width: 100%;
+        min-width: 0;
+    }
+
+    /* 4. 考亭讲筵：右侧讲义面板改为滑出抽屉 */
+    .mobile-drawer-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.48);
+        z-index: 1150;
+    }
+
+    .mobile-drawer-backdrop.visible {
+        display: block !important;
+    }
+
+    .galgame-syllabus-drawer {
+        position: fixed !important;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: min(360px, 88vw) !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        padding-top: var(--safe-top);
+        padding-bottom: var(--safe-bottom);
+        transform: translateX(106%);
+        transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+        z-index: 1200 !important;
+        box-shadow: -6px 0 32px rgba(15, 23, 42, 0.28);
+    }
+
+    .galgame-syllabus-drawer.mobile-drawer-open {
+        transform: translateX(0);
+    }
+
+    /* 5. 沧洲藏书 3D 书架：改为原生横滑书列 + 允许纵滚 */
+    .realistic-library-mode {
+        overflow-y: auto !important;
+        padding: 12px 12px 74px !important;
+    }
+
+    .realistic-bookshelf-wrapper {
+        margin: 0 auto;
+        perspective: none;
+        transform-style: flat;
+        transform: none !important;
+    }
+
+    .shelf-tier-body {
+        display: block;
+        padding: 20px 8px 8px;
+        min-height: auto;
+        overflow: visible;
+    }
+
+    .shelf-books-row {
+        justify-content: flex-start;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        width: 100%;
+        padding: 8px 12px 12px;
+        gap: 16px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .shelf-books-row .book-3d-item {
+        scroll-snap-align: center;
+    }
+
+    .classified-shelves-container.all-tiers-mode {
+        max-height: none;
+        overflow-y: visible;
+    }
+
+    /* 6. 电子全文阅览器：目录侧栏改为滑出抽屉 */
+    .ft-toc-toggle-btn,
+    .ft-sidebar-close {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .ft-sidebar-close {
+        width: 30px;
+        height: 30px;
+        border-radius: 6px;
+        border: 1px solid #d6c5ae;
+        background: #ffffff;
+        color: #78350f;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .ft-sidebar {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: min(280px, 82vw);
+        z-index: 30;
+        transform: translateX(-106%);
+        transition: transform 0.24s ease;
+        box-shadow: 6px 0 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .ft-sidebar.open {
+        transform: translateX(0);
+    }
+
+    .ft-sidebar-backdrop.visible {
+        display: block !important;
+        position: absolute;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.42);
+        z-index: 25;
+    }
+
+    /* 首页中屏卡片网格 */
+    .feature-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .lib-books-grid {
+        grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr)) !important;
+    }
+}
+
+/* ============================================================================
+   二、手机端竖屏全量适配 (<= 767px)
+   ============================================================================ */
+@media (max-width: 767px) {
+    /* 1. 防止 iOS Safari 聚焦输入框自动放大 */
+    input[type="text"],
+    input[type="search"],
+    input[type="tel"],
+    input[type="email"],
+    input[type="number"],
+    textarea,
+    select {
+        font-size: 16px !important;
+    }
+
+    /* 2. 顶部控制条瘦身并兼容刘海安全区 */
+    .window-topbar {
+        min-height: calc(48px + var(--safe-top));
+        height: auto;
+        padding: var(--safe-top) 10px 4px 8px;
+        gap: 6px;
+    }
+
+    .topbar-status-tip {
+        min-width: 0;
+        flex: 1;
+        gap: 6px;
+        overflow: hidden;
+    }
+
+    .topbar-school-logo {
+        width: 24px;
+        height: 24px;
+        flex-shrink: 0;
+    }
+
+    .topbar-school-title {
+        font-size: 14px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .topbar-divider,
+    .topbar-engine-name,
+    .topbar-loc-tag,
+    .dot-online,
+    .topbar-action-pill .pill-label {
+        display: none !important;
+    }
+
+    .window-controls {
+        gap: 6px;
+        flex-shrink: 0;
+    }
+
+    .topbar-action-pill {
+        padding: 0 10px;
+        min-width: 40px;
+        height: 38px;
+        justify-content: center;
+    }
+
+    .win-btn {
+        width: 38px;
+        height: 38px;
+    }
+
+    /* 3. 由主容器统一为固定底部 5-Tab 预留安全高度，保证 QA/藏书 100% 高度正好止于底栏上方，绝不遮挡发送框 */
+    .app-main-content {
+        padding-bottom: calc(var(--mobile-bottom-nav-h) + var(--safe-bottom));
+        box-sizing: border-box;
+    }
+
+    .content-scroll-wrap {
+        flex: 1;
+        min-height: 0;
+        padding-bottom: 0;
+        overflow-x: hidden;
+    }
+
+    #view-class.active {
+        height: auto !important;
+        max-height: none !important;
+        min-height: 100%;
+    }
+
+    #view-class .dedicated-view-container {
+        height: auto !important;
+        max-height: none !important;
+    }
+
+    /* 4. 固定底部 5-Tab 导航栏 */
+    .mobile-bottom-nav {
+        display: flex !important;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: calc(var(--mobile-bottom-nav-h) + var(--safe-bottom));
+        padding: 4px 6px calc(4px + var(--safe-bottom));
+        background: rgba(255, 253, 248, 0.96);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border-top: 1px solid #e2d9c8;
+        box-shadow: 0 -4px 18px rgba(15, 23, 42, 0.08);
+        z-index: 1050;
+        align-items: center;
+        justify-content: space-around;
+    }
+
+    .mobile-tab-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        min-height: 46px;
+        border: none;
+        background: transparent;
+        color: #64748b;
+        cursor: pointer;
+        border-radius: 10px;
+        padding: 3px 2px;
+        transition: color 0.16s ease, background 0.16s ease;
+    }
+
+    .mobile-tab-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+    }
+
+    .mobile-tab-label {
+        font-size: 11px;
+        font-weight: 600;
+        line-height: 1.1;
+        font-family: var(--font-serif);
+    }
+
+    .mobile-tab-item.active {
+        color: #b45309;
+        background: rgba(254, 243, 199, 0.65);
+    }
+
+    /* 5. 全局悬浮语音播控条：移至顶栏下方，绝不遮挡输入栏与底栏 */
+    .audio-dock {
+        top: calc(54px + var(--safe-top));
+        bottom: auto;
+        left: 10px;
+        right: 10px;
+        border-radius: 14px;
+        padding: 8px 12px;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        z-index: 1080;
+    }
+
+    .dock-title {
+        font-size: 12.5px;
+    }
+
+    .dock-controls {
+        gap: 6px;
+    }
+
+    .dock-btn {
+        padding: 5px 10px;
+        font-size: 12px;
+        min-height: 32px;
+    }
+
+    /* 6. 【视图 1】首页总览适配 */
+    #view-home {
+        padding: 12px 12px 24px !important;
+        overflow-x: hidden;
+    }
+
+    .home-bamboo-bg-layer {
+        animation: none;
+        opacity: 0.35;
+    }
+
+    .hero-banner-card {
+        padding: 16px 14px !important;
+        min-height: auto;
+        margin-bottom: 14px;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.94) 0%, rgba(252, 248, 238, 0.92) 100%) !important;
+        background-image: none !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+
+    .banner-left-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        width: 100%;
+    }
+
+    .portrait-badge-wrap {
+        gap: 10px;
+    }
+
+    .portrait-circle {
+        width: 54px;
+        height: 54px;
+    }
+
+    .banner-top-institution-tag {
+        flex-wrap: wrap;
+        gap: 4px 6px;
+        font-size: 11.5px;
+    }
+
+    .banner-title {
+        font-size: 18px !important;
+        line-height: 1.38 !important;
+    }
+
+    .banner-subtitle {
+        font-size: 13px !important;
+    }
+
+    .banner-desc {
+        font-size: 13px !important;
+        line-height: 1.65 !important;
+    }
+
+    .banner-features-row {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        gap: 8px;
+        padding-bottom: 4px;
+        width: 100%;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+    .banner-features-row::-webkit-scrollbar {
+        display: none;
+    }
+
+    .banner-feature-item {
+        flex-shrink: 0;
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+
+    .home-master-welcome-banner {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 14px !important;
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+
+    .master-figure-avatar-box {
+        width: 96px !important;
+        height: 96px !important;
+        margin: 0 auto;
+    }
+
+    .welcome-speech-header {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .welcome-speech-text {
+        font-size: 13.5px !important;
+        line-height: 1.7 !important;
+    }
+
+    .welcome-chips-row {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        gap: 8px;
+        padding-bottom: 4px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+    .welcome-chips-row::-webkit-scrollbar {
+        display: none;
+    }
+
+    .welcome-hint-pill {
+        flex-shrink: 0;
+        font-size: 12px;
+        padding: 6px 11px;
+    }
+
+    .feature-cards-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px;
+    }
+
+    .feature-card {
+        padding: 16px 14px !important;
+    }
+
+    .home-library-showcase-panel {
+        padding: 14px 12px !important;
+        margin-top: 16px;
+        margin-bottom: 16px;
+        background: rgba(255, 253, 248, 0.94) !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+
+    .lib-showcase-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .lsh-title {
+        font-size: 15px;
+    }
+
+    .lsh-right {
+        width: 100%;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .lsh-action-btn {
+        flex: 1 1 140px;
+        justify-content: center;
+        min-height: 38px;
+        font-size: 12.5px;
+    }
+
+    .lib-info-ribbon {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+        padding: 10px !important;
+    }
+
+    .home-cat-pills-row {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto;
+        gap: 8px;
+        padding-bottom: 6px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+    .home-cat-pills-row::-webkit-scrollbar {
+        display: none;
+    }
+
+    .home-cat-pill {
+        flex-shrink: 0;
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+
+    .lib-books-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px;
+    }
+
+    .lbc-actions {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .lbc-btn {
+        flex: 1 1 120px;
+        min-height: 38px;
+        justify-content: center;
+    }
+
+    .home-institutional-footer {
+        padding: 16px 12px !important;
+        text-align: center;
+    }
+
+    .footer-crest-row {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .footer-details-row {
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .footer-sep {
+        display: none;
+    }
+
+    /* 7. 【视图 2】考亭答疑适配 */
+    .dedicated-view-container {
+        padding: 6px 10px 6px !important;
+    }
+
+    .dedicated-header-bar {
+        padding: 8px 10px !important;
+        gap: 6px;
+        flex-wrap: wrap;
+        border-radius: 10px;
+    }
+
+    .dedicated-header-bar .back-home-pill,
+    .dedicated-header-bar .header-desc {
+        display: none !important;
+    }
+
+    .header-title-group h2 {
+        font-size: 15px !important;
+        margin: 0;
+    }
+
+    .header-right-actions {
+        gap: 6px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .action-pill-btn {
+        padding: 5px 10px !important;
+        font-size: 12px !important;
+        min-height: 34px;
+    }
+
+    /* 任务流压缩为单行横向可滑胶囊条（释放 200px+ 对话高度） */
+    .taskflow-capsule-bar {
+        padding: 6px 8px !important;
+        margin-bottom: 6px !important;
+        border-radius: 10px;
+    }
+
+    .taskflow-bar-header,
+    .flow-sub-desc,
+    .flow-btn-enter {
+        display: none !important;
+    }
+
+    .taskflow-capsules-grid {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto;
+        gap: 8px;
+        padding-bottom: 2px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+    .taskflow-capsules-grid::-webkit-scrollbar {
+        display: none;
+    }
+
+    .taskflow-capsule-item {
+        flex-shrink: 0;
+        padding: 6px 11px !important;
+        border-radius: 18px !important;
+    }
+
+    .flow-emoji {
+        font-size: 15px;
+    }
+
+    .flow-main-title {
+        font-size: 12.5px;
+    }
+
+    .active-taskflow-bar {
+        padding: 6px 10px;
+        margin-bottom: 6px;
+        gap: 6px;
+    }
+
+    .active-flow-title {
+        font-size: 12px;
+    }
+
+    .taskflow-quick-chips {
+        flex-wrap: nowrap !important;
+        overflow-x: auto;
+        padding: 6px 8px;
+        gap: 6px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+    .taskflow-quick-chips::-webkit-scrollbar {
+        display: none;
+    }
+
+    .taskflow-quick-chip {
+        flex-shrink: 0;
+        font-size: 12px;
+        padding: 5px 10px;
+    }
+
+    /* 快捷论题条改为单行横滑 */
+    .theme-chips-bar {
+        flex-wrap: nowrap !important;
+        overflow-x: auto;
+        padding: 4px 2px 6px !important;
+        gap: 6px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+    .theme-chips-bar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .chips-label {
+        flex-shrink: 0;
+        font-size: 12px;
+    }
+
+    .chip-item {
+        flex-shrink: 0;
+        font-size: 12px !important;
+        padding: 5px 10px !important;
+    }
+
+    /* 对话消息流 */
+    .chat-messages-scroll {
+        padding: 8px 2px 12px !important;
+    }
+
+    .message-row {
+        gap: 8px !important;
+        margin-bottom: 12px !important;
+    }
+
+    .message-avatar {
+        width: 32px !important;
+        height: 32px !important;
+        flex-shrink: 0;
+    }
+
+    .message-bubble {
+        max-width: calc(100% - 40px) !important;
+        padding: 11px 12px !important;
+        font-size: 14.5px !important;
+        border-radius: 12px !important;
+    }
+
+    .bubble-top-row {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .tts-play-btn {
+        font-size: 11.5px;
+        padding: 4px 9px;
+    }
+
+    .opac-citation-card {
+        padding: 12px 12px 12px 14px;
+    }
+
+    .opac-card-meta-grid {
+        grid-template-columns: 1fr !important;
+        gap: 6px;
+    }
+
+    .opac-card-actions-row,
+    .prov-action-row {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .opac-action-btn,
+    .prov-btn {
+        flex: 1 1 130px;
+        justify-content: center;
+        min-height: 36px;
+    }
+
+    /* 手机端两行舒适型输入栏：上行全宽输入文本，下行大热区功能键 */
+    .view-bottom-input-bar {
+        padding: 6px 0 4px !important;
+    }
+
+    .input-pill-container {
+        flex-wrap: wrap;
+        border-radius: 16px;
+        padding: 8px 10px 6px;
+        gap: 6px;
+        min-height: auto;
+    }
+
+    .user-text-input {
+        flex: 1 0 100%;
+        width: 100%;
+        padding: 2px 4px;
+        min-height: 28px;
+        max-height: 110px;
+    }
+
+    .input-actions-right {
+        width: 100%;
+        justify-content: flex-end;
+        gap: 6px;
+    }
+
+    .action-clip-btn,
+    .action-mic-btn {
+        width: 38px;
+        height: 38px;
+    }
+
+    .action-send-btn {
+        width: 40px;
+        height: 40px;
+    }
+
+    .action-tts-toggle-btn {
+        height: 36px;
+        padding: 4px 10px;
+        font-size: 12px;
+        margin-right: auto;
+    }
+
+    .voice-listening-dock {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 8px 10px;
+    }
+
+    /* 8. 【视图 3】考亭讲筵 GalGame：三段式竖屏重排（舞台 / 对话 / 选项互不遮挡） */
+    .galgame-page-container {
+        overflow-y: auto !important;
+        height: auto !important;
+        min-height: 100%;
+    }
+
+    .galgame-score-pill {
+        font-size: 12px;
+        padding: 3px 10px;
+    }
+
+    .galgame-chapter-bar {
+        padding: 6px 10px !important;
+        gap: 6px;
+        scrollbar-width: none;
+    }
+    .galgame-chapter-bar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .chapter-tab-pill {
+        flex-shrink: 0;
+        font-size: 12px;
+        padding: 5px 11px;
+    }
+
+    .galgame-workspace-split {
+        flex-direction: column;
+        overflow: visible !important;
+        height: auto !important;
+        flex: 0 0 auto;
+    }
+
+    .galgame-screen-pane {
+        padding: 8px 10px 18px !important;
+        height: auto !important;
+        overflow: visible !important;
+        justify-content: flex-start !important;
+    }
+
+    .galgame-screen-wrap {
+        aspect-ratio: auto !important;
+        max-height: none !important;
+        height: auto !important;
+        padding-top: 238px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        background: transparent !important;
+        box-shadow: none !important;
+        overflow: visible !important;
+    }
+
+    /* 第一段：顶部讲堂画卷 + 左上板书 + 右侧先生立绘 */
+    .galgame-bg-layer {
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 238px !important;
+        border-radius: 14px;
+        box-shadow: 0 8px 22px rgba(27, 38, 59, 0.22);
+    }
+
+    .galgame-blackboard-overlay {
+        top: 12px !important;
+        left: 3% !important;
+        width: 54% !important;
+        max-width: none !important;
+        height: 122px !important;
+    }
+
+    .blackboard-chalk-inner {
+        padding: 6px 8px !important;
+    }
+
+    .chalk-text-body {
+        font-size: 13px !important;
+        line-height: 1.48 !important;
+        letter-spacing: 0.8px !important;
+    }
+
+    .galgame-sprite-stage {
+        top: 18px !important;
+        bottom: auto !important;
+        left: auto !important;
+        right: 2% !important;
+        transform: none !important;
+        width: 46% !important;
+        height: 220px !important;
+    }
+
+    .galgame-master-sprite {
+        height: 100% !important;
+        max-height: 220px !important;
+    }
+
+    /* 第二段：静态流对话窗（绝不裁切长句） */
+    .galgame-dialogue-window {
+        position: static !important;
+        transform: none !important;
+        width: 100% !important;
+        max-width: none !important;
+        height: auto !important;
+        min-height: 130px;
+        order: 2;
+        padding: 12px 14px !important;
+        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.1) !important;
+    }
+
+    .dialogue-header-strip {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .dialogue-typing-paragraph {
+        font-size: 15px !important;
+        line-height: 1.72 !important;
+    }
+
+    .dialogue-footer-hint {
+        margin-top: 6px;
+        font-size: 11px;
+    }
+
+    /* 第三段：分支抉择按钮栈（44px 触控高度） */
+    .galgame-choices-overlay {
+        position: static !important;
+        transform: none !important;
+        width: 100% !important;
+        max-width: none !important;
+        order: 3;
+        gap: 8px;
+    }
+
+    .gal-choice-btn {
+        min-height: 44px;
+        padding: 10px 14px !important;
+        font-size: 14px !important;
+        line-height: 1.5;
+    }
+
+    .galgame-inquire-card {
+        width: 94%;
+        padding: 16px;
+        max-height: 88dvh;
+        overflow-y: auto;
+    }
+
+    /* 9. 【视图 4】沧洲藏书 3D 书阁适配 */
+    .library-category-bar {
+        padding: 6px 10px !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto;
+        gap: 8px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+    .library-category-bar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .category-bar-label {
+        flex-shrink: 0;
+        font-size: 12px;
+    }
+
+    .category-pills-row {
+        display: flex;
+        flex-wrap: nowrap !important;
+        gap: 6px;
+    }
+
+    .category-pill {
+        flex-shrink: 0;
+        font-size: 12px !important;
+        padding: 5px 11px !important;
+    }
+
+    .realistic-library-mode {
+        margin: 6px 8px !important;
+        padding: 10px 8px 72px !important;
+        border-radius: 10px;
+    }
+
+    .bookshelf-top-cornice {
+        padding: 8px 10px;
+    }
+
+    .cornice-carving {
+        font-size: 13.5px;
+        letter-spacing: 1.5px;
+    }
+
+    .classified-shelves-container {
+        padding: 10px 8px;
+        border-left-width: 3px;
+        border-right-width: 3px;
+    }
+
+    .shelf-tier-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+        padding: 8px 10px;
+    }
+
+    .tier-nav-left {
+        flex-wrap: wrap;
+    }
+
+    .tier-desc {
+        white-space: normal;
+        text-align: left;
+        font-size: 11.5px;
+    }
+
+    .tier-nav-right {
+        align-self: flex-end;
+    }
+
+    .shelf-books-row {
+        gap: 14px;
+        padding: 6px 8px 10px;
+    }
+
+    .shelf-books-row .book-3d-item {
+        width: 122px;
+    }
+
+    .shelf-books-row .book-3d-mesh {
+        width: 122px;
+        height: 174px;
+    }
+
+    .shelf-timber-beam {
+        height: auto;
+        padding: 5px 8px;
+    }
+
+    .beam-brass-label,
+    .grand-plinth-brass {
+        font-size: 10px;
+        padding: 2px 10px;
+        white-space: normal;
+        text-align: center;
+        letter-spacing: 0.5px;
+    }
+
+    .bookshelf-grand-plinth {
+        height: auto;
+        padding: 6px 8px;
+    }
+
+    /* 藏书阁底部寻书浮窗：紧贴底部 5-Tab 之上 */
+    .library-floating-inquire-dock {
+        position: fixed !important;
+        left: 8px !important;
+        right: 8px !important;
+        bottom: calc(var(--mobile-bottom-nav-h) + var(--safe-bottom) + 6px) !important;
+        z-index: 980 !important;
+        max-height: 62dvh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .library-floating-inquire-dock .dock-toggle-bar {
+        padding: 9px 12px;
+    }
+
+    .library-floating-inquire-dock .dock-toggle-title {
+        font-size: 12.5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .library-floating-inquire-dock .dock-body-content {
+        overflow-y: auto;
+        padding: 8px 10px 10px;
+    }
+
+    /* 书籍简介卡与原典全屏电子阅览器 */
+    .book-reader-modal {
+        width: 96vw;
+        max-height: 90dvh;
+        border-radius: 12px;
+    }
+
+    .reader-header-row {
+        padding: 12px 14px;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .reader-book-title {
+        font-size: 17px;
+    }
+
+    .reader-scroll-content {
+        padding: 14px;
+    }
+
+    .reader-actions-bar {
+        padding: 10px 14px;
+        flex-wrap: wrap;
+    }
+
+    .reader-action-pill {
+        flex: 1 1 120px;
+        text-align: center;
+    }
+
+    .modal-overlay.fulltext-overlay {
+        padding: 0 !important;
+        height: 100dvh !important;
+    }
+
+    .fulltext-reader-modal {
+        width: 100vw !important;
+        max-width: 100vw !important;
+        height: 100dvh !important;
+        border-radius: 0 !important;
+        border: none !important;
+    }
+
+    .ft-header {
+        padding: calc(10px + var(--safe-top)) 10px 10px;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .ft-book-title {
+        font-size: 15px;
+    }
+
+    .ft-tag,
+    .ft-char-count {
+        display: none;
+    }
+
+    .ft-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .ft-btn {
+        min-height: 34px;
+        padding: 4px 10px;
+    }
+
+    .ft-close-btn {
+        width: 36px;
+        height: 36px;
+    }
+
+    .ft-content {
+        padding: 16px 14px calc(28px + var(--safe-bottom));
+        font-size: 16px;
+        line-height: 1.85;
+    }
+
+    /* 10. 全局弹窗统一手机端安全流式布局 */
+    .modal-backdrop {
+        padding: 8px !important;
+    }
+
+    .modal-card,
+    .upload-enhanced-card,
+    .wisdom-modal-card,
+    .quiz-modal-card,
+    .corpus-search-modal-card,
+    .letter-modal-card,
+    .reservation-modal-card {
+        width: 96vw !important;
+        max-width: 96vw !important;
+        max-height: 90dvh !important;
+        display: flex !important;
+        flex-direction: column;
+        overflow: hidden !important;
+        border-radius: 12px !important;
+    }
+
+    .modal-header {
+        padding: 12px 14px !important;
+        gap: 8px;
+        flex-shrink: 0;
+    }
+
+    .modal-header h3 {
+        font-size: 15px !important;
+    }
+
+    .modal-close-btn {
+        width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .modal-body {
+        padding: 12px 14px !important;
+        overflow-y: auto !important;
+        flex: 1;
+        min-height: 0;
+    }
+
+    /* 结业文凭弹窗 */
+    .certificate-modal-card {
+        overflow-y: auto !important;
+        padding: 18px 14px !important;
+    }
+
+    .cert-era-title {
+        font-size: 11.5px;
+        letter-spacing: 1.5px;
+    }
+
+    .cert-grand-title {
+        font-size: 20px;
+        letter-spacing: 1.5px;
+    }
+
+    .cert-narrative-box {
+        padding: 12px 14px;
+        font-size: 13.5px;
+    }
+
+    .cert-eval-grid {
+        grid-template-columns: 1fr !important;
+        gap: 10px;
+    }
+
+    .cert-actions-row .btn {
+        flex: 1 1 130px;
+        text-align: center;
+    }
+
+    /* 研学考校弹窗 */
+    .quiz-mode-nav-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+    }
+
+    .quiz-category-pills {
+        display: flex;
+        flex-wrap: nowrap !important;
+        overflow-x: auto;
+        gap: 6px;
+        padding-bottom: 4px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+    .quiz-category-pills::-webkit-scrollbar {
+        display: none;
+    }
+
+    .quiz-cat-pill {
+        flex-shrink: 0;
+    }
+
+    .quiz-score-banner {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+
+    .quiz-result-actions {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .quiz-result-actions .action-pill-btn {
+        flex: 1 1 130px;
+        justify-content: center;
+    }
+
+    /* 典籍考据弹窗 */
+    .corpus-search-input-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .corpus-search-submit-btn {
+        width: 100%;
+        justify-content: center;
+        min-height: 40px;
+    }
+
+    .corpus-hot-tags-row {
+        flex-wrap: nowrap !important;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        scrollbar-width: none;
+    }
+    .corpus-hot-tags-row::-webkit-scrollbar {
+        display: none;
+    }
+
+    .corpus-hot-tags-row .hot-label,
+    .corpus-hot-tags-row .hot-tag {
+        flex-shrink: 0;
+    }
+
+    /* 考亭尺牍弹窗 */
+    .letter-quick-ideas-row {
+        flex-wrap: nowrap !important;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        scrollbar-width: none;
+    }
+    .letter-quick-ideas-row::-webkit-scrollbar {
+        display: none;
+    }
+
+    .quick-idea-label,
+    .quick-idea-chip {
+        flex-shrink: 0;
+    }
+
+    .letter-reply-header,
+    .letter-reply-head-actions,
+    .letter-reply-bottom-actions {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .letter-reply-bottom-actions .action-pill-btn {
+        flex: 1 1 130px;
+        justify-content: center;
+    }
+
+    .letter-image-preview {
+        max-width: 100%;
+        height: auto;
+    }
+
+    /* OPAC 预约弹窗 */
+    .opac-modal-cat-tabs {
+        display: flex;
+        flex-wrap: nowrap !important;
+        overflow-x: auto;
+        gap: 6px;
+        padding-bottom: 4px;
+        scrollbar-width: none;
+    }
+    .opac-modal-cat-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .opac-cat-tab {
+        flex-shrink: 0;
+    }
+
+    .res-category-book-item {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+
+    .res-book-actions-col {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    /* 晨策灵签、上传与系统设置弹窗 */
+    .wisdom-actions-row {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .wisdom-actions-row .action-pill-btn {
+        flex: 1 1 130px;
+        justify-content: center;
+    }
+
+    .upload-mode-tabs {
+        flex-wrap: wrap;
+    }
+
+    .setting-item {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 6px;
+    }
+
+    .ip-info-box {
+        width: 100%;
+        word-break: break-all;
+    }
+
+    /* 11. 内嵌式朱子文化论文写作工作台（手机端单列 + 写作/精批子标签切换） */
+    #view-qa.thesis-active-mode #qa-mobile-avatar-strip,
+    #view-qa.thesis-active-mode #taskflow-capsule-bar {
+        display: none !important;
+    }
+
+    .ts-top-bar {
+        padding: 8px 10px;
+        gap: 6px;
+    }
+
+    .ts-project-switcher {
+        width: 100%;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .ts-select {
+        flex: 1 1 0;
+        min-width: 120px;
+        max-width: 100%;
+        height: 36px;
+        line-height: 34px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .ts-top-metrics {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .ts-stepper-bar {
+        padding: 6px 8px;
+        gap: 6px;
+    }
+
+    .ts-step-tab {
+        padding: 6px 10px;
+        font-size: 12.5px;
+    }
+
+    .ts-stage-body {
+        padding: 10px 8px 14px;
+    }
+
+    .ts-card {
+        padding: 12px 10px;
+    }
+
+    .ts-form-grid,
+    .ts-cit-grid,
+    .ts-ch-body-grid,
+    .ts-dim-list,
+    .ts-export-summary-grid,
+    .ts-export-cards-row,
+    .ts-manual-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .ts-inline-search-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .ts-inline-search-row .ts-btn-primary {
+        width: 100%;
+        min-height: 40px;
+    }
+
+    .ts-mobile-subtabs {
+        display: flex !important;
+        gap: 6px;
+        margin-bottom: 4px;
+    }
+
+    .ts-subtab-btn {
+        flex: 1;
+        padding: 8px 10px;
+        border: 1px solid #d6c9b4;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #57534e;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .ts-subtab-btn.active {
+        background: #8b1d1d;
+        color: #ffffff;
+        border-color: #7f1d1d;
+    }
+
+    .ts-write-split {
+        display: block;
+        min-height: auto;
+    }
+
+    .ts-write-editor-col,
+    .ts-write-mentor-col {
+        display: none;
+    }
+
+    .ts-write-editor-col.mobile-show,
+    .ts-write-mentor-col.mobile-show {
+        display: flex;
+    }
+
+    .ts-draft-textarea {
+        min-height: 220px;
+        font-size: 16px !important;
+    }
+
+    .ts-ai-tools-bar .ts-btn-primary,
+    .ts-ai-tools-bar .ts-btn-outline {
+        flex: 1 1 130px;
+        min-height: 38px;
+        text-align: center;
+    }
+
+    .ts-topic-top {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+/* ============================================================================
+   三、超小屏手机精调 (<= 420px)
+   ============================================================================ */
+@media (max-width: 420px) {
+    .action-tts-toggle-btn .tts-status-label {
+        display: none;
+    }
+
+    .mobile-strip-expand-pill {
+        padding: 3px 7px;
+        font-size: 11px;
+    }
+
+    .galgame-screen-wrap {
+        padding-top: 215px;
+    }
+
+    .galgame-bg-layer {
+        height: 215px !important;
+    }
+
+    .galgame-sprite-stage {
+        height: 198px !important;
+    }
+
+    .galgame-master-sprite {
+        max-height: 198px !important;
+    }
+
+    .shelf-books-row .book-3d-item {
+        width: 112px;
+    }
+
+    .shelf-books-row .book-3d-mesh {
+        width: 112px;
+        height: 162px;
+    }
+}
+
+/* ============================================================================
+   四、手机横屏适配 (max-height: 500px and orientation: landscape)
+   ============================================================================ */
+@media (max-height: 500px) and (orientation: landscape) {
+    :root {
+        --mobile-bottom-nav-h: 46px;
+    }
+
+    .window-topbar {
+        min-height: 40px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+    }
+
+    .mobile-tab-item {
+        flex-direction: row;
+        gap: 5px;
+        min-height: 38px;
+    }
+
+    .qa-mobile-avatar-strip {
+        padding: 4px 10px;
+    }
+
+    .mobile-avatar-thumb-wrap {
+        width: 28px;
+        height: 28px;
+    }
+
+    .galgame-screen-wrap {
+        padding-top: 170px;
+    }
+
+    .galgame-bg-layer {
+        height: 170px !important;
+    }
+
+    .galgame-blackboard-overlay {
+        height: 92px !important;
+    }
+
+    .galgame-sprite-stage {
+        height: 156px !important;
+    }
+
+    .galgame-master-sprite {
+        max-height: 156px !important;
+    }
+}

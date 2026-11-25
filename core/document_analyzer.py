@@ -3,95 +3,66 @@
 支持多格式文献抽取 (txt, md, docx, pdf) 与朱子理学“理气·心性·知行”四维深度解构
 """
 
-import os
+import io
 import re
-from typing import Dict, Any, Tuple
+import zipfile
+import xml.etree.ElementTree as ET
 
 
 def extract_document_text(filename: str, file_bytes: bytes) -> str:
-    """提取上传文档的文本内容"""
-    lower_name = filename.lower()
+    """安全、可靠地提取上传文档的文本内容（无法提取时返回空字符串，绝不伪造内容）"""
+    lower_name = (filename or "").lower()
 
     # 1. 纯文本 / Markdown
     if lower_name.endswith(('.txt', '.md', '.json', '.csv')):
-        for enc in ['utf-8', 'gbk', 'gb18030', 'utf-16']:
+        for enc in ('utf-8', 'utf-8-sig', 'gb18030', 'gbk', 'utf-16'):
             try:
                 return file_bytes.decode(enc)
             except Exception:
                 continue
         return file_bytes.decode('utf-8', errors='ignore')
 
-    # 2. DOCX 格式
+    # 2. DOCX 格式（按段落 <w:p> 拼接 <w:t>，保留句子完整性）
     if lower_name.endswith('.docx'):
         try:
-            import io
-            import zipfile
-            import xml.etree.ElementTree as ET
-
-            # 纯标准库极速解析 docx 中的 word/document.xml
             with zipfile.ZipFile(io.BytesIO(file_bytes)) as z:
                 xml_content = z.read('word/document.xml')
                 tree = ET.fromstring(xml_content)
+                ns = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
                 paragraphs = []
-                for p in tree.iter('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}p'):
-                    texts = [t.text for t in p.iter('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}t') if t.text]
+                for p in tree.iter(f'{ns}p'):
+                    texts = [t.text for t in p.iter(f'{ns}t') if t.text]
                     if texts:
                         paragraphs.append(''.join(texts))
                 return '\n'.join(paragraphs)
         except Exception as e:
-            print(f"[DocumentAnalyzer] DOCX 解析降级: {e}")
-            return file_bytes.decode('utf-8', errors='ignore')
+            print(f"[DocumentAnalyzer] DOCX 解析失败: {e}")
+            return ""
 
-    # 3. PDF 格式
+    # 3. PDF 格式（优先使用 pypdf 完整解压与解析文本层）
     if lower_name.endswith('.pdf'):
         try:
-            import io
             import pypdf
             reader = pypdf.PdfReader(io.BytesIO(file_bytes))
             pages = []
-            for page in reader.pages:
+            for page in reader.pages[:40]:  # 上限 40 页避免超大 PDF 阻塞
                 text = page.extract_text()
-                if text:
-                    pages.append(text)
-            return '\n'.join(pages)
+                if text and text.strip():
+                    pages.append(text.strip())
+            if pages:
+                return '\n\n'.join(pages)
         except Exception as e:
-            # 基础文本抽取降级
+            print(f"[DocumentAnalyzer] pypdf 解析异常: {e}")
+
+        # 降级尝试：正确方向的 PDF 文本算子 (text) Tj 提取（仅对未压缩 PDF 有效）
+        try:
             raw = file_bytes.decode('latin1', errors='ignore')
-            text_chunks = re.findall(r'\(([^\(\)]+)\)\s*T[jJ]', raw)
-            if text_chunks:
-                return '\n'.join(text_chunks)
-            return "（PDF 文档已成功挂载，老夫当体察其旨趣并析解其理）"
+            text_chunks = re.findall(r'\(([^\(\)\\]{2,})\)\s*T[jJ]', raw)
+            cleaned = [c.strip() for c in text_chunks if re.search(r'[\u4e00-\u9fffA-Za-z0-9]', c)]
+            if cleaned:
+                return '\n'.join(cleaned)
+        except Exception:
+            pass
+        return ""
 
-    return file_bytes.decode('utf-8', errors='ignore')
-
-
-def build_zhuzi_analysis_prompt(filename: str, text_content: str) -> str:
-    """构建朱子理学即物穷理深度剖析 Prompt"""
-    # 截取适量字符（不超过 3500 字，提炼精髓）
-    snippet = text_content[:3500].strip()
-
-    prompt = f"""后学仁兄呈呈上来一篇文献资料《{filename}》，请先生（老夫）以纯第一人称自述，运用考亭理学“即物穷理、心统性情、知行相须”的至理，对这篇文献所蕴含的道理和朱子文化精义进行深入浅出的条分缕析。
-
-【待剖析文献原稿摘录】：
-\"\"\"
-{snippet}
-\"\"\"
-
-请先生以朱子文人风骨与亲切开导的口吻，结构化从以下四大理学维度进行朱砂手批与义理解构：
-
-一、 📜【卷首提要 · 即物穷理】：
-概述这篇文献所论何事？从理学视角看，事事物物皆有客观必然之“理”，此文关乎何种天地人事之常理？
-
-二、 ☯️【理气之辨 · 寻本溯源】：
-剖析文中呈现的现象（“气”之聚散与表象）与本质规矩（“理”之固然）。指出何处是外在流转之形迹，何处是不可移易之铁律。
-
-三、 🏮【心统性情 · 存养省察】：
-从心性修养视角切入：此文所反映之人心思虑，何者合于“天理之至公”，何者易流于“人欲之偏私”？学者读此文当如何收敛身心、涵养持敬？
-
-四、 👣【知行相须 · 现实践履指南】：
-“知之愈明，则行之愈笃”。结合朱子读书法与处世箴规，给当下的后学学子开出 2~3 条切实可行的日用行持建议。
-
-末尾请附上一句先生题赠门生的考亭勉词与朱砂印记。要求：必须纯第一人称“老夫”自述，语言典雅生动，文白兼备。"""
-
-    return prompt
-
+    return ""

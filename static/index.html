@@ -2,11 +2,13 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>武夷学院逸夫图书馆 · 宋明理学特藏文献智能研习馆</title>
-    <link rel="stylesheet" href="/static/style.css?v=20260929_1130">
+    <link rel="stylesheet" href="/static/style.css?v=20261125_04">
+    <link rel="stylesheet" href="/static/responsive.css?v=20261125_04">
 </head>
 <body class="app-body">
+    <div id="mobile-nav-backdrop" class="mobile-nav-backdrop" onclick="closeMobileNavDrawer()" aria-hidden="true"></div>
     <div class="window-frame">
         <!-- ==============================================
              左侧导航侧边栏 · 雅致宣纸微质感 + 1:1 书法印章
@@ -21,6 +23,7 @@
                     <span class="brand-name" title="云起武夷·活水传理 -- 考亭理学研习">云起武夷·活水传理</span>
                     <span class="brand-subtag">考亭理学研习</span>
                 </div>
+                <button type="button" class="sidebar-mobile-close-btn" onclick="event.stopPropagation(); closeMobileNavDrawer()" aria-label="关闭导航抽屉" title="关闭">✕</button>
             </div>
 
             <!-- 主导航菜单项 -->
@@ -94,6 +97,16 @@
                     <span class="nav-title">考亭尺牍</span>
                     <span class="nav-badge amber">书信</span>
                 </div>
+                <div class="nav-item" id="nav-history" onclick="openHistoryModal()">
+                    <span class="nav-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </span>
+                    <span class="nav-title">历史问学</span>
+                    <span class="nav-badge">存档</span>
+                </div>
 
                 <div class="nav-divider"></div>
 
@@ -145,6 +158,13 @@
             <!-- 顶部控制条 -->
             <header class="window-topbar">
                 <div class="topbar-status-tip">
+                    <button type="button" class="mobile-menu-btn" id="mobile-menu-btn" onclick="toggleMobileNavDrawer()" aria-label="打开菜单" title="打开功能导航">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
                     <img src="/static/wuyi_logo.jpg" class="topbar-school-logo" alt="武夷学院">
                     <span class="topbar-school-title">武夷学院逸夫图书馆</span>
                     <span class="topbar-divider">·</span>
@@ -160,7 +180,7 @@
                     <button class="win-btn" id="tts-audio-btn" onclick="toggleAutoTTS()" title="自动文人配音开关 当前已静音 点击开启">
                         <span id="tts-icon">🔇</span>
                     </button>
-                    <button class="win-btn" onclick="toggleFullScreen()" title="全屏沉浸研学">
+                    <button class="win-btn" id="topbar-fullscreen-btn" onclick="toggleFullScreen()" title="全屏沉浸研学">
                         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
                         </svg>
@@ -225,7 +245,7 @@
                     <!-- 考亭先生首页迎客与引路大席 -->
                     <div class="home-master-welcome-banner" id="home-master-stage">
                         <div class="master-figure-avatar-box">
-                            <img src="/static/avatar_standalone/master_standing.png" alt="考亭先生" class="home-master-img" onclick="if(window.avatarEngine) avatarEngine.interactClick()">
+                            <img src="/static/avatar_standalone/master_standing.png" alt="考亭先生" class="home-master-img" onclick="openWisdomModal()" title="点击求取先生每日修身箴言">
                         </div>
                         <div class="master-welcome-speech">
                             <div class="welcome-speech-header">
@@ -501,10 +521,29 @@
                                 <button class="action-pill-btn gold" onclick="startNewChat('qa')" title="开启全新的答疑会话">
                                     <span>➕ 新建问学对答</span>
                                 </button>
+                                <button class="action-pill-btn outline" onclick="openHistoryModal()" title="查看并恢复本地研学历史记录">
+                                    <span>📜 历史问学</span>
+                                </button>
                                 <button class="action-pill-btn outline" onclick="clearCurrentMessages('qa')" title="清空当前消息">
                                     <span>🧹 清空问对</span>
                                 </button>
                             </div>
+                        </div>
+
+                        <!-- 移动端/平板端紧凑型先生伴读状态条（点击展开/收起立像） -->
+                        <div class="qa-mobile-avatar-strip" id="qa-mobile-avatar-strip" onclick="if(window.avatarEngine) avatarEngine.toggleCollapse()" role="button" tabindex="0" title="点击展开考亭先生庄严立像">
+                            <div class="mobile-avatar-thumb-wrap">
+                                <img src="/static/avatar_ref_hd.png" alt="考亭先生" class="mobile-avatar-thumb-img">
+                                <span class="live-dot-pulse mobile-strip-dot" id="qa-mobile-avatar-dot"></span>
+                            </div>
+                            <div class="mobile-avatar-strip-info">
+                                <div class="mobile-strip-top-row">
+                                    <span class="mobile-strip-name">考亭先生</span>
+                                    <span class="mobile-strip-status" id="qa-mobile-avatar-status">待机候教</span>
+                                </div>
+                                <div class="mobile-strip-quote" id="qa-mobile-avatar-quote">“诸生后学请了！凡有经义疑思，尽直道来。”</div>
+                            </div>
+                            <span class="mobile-strip-expand-pill">展开立像 ▾</span>
                         </div>
 
                         <!-- 问学讲席工作区：左侧动态数字人舞台 + 右侧对答流 -->
@@ -637,6 +676,9 @@
                                     <button class="chip-item" onclick="sendQuery('qa', '后世多有人讥评“存天理灭人欲”乃是灭绝人性之酷论，先生有何辩驳？')">理学思辨·存天理灭人欲辨</button>
                                 </div>
 
+                                <!-- 内嵌式朱子文化论文写作工作台（点击上方“论文写作指导”原位展开，退出即恢复问对流） -->
+                                <div id="thesis-inline-workspace" class="thesis-inline-workspace" style="display:none;"></div>
+
                                 <!-- 独立对答消息流 -->
                                 <div class="chat-messages-scroll" id="qa-messages">
                                     <!-- 默认欢迎信笺 -->
@@ -681,23 +723,23 @@
                                         <button type="button" class="voice-dock-cancel-btn" onclick="stopVoiceInput('qa', false)" title="取消语音输入">✕</button>
                                     </div>
                                     <div class="input-pill-container">
-                                        <input type="text" id="qa-user-input" class="user-text-input" placeholder="向先生请教理学经义、治学修身、世务困惑..." onkeydown="if(event.key==='Enter') sendQuery('qa')">
+                                        <textarea id="qa-user-input" class="user-text-input" rows="1" placeholder="向先生请教理学经义、治学修身、世务困惑..."></textarea>
                                         <div class="input-actions-right">
-                                            <button class="action-clip-btn" onclick="openUploadModal()" title="挂载文献资料">
+                                            <button class="action-clip-btn" type="button" onclick="openUploadModal()" title="挂载文献资料">
                                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2">
                                                     <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
                                                 </svg>
                                             </button>
-                                            <button class="action-clip-btn" onclick="triggerPoetryImageUpload()" title="拍摄或上传古诗墨宝图片">
+                                            <button class="action-clip-btn" type="button" onclick="triggerPoetryImageUpload()" title="拍摄或上传古诗墨宝图片">
                                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2">
                                                     <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
                                                     <circle cx="12" cy="13" r="4"></circle>
                                                 </svg>
                                             </button>
                                             <input type="file" id="poetry-file-input" accept="image/*" style="display:none;" onchange="handlePoetryImageFile(this)">
-                                            <button class="action-tts-toggle-btn active" id="qa-tts-toggle-btn" type="button" onclick="toggleInstantTTS()" title="实时语音开示开关">
-                                                <span class="tts-status-icon">🔊</span>
-                                                <span class="tts-status-label">实时语音: 开</span>
+                                            <button class="action-tts-toggle-btn" id="qa-tts-toggle-btn" type="button" onclick="toggleInstantTTS()" title="实时语音开示开关">
+                                                <span class="tts-status-icon">🔇</span>
+                                                <span class="tts-status-label">实时语音: 关</span>
                                             </button>
                                             <button class="action-mic-btn" id="qa-mic-btn" type="button" onclick="toggleVoiceInput('qa')" title="语音输入问对">
                                                 <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -707,7 +749,7 @@
                                                     <line x1="8" y1="23" x2="16" y2="23"></line>
                                                 </svg>
                                             </button>
-                                            <button class="action-send-btn" id="qa-send-btn" onclick="handleSendOrStop('qa')" title="发送问对">
+                                            <button class="action-send-btn" id="qa-send-btn" type="button" onclick="handleSendOrStop('qa')" title="发送问对">
                                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5">
                                                     <line x1="22" y1="2" x2="11" y2="13"></line>
                                                     <polygon points="22 2 15 22 11 13 2 9 22 2" fill="#3b82f6"></polygon>
@@ -821,6 +863,9 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- 移动端/平板端讲义抽屉遮罩层 -->
+                            <div id="galgame-drawer-backdrop" class="mobile-drawer-backdrop" onclick="toggleGalGameSyllabusDrawer(false)" aria-hidden="true"></div>
 
                             <!-- 侧边研学履历记录与经传讲义辅助看板 -->
                             <div class="galgame-syllabus-drawer" id="galgame-syllabus-drawer">
@@ -1123,7 +1168,7 @@
                                             <button type="button" class="voice-dock-cancel-btn" onclick="stopVoiceInput('recommend', false)" title="取消语音输入">✕</button>
                                         </div>
                                         <div class="input-pill-container">
-                                            <input type="text" id="recommend-user-input" class="user-text-input" placeholder="告知先生自己的学力背景，请先生量身推荐读书单与研读次第..." onkeydown="if(event.key==='Enter') sendQuery('recommend')">
+                                            <textarea id="recommend-user-input" class="user-text-input" rows="1" placeholder="告知先生自己的学力背景，请先生量身推荐读书单与研读次第..."></textarea>
                                             <div class="input-actions-right">
                                                 <button class="action-mic-btn" id="recommend-mic-btn" type="button" onclick="toggleVoiceInput('recommend')" title="语音输入问对">
                                                     <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1133,7 +1178,7 @@
                                                         <line x1="8" y1="23" x2="16" y2="23"></line>
                                                     </svg>
                                                 </button>
-                                                <button class="action-send-btn" id="recommend-send-btn" onclick="handleSendOrStop('recommend')" title="请教指引">
+                                                <button class="action-send-btn" id="recommend-send-btn" type="button" onclick="handleSendOrStop('recommend')" title="请教指引">
                                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5">
                                                         <line x1="22" y1="2" x2="11" y2="13"></line>
                                                         <polygon points="22 2 15 22 11 13 2 9 22 2" fill="#dc2626"></polygon>
@@ -1172,14 +1217,49 @@
                     </button>
                 </div>
             </div>
+            <!-- ==============================================
+                 移动端专属底部 5-Tab 导航栏（桌面端隐藏）
+                 ============================================== -->
+            <nav id="mobile-bottom-nav" class="mobile-bottom-nav" aria-label="移动端主导航">
+                <button type="button" class="mobile-tab-item active" id="mobile-tab-home" onclick="switchNav('home')">
+                    <span class="mobile-tab-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                    </span>
+                    <span class="mobile-tab-label">首页</span>
+                </button>
+                <button type="button" class="mobile-tab-item" id="mobile-tab-qa" onclick="switchNav('qa')">
+                    <span class="mobile-tab-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    </span>
+                    <span class="mobile-tab-label">答疑</span>
+                </button>
+                <button type="button" class="mobile-tab-item" id="mobile-tab-class" onclick="switchNav('class')">
+                    <span class="mobile-tab-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                    </span>
+                    <span class="mobile-tab-label">讲筵</span>
+                </button>
+                <button type="button" class="mobile-tab-item" id="mobile-tab-recommend" onclick="switchNav('recommend')">
+                    <span class="mobile-tab-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    </span>
+                    <span class="mobile-tab-label">藏书</span>
+                </button>
+                <button type="button" class="mobile-tab-item" id="mobile-tab-more" onclick="toggleMobileNavDrawer()">
+                    <span class="mobile-tab-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1.5" fill="currentColor"></circle><circle cx="19" cy="12" r="1.5" fill="currentColor"></circle><circle cx="5" cy="12" r="1.5" fill="currentColor"></circle></svg>
+                    </span>
+                    <span class="mobile-tab-label">更多</span>
+                </button>
+            </nav>
         </main>
     </div>
 
     <!-- ==============================================
          弹窗 1：文献解析与特色典籍挂载  · 即物穷理深度剖析 + 知识库收录
          ============================================== -->
-    <div id="upload-modal" class="modal-backdrop">
-        <div class="modal-card upload-enhanced-card">
+    <div id="upload-modal" class="modal-backdrop" onclick="if(event.target===this) closeUploadModal()">
+        <div class="modal-card upload-enhanced-card" onclick="event.stopPropagation()">
             <div class="modal-header">
                 <div class="modal-title-with-tabs">
                     <h3>📎 文献经籍析理与挂载</h3>
@@ -1230,8 +1310,8 @@
     <!-- ==============================================
          弹窗 2：历史对话与语录
          ============================================== -->
-    <div id="history-modal" class="modal-backdrop">
-        <div class="modal-card">
+    <div id="history-modal" class="modal-backdrop" onclick="if(event.target===this) closeHistoryModal()">
+        <div class="modal-card" onclick="event.stopPropagation()">
             <div class="modal-header">
                 <h3>⏰ 研讨论道历史记录</h3>
                 <button class="modal-close-btn" onclick="closeHistoryModal()">✕</button>
@@ -1247,8 +1327,8 @@
     <!-- ==============================================
          弹窗：雅乐琴台 (宋韵BGM音乐播放器 · 循环重复播放)
          ============================================== -->
-    <div id="bgm-modal" class="modal-backdrop">
-        <div class="modal-card" style="max-width:540px;">
+    <div id="bgm-modal" class="modal-backdrop" onclick="if(event.target===this) closeBgmModal()">
+        <div class="modal-card" style="max-width:540px;" onclick="event.stopPropagation()">
             <div class="modal-header">
                 <h3>🎶 考亭书院 · 雅乐琴台</h3>
                 <button class="modal-close-btn" onclick="closeBgmModal()">✕</button>
@@ -1282,17 +1362,17 @@
     <!-- ==============================================
          弹窗：考亭书院 · 圣学传道研学结业文凭 / 证书
          ============================================== -->
-    <div id="galgame-certificate-modal" class="modal-backdrop">
-        <div class="modal-card certificate-card" style="max-width: 680px; background: #faf6ee; border: 3px double #b45309; box-shadow: 0 25px 60px rgba(0,0,0,0.45); border-radius: 12px; padding: 28px 36px; position: relative; overflow: hidden;">
+    <div id="galgame-certificate-modal" class="modal-backdrop" onclick="if(event.target===this) galGameEngine.closeCertificate()">
+        <div class="modal-card certificate-card certificate-modal-card" onclick="event.stopPropagation()">
             <!-- 古典宣纸回纹边框底纹 -->
-            <div style="position:absolute; top:8px; left:8px; right:8px; bottom:8px; border: 1px solid #d97706; pointer-events:none; border-radius:8px;"></div>
-            <div style="position:absolute; top:12px; left:12px; right:12px; bottom:12px; border: 1px dashed rgba(180,83,9,0.3); pointer-events:none; border-radius:6px;"></div>
+            <div class="cert-outer-frame"></div>
+            <div class="cert-inner-frame"></div>
 
             <!-- 顶部装饰与关闭按钮 -->
-            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; position:relative; z-index:2;">
+            <div class="cert-top-bar">
                 <div style="display:flex; align-items:center; gap:8px;">
                     <span style="font-size:22px;">📜</span>
-                    <span style="font-size:13px; letter-spacing:4px; color:#92400e; font-weight:bold; font-family:var(--font-serif);">宋·淳熙十年 考亭讲筵特颁</span>
+                    <span class="cert-era-title">宋·淳熙十年 考亭讲筵特颁</span>
                 </div>
                 <button class="modal-close-btn" onclick="galGameEngine.closeCertificate()" style="font-size:18px;">✕</button>
             </div>
@@ -1300,7 +1380,7 @@
             <!-- 证书核心抬头 -->
             <div style="text-align:center; margin-bottom:18px; position:relative; z-index:2;">
                 <div style="font-size:12px; letter-spacing:6px; color:#b45309; margin-bottom:4px; font-family:var(--font-serif);">建宁府建阳县考亭书院</div>
-                <h2 style="font-size:26px; font-weight:900; color:#451a03; font-family:'STKaiti', 'KaiTi', var(--font-serif); letter-spacing:3px; margin:0 0 6px 0;">
+                <h2 class="cert-grand-title">
                     圣学传道研学结业文凭
                 </h2>
                 <div style="display:inline-block; padding:2px 14px; background:linear-gradient(90deg, #fef3c7, #fde68a); border:1px solid #d97706; border-radius:14px; font-size:12.5px; color:#78350f; font-weight:bold;">
@@ -1309,14 +1389,14 @@
             </div>
 
             <!-- 正文叙述 -->
-            <div style="line-height:1.9; color:#292524; font-size:14.5px; font-family:'STKaiti', 'KaiTi', var(--font-serif); margin-bottom:18px; text-indent:2em; background:rgba(255,255,255,0.7); padding:16px 20px; border-radius:8px; border:1px solid #fef08a; position:relative; z-index:2;">
+            <div class="cert-narrative-box">
                 学子 <strong id="cert-student-name" style="color:#b45309; font-size:16px; text-decoration:underline; text-decoration-color:#d97706; text-underline-offset:4px;">考亭精进学子</strong> 尊奉师训，研习本院武夷理学讲筵全六程：
                 <span style="color:#92400e; font-weight:600;">《隐屏结庐》、《九曲寻源》、《岩壑瀹茗》、《崇安社仓》、《鹅湖论道》、《万物条理》</span>。
                 在堂期间，沉潜笃敬，即物穷理，虚心涵泳，深造自得。经诸讲试炼研判，功德圆满，特赐结业！
             </div>
 
             <!-- 评定与批语区 -->
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:18px; position:relative; z-index:2;">
+            <div class="cert-eval-grid">
                 <div style="background:#fff; border:1px solid #e2d9c8; border-radius:8px; padding:12px 16px;">
                     <div style="font-size:12.5px; color:#78350f; font-weight:bold; margin-bottom:6px;">📊 研学学力评定：</div>
                     <div style="font-size:13.5px; color:#44403c; line-height:1.6;">
@@ -1334,13 +1414,13 @@
             </div>
 
             <!-- 底部落款与印章 -->
-            <div style="display:flex; justify-content:space-between; align-items:flex-end; border-top:1px solid #e2d9c8; padding-top:14px; position:relative; z-index:2;">
+            <div class="cert-footer-seal-row">
                 <div style="font-size:12px; color:#78350f; font-family:var(--font-serif);">
                     <div>研学结业纪年：<span id="cert-date-text">宋庆元四年 · 岁次戊午春</span></div>
                     <div style="color:#a8a29e; font-size:11px; margin-top:2px;">考亭学筵统字第 1198 号 · 武夷学院图书馆宋明理学特藏监制</div>
                 </div>
 
-                <div style="display:flex; align-items:center; gap:12px;">
+                <div style="display:flex; align-items:center; gap:12px; flex-shrink:0;">
                     <!-- 红色大印章 1：考亭书院山长之印 -->
                     <div style="width:58px; height:58px; border:2px solid #b91c1c; background:rgba(185,28,28,0.06); color:#b91c1c; font-weight:bold; font-size:12px; line-height:1.15; display:flex; align-items:center; justify-content:center; text-align:center; font-family:'STKaiti', KaiTi, serif; transform:rotate(-4deg); box-shadow:0 2px 6px rgba(185,28,28,0.2);">
                         考亭书院<br>山长之印
@@ -1353,7 +1433,7 @@
             </div>
 
             <!-- 底部操作按钮栏 -->
-            <div style="display:flex; justify-content:center; gap:14px; margin-top:20px; position:relative; z-index:2;">
+            <div class="cert-actions-row">
                 <button class="btn btn-primary" onclick="galGameEngine.printCertificate()" style="padding:8px 22px; font-size:13.5px; background:linear-gradient(135deg, #b45309, #78350f);">
                     🖨️ 打印 / 保存结业文凭
                 </button>
@@ -1370,8 +1450,8 @@
     <!-- ==============================================
          弹窗 3：设置与声音风骨
          ============================================== -->
-    <div id="settings-modal" class="modal-backdrop">
-        <div class="modal-card">
+    <div id="settings-modal" class="modal-backdrop" onclick="if(event.target===this) closeSettingsModal()">
+        <div class="modal-card" onclick="event.stopPropagation()">
             <div class="modal-header">
                 <h3>⚙️ 智能体声音与系统设置</h3>
                 <button class="modal-close-btn" onclick="closeSettingsModal()">✕</button>
@@ -1383,11 +1463,11 @@
                 </div>
                 <div class="setting-item">
                     <label>🔊 自动朗读回答：</label>
-                    <button class="toggle-pill-btn" id="modal-tts-toggle" onclick="toggleAutoTTS()">已开启</button>
+                    <button class="toggle-pill-btn" id="modal-tts-toggle" onclick="toggleAutoTTS()">已关闭</button>
                 </div>
                 <div class="setting-item">
                     <label>🌐 局域网/手机端访问地址：</label>
-                    <div class="ip-info-box"><code>http://172.22.92.196:8000/</code> 同一Wi-Fi下手机直接访问</div>
+                    <div class="ip-info-box"><code id="settings-lan-url">http://localhost:8000/</code> 同一Wi-Fi下手机直接访问</div>
                 </div>
             </div>
         </div>
@@ -1684,7 +1764,7 @@
                             <!-- 草书文本内容 -->
                         </div>
                         <div class="letter-seal-footer">
-                            <div class="letter-reply-seal-stamp">考亭<br>晦翁</div>
+                            <div class="letter-reply-seal-stamp" id="letter-seal-stamp">考亭<br>晦翁</div>
                             <div class="letter-reply-date" id="letter-reply-date">宋庆元四年 · 考亭讲筵 晦庵朱熹 代拟手札</div>
                         </div>
                     </div>
@@ -1907,7 +1987,7 @@
     <div id="guide-transition-modal" class="modal-backdrop guide-modal-backdrop" style="display:none !important;">
         <div class="guide-modal-card">
             <div class="guide-video-wrapper">
-                <video id="guide-master-video" class="guide-avatar-video" playsinline webkit-playsinline muted loop autoplay>
+                <video id="guide-master-video" class="guide-avatar-video" playsinline webkit-playsinline muted loop preload="none">
                     <source src="/static/avatar_videos/avatar_guide_leading.mp4" type="video/mp4">
                     <source src="/static/avatar_videos/avatar_guide_leading.webm" type="video/webm">
                 </video>
@@ -1923,189 +2003,17 @@
         </div>
     </div>
 
-    <!-- Three.js 核心三维渲染与交互控制器  · 本地极速加载 -->
-    <script src="/static/libs/three.min.js?v=5.0.0"></script>
-    <script src="/static/libs/OrbitControls.js?v=5.0.0"></script>
-    <script src="/static/libs/GLTFLoader.js?v=5.0.0"></script>
     <!-- 考亭书院第一人称 GalGame 引擎 -->
-    <script src="/static/galgame_engine.js?v=8.0.6"></script>
+    <script src="/static/galgame_engine.js?v=20261125_01"></script>
     <!-- 沧洲藏书阁 3D 沉浸式互动图书馆 -->
-    <script src="/static/library_3d.js?v=8.3.0"></script>
-    <!-- 考亭先生无界 3D 连贯视频数字人系统 -->
-    <script src="/static/avatar_3d_engine.js?v=8.0.0"></script>
+    <script src="/static/library_3d.js?v=20261125_01"></script>
+    <!-- 考亭先生数字人立像交互系统 -->
+    <script src="/static/avatar_3d_engine.js?v=20261125_01"></script>
+    <!-- 考亭研撰 · 朱子文化论文写作内嵌控制器 -->
+    <script src="/static/thesis_studio.js?v=20261125_04"></script>
     <!-- 交互与多模块独立控制器 -->
-    <script src="/static/app.js?v=20260929_1130"></script>
+    <script src="/static/app.js?v=20261125_03"></script>
     <!-- 考亭墨竹动态微风落叶动效引擎 -->
-    <script src="/static/bamboo_leaves.js?v=1.0.1"></script>
-
-    <!-- 典籍分类切换引擎（内联确保无缓存延迟、即点即换） -->
-    <script>
-    (function() {
-        const CATS = {
-            sishu: {
-                id: "sishu",
-                name: "① 四书章句类 · 进学之阶",
-                books: [
-                    { key: "daxue", title: "《大学章句》", author: "宋·朱熹 章句 · 传世善本", callNumber: "B222.12/Z90：1", location: "总馆 - 流通书库", tag: "进学第一关", borrowStatus: "🟢 租借情况：在架可借【实时在架3册】", isAvailable: true, bibId: "m1ac8664b61c03d8a5c8a35571d676d66", txtFile: "01_大学章句.txt", snippet: "大学之道在明明德", chapter: "经一章" },
-                    { key: "zhongyong", title: "《中庸章句》", author: "宋·朱熹 章句 · 宋本中庸", callNumber: "B222.12/Z90：1", location: "总馆 - 流通书库", tag: "性命心法", borrowStatus: "🟢 租借情况：在架可借【实时在架3册】", isAvailable: true, bibId: "m1ac8664b61c03d8a5c8a35571d676d66", txtFile: "02_中庸章句.txt", snippet: "天命之谓性", chapter: "第一章" },
-                    { key: "lunyu", title: "《论语集注》", author: "宋·朱熹 集注 · 考亭讲筵", callNumber: "B222.22/Z90", location: "特藏室 · 宋明理学专柜", tag: "仁义践履", borrowStatus: "🔴 租借情况：特藏借出【支持线上预约】", isAvailable: false, bibId: "m94a1e22d43113bea41afbb3b3fb15046", txtFile: "03_论语集注.txt", snippet: "学而时习之", chapter: "学而第一" },
-                    { key: "mengzi", title: "《孟子集注》", author: "宋·朱熹 集注 · 性善阐微", callNumber: "B222.52/Z90/1", location: "总馆 - 流通书库", tag: "义利辨析", borrowStatus: "🟢 租借情况：在架可借【实时在架2册】", isAvailable: true, bibId: "m51f8f17f5b8a91bfc2c86da36d289bc9", txtFile: "04_孟子集注.txt", snippet: "仁义礼智根于心", chapter: "梁惠王章句上" },
-                    { key: "sishu", title: "《四书章句集注》", author: "宋·朱熹 著 · 中华书局典藏版", callNumber: "B222.12/Z90:10", location: "总馆 - 流通书库", tag: "理学金梯", borrowStatus: "🟢 租借情况：在架可借【实时在架1册】", isAvailable: true, bibId: "mc7034ec9f084a8217d312a7fbb9d0960", txtFile: "05_四书或问.txt", snippet: "为己之学", chapter: "四书总论" }
-                ]
-            },
-            daotong: {
-                id: "daotong",
-                name: "② 理学道统类 · 性理心法",
-                books: [
-                    { key: "jinsi", title: "《近思录》", author: "宋·朱熹、吕祖谦 编 · 北宋五子心传", callNumber: "B244.74/Z30", location: "二楼社科书库", tag: "性理大成", borrowStatus: "🟢 租借情况：在架可借【实时在架2册】", isAvailable: true, bibId: "ma9ed44adcd8699c1c919d7fe122b33cf", txtFile: "07_近思录.txt", snippet: "学者先须立志", chapter: "卷之一·道体" },
-                    { key: "yulei", title: "《朱子语类》", author: "宋·黎靖德 编 · 考亭门生实录", callNumber: "B244.71/L42", location: "特藏室 · 宋明理学专柜", tag: "讲筵实录", borrowStatus: "🔴 租借情况：特藏借出【支持线上预约】", isAvailable: false, bibId: "m910fe206f504321ab8075f4425a6561e", txtFile: "01_朱子语类.txt", snippet: "未有天地之先毕竟也只是先有此理", chapter: "卷一·理气上" },
-                    { key: "taiji", title: "《太极图说解》", author: "宋·朱熹 著 · 周敦颐 原著", callNumber: "B244.25/Z29", location: "总馆 - 流通书库", tag: "理气元旨", borrowStatus: "🟢 租借情况：在架可借【实时在架1册】", isAvailable: true, bibId: "m03a229fed172c6c4457a9d25d0e3472e", txtFile: "11_太极图说解.txt", snippet: "无极而太极", chapter: "图说本义" },
-                    { key: "ximing", title: "《西铭解》", author: "宋·朱熹 著 · 张载 原著", callNumber: "B222/T94：46", location: "六楼古籍特藏室", tag: "民胞物与", borrowStatus: "🔴 租借情况：特藏借出【支持线上预约】", isAvailable: false, bibId: "m329c4bf8aac402ba94c27628fa60915b", txtFile: "12_西铭解.txt", snippet: "民吾同胞物吾与也", chapter: "西铭解义" }
-                ]
-            },
-            jingshi: {
-                id: "jingshi",
-                name: "③ 经史政理类 · 春秋史鉴",
-                books: [
-                    { key: "gangmu", title: "《资治通鉴纲目》", author: "宋·朱熹 著 · 春秋义法史学丰碑", callNumber: "K204.3/Z90:4", location: "总馆 - 流通书库", tag: "史学义旨", borrowStatus: "🟢 租借情况：在架可借【实时在架4册】", isAvailable: true, bibId: "m847dd131dfc2f3cd792a696d5fc70bff", txtFile: "13_资治通鉴纲目.txt", snippet: "以纲提领以目纪实", chapter: "纲目序例" },
-                    { key: "shijizhuan", title: "《诗集传》", author: "宋·朱熹 著 · 经学诗义集大成", callNumber: "I222.2/Z90", location: "六楼古籍特藏室", tag: "经学诗义", borrowStatus: "🔴 租借情况：特藏借出【支持线上预约】", isAvailable: false, bibId: "m09f06ea84a2100925179748950beff70", txtFile: "08_诗集传.txt", snippet: "关关雎鸠在河之洲", chapter: "国风·周南" },
-                    { key: "zhouyi", title: "《周易本义》", author: "宋·朱熹 著 · 象数义理双融", callNumber: "B221.5/L30", location: "总馆 - 流通书库", tag: "象数义理", borrowStatus: "🟢 租借情况：在架可借【实时在架2册】", isAvailable: true, bibId: "m733ba27d4b6949cbdefd37ffe4fd2f80", txtFile: "09_周易本义.txt", snippet: "天行健君子以自强不息", chapter: "乾卦" }
-                ]
-            },
-            wenxue_meng: {
-                id: "wenxue_meng",
-                name: "④ 骚体蒙学类 · 家风规矩",
-                books: [
-                    { key: "chuci", title: "《楚辞集注》", author: "宋·朱熹 著 · 屈宋骚韵忠愤之思", callNumber: "I222.3/Z90:2", location: "总馆 - 流通书库", tag: "文学骚韵", borrowStatus: "🟢 租借情况：在架可借【实时在架2册】", isAvailable: true, bibId: "mc81bc1fef94dd6cdc04a36d4466f66be", txtFile: "10_楚辞集注.txt", snippet: "帝高阳之苗裔兮", chapter: "离骚经" },
-                    { key: "tongmeng", title: "《童蒙须知》", author: "宋·朱熹 著 · 考亭幼童规训", callNumber: "B222/T94：44", location: "六楼古籍特藏室", tag: "蒙学初阶", borrowStatus: "🔴 租借情况：特藏借出【支持线上预约】", isAvailable: false, bibId: "me19479abe54bb4b8467c82ec016450aa", txtFile: "14_童蒙须知.txt", snippet: "衣服饮食步趋坐立", chapter: "衣服冠履" },
-                    { key: "xuegui", title: "《白鹿洞书院学规》", author: "宋·朱熹 著 · 千年学规之祖", callNumber: "TU-092.2/L70:3", location: "总馆 - 流通书库", tag: "书院规条", borrowStatus: "🟢 租借情况：在架可借【实时在架1册】", isAvailable: true, bibId: "m01a9861554abb51f11ba8d5c015131c8", txtFile: "15_白鹿洞书院学规.txt", snippet: "父子有亲君臣有义", chapter: "学规箴戒" }
-                ]
-            },
-            wuyi_spec: {
-                id: "wuyi_spec",
-                name: "🏛️ 武夷学院特色馆 · 闽北文库",
-                books: [
-                    { key: "wuyi_shici", title: "《朱子的诗和远方：武夷山水理学诗歌专著》", author: "张建光 著 · 海峡文艺出版社", callNumber: "I207.227.442/Z43", location: "六楼特藏室【闽北文库】", tag: "闽北文献专架", borrowStatus: "🟢 租借情况：特藏现架【支持借阅预约】", isAvailable: true, bibId: "m5590f490b8512b928c22c8a630f2f93b", txtFile: "02_朱子的诗和远方_武夷山水理学诗歌专著.txt", snippet: "半亩方塘一鉴开", chapter: "第一章" },
-                    { key: "wuyi_chaosheng", title: "《朝圣朱子：武夷山五夫故里特色专著》", author: "张建光 著 · 特色地方文献", callNumber: "B244.7/Z46", location: "六楼特藏室【闽北文库】", tag: "五夫朱子专柜", borrowStatus: "🟢 租借情况：在架可借【实时在架5册】", isAvailable: true, bibId: "m769fa97c35a89c0a3624980a21003904", txtFile: "03_朝圣朱子_武夷山五夫故里特色专著.txt", snippet: "紫阳楼前绿竹青松", chapter: "第一章" },
-                    { key: "wuyi_century", title: "《世纪之交的朱子学：协同创新文丛》", author: "潘飞声、张品端 主编", callNumber: "B244.75/X39:2", location: "二楼社科书库", tag: "社科书库精选", borrowStatus: "🟢 租借情况：在架可借【精装1套在架】", isAvailable: true, bibId: "md0bec348de5285f8b72b7bd977276ee9", txtFile: "01_世纪之交的朱子学_朱子文化协同创新文丛.txt", snippet: "世纪之交的朱子学研究", chapter: "第一章" },
-                    { key: "wuyi_fujian", title: "《朱子三代与政和：闽北朱氏家风》", author: "政和县朱子文化研究会 编", callNumber: "B244.75/G49:1", location: "六楼特藏室【闽北理学专架】", tag: "闽北家风专架", borrowStatus: "🟢 租借情况：在架可借【实时在架1册】", isAvailable: true, bibId: "mcd9b1f2e032950ae0d77ce38a1bb4770", txtFile: "06_朱子三代与政和_闽北朱氏家风与历史渊源.txt", snippet: "政和朱氏家风清廉自守", chapter: "第一章" },
-                    { key: "wuyi_kaoting", title: "《第二届考亭论坛专辑：理学研讨集》", author: "武夷学院朱子学研究中心 编", callNumber: "B244.75/L43:1", location: "六楼特藏室【闽北文库】", tag: "考亭论丛专柜", borrowStatus: "🟢 租借情况：在架可借【实时在架2册】", isAvailable: true, bibId: "m2b6005a499aa4f3f50aa0f01f5adc36f", txtFile: "04_第二届考亭论坛专辑_考亭书院理学研讨集.txt", snippet: "考亭论坛汇集海内外学者", chapter: "序言" },
-                    { key: "wuyi_haiwai", title: "《朱子文化在海外：国际传播与影响》", author: "武夷学院朱子学研究中心 编", callNumber: "B244.75/D40", location: "六楼特藏室【国际朱子学柜】", tag: "国际传播专架", borrowStatus: "🟢 租借情况：在架可借【实时在架2册】", isAvailable: true, bibId: "m9750078ba9d212e3b9a8c8ddd7e281f2", txtFile: "05_朱子文化在海外_武夷学院朱子学研究中心.txt", snippet: "朱子之学东渐日本朝鲜", chapter: "序言" }
-                ]
-            }
-        };
-
-        window.HOME_SHOWCASE_CATEGORIES = CATS;
-
-        window.switchHomeShowcaseCategory = function(catId, btn) {
-            document.querySelectorAll("#home-showcase-cat-pills .home-cat-pill").forEach(p => p.classList.remove("active"));
-            if (btn) {
-                btn.classList.add("active");
-            } else {
-                const target = document.querySelector(`#home-showcase-cat-pills [onclick*="'${catId}'"]`);
-                if (target) target.classList.add("active");
-            }
-            window.renderHomeShowcaseBooks(catId);
-        };
-
-        window.renderHomeShowcaseBooks = function(catId) {
-            const grid = document.getElementById("home-showcase-books-grid");
-            if (!grid) return;
-            const cat = CATS[catId] || CATS.sishu;
-            grid.innerHTML = (cat.books || []).map(b => {
-                const isBusy = !b.isAvailable || b.borrowStatus.includes("借出");
-                const pillClass = isBusy ? "borrowed" : "available";
-                const safeTitle = (b.title || "").replace(/'/g, "\\'");
-                const safeSnippet = (b.snippet || "").replace(/'/g, "\\'");
-                const safeFile = (b.txtFile || "").replace(/'/g, "\\'");
-                const safeChap = (b.chapter || "").replace(/'/g, "\\'");
-
-                return `
-                    <div class="lib-book-card">
-                        <div class="lbc-tag">${b.tag || "典籍"}</div>
-                        <div class="lbc-title">${b.title}</div>
-                        <div class="lbc-author">${b.author}</div>
-                        <div class="lbc-callno">索书号：<code>${b.callNumber}</code></div>
-                        <div class="lbc-loc">馆藏：${b.location}</div>
-                        <div class="lbc-borrow-row">
-                            <span class="borrow-status-pill ${pillClass}">${b.borrowStatus}</span>
-                        </div>
-                        <div class="lbc-actions">
-                            <button type="button" class="lbc-btn read" onclick="openFulltextFromProvenance('${b.key}', '${safeTitle}', '${safeSnippet}', '${safeFile}', '${safeChap}')">📖 翻阅电子版</button>
-                            <button type="button" class="lbc-btn reserve" onclick="openReservationModal('${b.key}')">🔖 OPAC预约借阅</button>
-                        </div>
-                    </div>
-                `;
-            }).join("");
-        };
-
-        window.switchOpacModalCategory = function(catId, btn, highlightKey) {
-            document.querySelectorAll("#opac-modal-cat-pills .opac-cat-tab").forEach(t => t.classList.remove("active"));
-            if (btn) {
-                btn.classList.add("active");
-            } else {
-                const target = document.querySelector(`#opac-modal-cat-pills [data-cat="${catId}"]`);
-                if (target) target.classList.add("active");
-            }
-            window.renderReservationBooksList(catId, highlightKey);
-        };
-
-        window.renderReservationBooksList = function(targetCategory, highlightKey) {
-            const container = document.getElementById("res-books-container");
-            if (!container) return;
-            const catId = targetCategory || "sishu";
-            const cat = CATS[catId] || CATS.sishu;
-            const books = cat.books || [];
-
-            container.innerHTML = `
-                <div style="padding:10px 12px; background:rgba(255,255,255,0.7); border-radius:6px; border:1px solid #e2e8f0;">
-                    <div style="font-size:12px; color:#64748b; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
-                        <span>💡 <strong>${cat.name}</strong>（共 ${books.length} 部典籍，点击可直接直达武夷学院图书馆该课本官方专属预约界面）：</span>
-                        <span style="font-size:11px; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:4px; font-weight:700;">Space v4.2.29 直通</span>
-                    </div>
-                    <div style="display:flex; flex-direction:column; gap:8px;">
-                        ${books.map(b => {
-                            const isHighlighted = (highlightKey && highlightKey === b.key);
-                            const isBusy = !b.isAvailable || b.borrowStatus.includes("借出");
-                            const pillClass = isBusy ? "borrowed" : "available";
-                            const highlightClass = isHighlighted ? "res-book-highlighted" : "";
-                            const highlightBorder = isHighlighted ? "border:2px solid #0284c7; background:#f0f9ff; box-shadow:0 0 0 3px rgba(2,132,199,0.15);" : "border:1px solid #e2e8f0; background:#f8fafc;";
-                            const directUrl = "https://wyutsg.wuyiu.edu.cn/space/searchDetailLocal/" + b.bibId;
-                            const safeTitle = (b.title || "").replace(/'/g, "\\'");
-                            const safeSnippet = (b.snippet || "").replace(/'/g, "\\'");
-                            const safeFile = (b.txtFile || "").replace(/'/g, "\\'");
-                            const safeChap = (b.chapter || "").replace(/'/g, "\\'");
-
-                            return `
-                                <div class="res-category-book-item ${highlightClass}" style="display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-radius:6px; ${highlightBorder} transition:all 0.2s; flex-wrap:wrap; gap:8px;">
-                                    <div style="display:flex; flex-direction:column; gap:4px; flex:1; min-width:240px;">
-                                        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                                            <strong style="font-size:13.5px; color:#0f172a; font-family:var(--font-serif);">${b.title}</strong>
-                                            <span class="borrow-status-pill ${pillClass}">${b.borrowStatus}</span>
-                                            ${isHighlighted ? '<span style="font-size:11px; background:#0284c7; color:#fff; padding:1px 6px; border-radius:3px; font-weight:700;">★ 当前选定课本</span>' : ''}
-                                        </div>
-                                        <div style="font-size:11.5px; color:#64748b; display:flex; gap:12px; flex-wrap:wrap;">
-                                            <span>索书号：<code style="color:#b45309; font-weight:700;">${b.callNumber}</code></span>
-                                            <span>馆藏：${b.location}</span>
-                                            <span>著者：${b.author}</span>
-                                        </div>
-                                    </div>
-                                    <div style="display:flex; align-items:center; gap:8px;">
-                                        <button type="button" onclick="openFulltextFromProvenance('${b.key}', '${safeTitle}', '${safeSnippet}', '${safeFile}', '${safeChap}')" style="background:#fff; color:#475569; border:1px solid #cbd5e1; font-size:11.5px; font-weight:600; padding:5px 10px; border-radius:5px; cursor:pointer;" title="在电子阅览器中翻阅此典籍全文">
-                                            📖 翻阅
-                                        </button>
-                                        <a href="${directUrl}" target="_blank" rel="noopener noreferrer" style="background:linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color:#fff; text-decoration:none; padding:6px 14px; border-radius:5px; font-size:12px; font-weight:700; display:inline-flex; align-items:center; gap:4px; box-shadow:0 2px 4px rgba(2,132,199,0.3);" title="直达武夷学院图书馆该课本官方预约界面">
-                                            🏛️ 直达该课本官方预约 ➔
-                                        </a>
-                                    </div>
-                                </div>
-                            `;
-                        }).join("")}
-                    </div>
-                </div>
-            `;
-        };
-    })();
-    </script>
+    <script src="/static/bamboo_leaves.js?v=20261125_01"></script>
 </body>
 </html>

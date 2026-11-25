@@ -164,17 +164,56 @@ const dailyQuotes = [
     { quote: "“人心虚灵不昧，以具众理而应万事。学者先须收拾此心，莫令逐物迁变。”", author: "—— 考亭夫子 · 《朱子语类》" }
 ];
 
-// 4. 全局语音配音控制器 (默认关闭自动播音以提升极致流畅度，点击气泡或按钮随时可朗诵)
+// 4. 全局语音配音控制器 (默认关闭自动播音，三端按钮单一状态源同步)
 let autoTTS = false;
 let currentVoiceStyle = "yunjian"; // 考亭大儒苍劲风骨
 let currentAudio = null;
+let currentAudioUrl = null;
 let currentTTSAbortController = null;
 let currentTTSButton = null;
 let activePlayId = 0;
 let isVoicePlaying = false;
 let isVoicePaused = false;
+let bgmPausedForVoice = false;
 
-// 4.1 考亭书院雅乐 (网络宋韵古典BGM播放器 · 默认播放《晨风琴韵》 · 循环重复播放)
+// 通用设备检测与安全剪贴板/焦点工具
+function isTouchDevice() {
+    return (window.matchMedia && window.matchMedia("(pointer: coarse)").matches) || window.innerWidth <= 768;
+}
+
+function safeFocus(el) {
+    if (el && !isTouchDevice()) {
+        try { el.focus(); } catch (e) {}
+    }
+}
+
+function copyTextSafe(text, okMsg = "已复制至剪贴板") {
+    if (!text) return;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+            showToast(okMsg);
+        }).catch(() => _fallbackCopyTextarea(text, okMsg));
+    } else {
+        _fallbackCopyTextarea(text, okMsg);
+    }
+}
+
+function _fallbackCopyTextarea(text, okMsg) {
+    try {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.cssText = "position:fixed;top:-9999px;left:-9999px;opacity:0;";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+        showToast(okMsg);
+    } catch (e) {
+        showToast("请长按选中文本手动复制");
+    }
+}
+
+// 4.1 考亭书院雅乐 (全曲目 MP3 兼容 iOS Safari / Android / 桌面端，用户手动开启不抢播)
 const BGM_PLAYLIST = [
     {
         id: "guzheng_morning",
@@ -187,28 +226,28 @@ const BGM_PLAYLIST = [
         id: "liu_shui",
         title: "《高山流水》",
         subtitle: "古琴天籁 · 伯牙子期知音名曲",
-        src: "/static/audio/liu_shui.ogg",
+        src: "/static/audio/liu_shui.mp3",
         desc: "宋代理学大儒会讲论道，必以琴棋书画为修身陶冶之具。流水汤汤，太古遗音。"
     },
     {
         id: "pingsha_luoyan",
         title: "《平沙落雁》",
         subtitle: "潇湘水云 · 逸士清幽之境",
-        src: "/static/audio/pingsha_luoyan.ogg",
+        src: "/static/audio/pingsha_luoyan.mp3",
         desc: "秋高气爽，风静沙平，云程万里，天际飞鸣。借鸿鹄之远志，写逸士之胸襟。"
     },
     {
         id: "zuiyu_changwan",
         title: "《醉渔唱晚》",
         subtitle: "沧浪濯足 · 渔歌互答清音",
-        src: "/static/audio/zuiyu_changwan.ogg",
+        src: "/static/audio/zuiyu_changwan.mp3",
         desc: "笑傲烟波，濯足沧浪。隐屏九曲之间，晚霞与孤鹜齐飞，尽显山水自得之趣。"
     },
     {
         id: "yangguan_sandie",
         title: "《阳关三叠》",
         subtitle: "唐宋琴歌 · 文士风骨与故人情谊",
-        src: "/static/audio/yangguan_sandie.ogg",
+        src: "/static/audio/yangguan_sandie.mp3",
         desc: "劝君更尽一杯酒，西出阳关无故人。曲调委婉缠绵，回环复沓，感人至深。"
     }
 ];
@@ -217,6 +256,19 @@ let currentBgmIndex = 0; // 默认首曲《晨风琴韵》
 let bgmAudio = null;
 let isBgmPlaying = false;
 let bgmVolume = 0.40;
+
+function duckBgmForSpeech(pause) {
+    if (!bgmAudio) return;
+    if (pause) {
+        if (isBgmPlaying) {
+            bgmPausedForVoice = true;
+            bgmAudio.pause();
+        }
+    } else if (bgmPausedForVoice) {
+        bgmPausedForVoice = false;
+        bgmAudio.play().catch(() => {});
+    }
+}
 
 function initBgmPlayer() {
     if (!bgmAudio) {
@@ -368,36 +420,12 @@ function toggleAcademyBGM() {
 }
 
 function tryAutoPlayBgm() {
-    initBgmPlayer();
-    const track = BGM_PLAYLIST[currentBgmIndex];
-    if (!bgmAudio.src || bgmAudio.src.indexOf(track.src) === -1) {
-        bgmAudio.src = track.src;
-    }
-    const p = bgmAudio.play();
-    if (p !== undefined) {
-        p.then(() => {
-            isBgmPlaying = true;
-            updateBgmUI();
-        }).catch(() => {
-            // 被浏览器策略限制，在首次用户手势点击或按键时启动
-            isBgmPlaying = false;
-            updateBgmUI();
-            const startOnInteraction = () => {
-                if (!isBgmPlaying && bgmAudio) {
-                    bgmAudio.play().then(() => {
-                        isBgmPlaying = true;
-                        updateBgmUI();
-                    }).catch(() => {});
-                }
-                document.removeEventListener('click', startOnInteraction);
-                document.removeEventListener('keydown', startOnInteraction);
-                document.removeEventListener('touchstart', startOnInteraction);
-            };
-            document.addEventListener('click', startOnInteraction, { once: true });
-            document.addEventListener('keydown', startOnInteraction, { once: true });
-            document.addEventListener('touchstart', startOnInteraction, { once: true });
-        });
-    }
+    // 遵循移动端与现代浏览器体验准则：不自动下载或首次点击劫持播放 BGM，由用户点击“书院雅乐”手动开启
+    const slider = document.getElementById("bgm-volume-slider");
+    const valEl = document.getElementById("bgm-volume-val");
+    if (slider) slider.value = String(bgmVolume);
+    if (valEl) valEl.textContent = `${Math.round(bgmVolume * 100)}%`;
+    updateBgmUI();
 }
 
 function nextBgmTrack() {
@@ -418,6 +446,7 @@ function setBgmVolume(val) {
 }
 
 function openBgmModal() {
+    closeMobileNavDrawer();
     initBgmPlayer();
     const modal = document.getElementById("bgm-modal");
     if (modal) {
@@ -502,16 +531,360 @@ function handleSendOrStop(moduleKey) {
     }
 }
 
+// ========================================================
+// 对话历史本地持久化管理器 (localStorage · 支持回溯、恢复与删除)
+// ========================================================
+const CHAT_HISTORY_STORAGE_KEY = "kaoting_chat_history_v1";
+let currentActiveView = "home";
+
+function loadSavedChatThreads() {
+    try {
+        const raw = localStorage.getItem(CHAT_HISTORY_STORAGE_KEY);
+        const list = raw ? JSON.parse(raw) : [];
+        return Array.isArray(list) ? list : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function saveChatThreadsList(list) {
+    try {
+        localStorage.setItem(CHAT_HISTORY_STORAGE_KEY, JSON.stringify(list.slice(0, 20)));
+    } catch (e) {
+        console.warn("保存本地会话历史遇限:", e);
+    }
+}
+
+function persistCurrentSession(moduleKey = "qa") {
+    const sess = chatSessions[moduleKey];
+    if (!sess || !Array.isArray(sess.history) || sess.history.length === 0) return;
+    const firstUser = sess.history.find(m => m.role === "user");
+    const title = firstUser ? firstUser.content.replace(/\s+/g, " ").slice(0, 32) : "考亭问学记录";
+    const list = loadSavedChatThreads().filter(item => item.id !== sess.id);
+    list.unshift({
+        id: sess.id,
+        moduleKey,
+        title,
+        updatedAt: new Date().toLocaleString(),
+        history: sess.history.slice(-30)
+    });
+    saveChatThreadsList(list);
+}
+
+function renderHistoryModalList() {
+    const listEl = document.getElementById("saved-history-list") || document.getElementById("history-list");
+    if (!listEl) return;
+    const threads = loadSavedChatThreads();
+    if (threads.length === 0) {
+        listEl.innerHTML = `<div class="history-empty-tip">暂无历史问学记录。您在「考亭答疑」中的每次对话都会自动留存，方便随时翻阅与续谈。</div>`;
+        return;
+    }
+    listEl.innerHTML = `
+        <div class="history-toolbar-row">
+            <span class="history-count-label">已存 ${threads.length} 卷历史问对</span>
+            <button type="button" class="history-clear-all-btn" onclick="clearAllSavedHistory()">清空全部归档</button>
+        </div>
+        ${threads.map(t => {
+            const turns = Math.ceil((t.history || []).length / 2);
+            return `
+                <div class="history-thread-card" data-thread-id="${escapeHtml(t.id)}">
+                    <div class="history-thread-main" onclick="restoreChatThread('${escapeHtml(t.id)}')">
+                        <div class="history-thread-title">📜 ${escapeHtml(t.title || "考亭问学")}</div>
+                        <div class="history-thread-meta">${escapeHtml(t.updatedAt || "")} · 共 ${turns} 轮对答</div>
+                    </div>
+                    <button type="button" class="history-thread-del" onclick="deleteChatThread('${escapeHtml(t.id)}', event)" title="删除此条记录">✕</button>
+                </div>
+            `;
+        }).join("")}
+    `;
+}
+
+function restoreChatThread(threadId) {
+    const threads = loadSavedChatThreads();
+    const target = threads.find(t => t.id === threadId);
+    if (!target) return;
+    const moduleKey = target.moduleKey || "qa";
+    const sess = chatSessions[moduleKey];
+    if (!sess) return;
+
+    stopCurrentVoice(true);
+    stopGenerating(moduleKey);
+    if (moduleKey === "qa") exitTaskFlow(true);
+
+    sess.id = target.id;
+    sess.history = Array.isArray(target.history) ? target.history.map(m => ({ ...m })) : [];
+
+    const container = document.getElementById(sess.containerId);
+    if (container) {
+        container.innerHTML = sess.welcomeHtml;
+        let lastUserQuery = "";
+        sess.history.forEach(msg => {
+            if (msg.role === "user") {
+                lastUserQuery = msg.content;
+                const uRow = document.createElement("div");
+                uRow.className = "message-row user";
+                uRow.innerHTML = `<div class="message-bubble">${escapeHtml(msg.content)}</div><div class="message-avatar">生</div>`;
+                container.appendChild(uRow);
+            } else if (msg.role === "assistant") {
+                const aRow = createAssistantBubbleRow(moduleKey, msg.content, lastUserQuery, false);
+                container.appendChild(aRow);
+            }
+        });
+        container.scrollTop = container.scrollHeight;
+    }
+
+    closeHistoryModal();
+    switchNav(moduleKey);
+    showToast(`已恢复问学记录：${target.title}`);
+}
+
+function deleteChatThread(threadId, event) {
+    if (event) event.stopPropagation();
+    const list = loadSavedChatThreads().filter(t => t.id !== threadId);
+    saveChatThreadsList(list);
+    renderHistoryModalList();
+    showToast("已移除该条历史记录");
+}
+
+function clearAllSavedHistory() {
+    if (!confirm("确定清空全部本地历史问学归档吗？")) return;
+    saveChatThreadsList([]);
+    renderHistoryModalList();
+    showToast("本地历史问学记录已清空");
+}
+
+// 移动端抽屉与底部导航控制
+function toggleMobileNavDrawer(forceOpen) {
+    const sidebar = document.getElementById("app-sidebar");
+    const backdrop = document.getElementById("mobile-nav-backdrop");
+    if (!sidebar) return;
+    const open = typeof forceOpen === "boolean" ? forceOpen : !sidebar.classList.contains("mobile-open");
+    sidebar.classList.toggle("mobile-open", open);
+    if (backdrop) backdrop.classList.toggle("active", open);
+    document.body.classList.toggle("mobile-drawer-open", open);
+}
+
+function closeMobileNavDrawer() {
+    toggleMobileNavDrawer(false);
+}
+
+// 文本域自动增高
+function autoResizeTextarea(el) {
+    if (!el || el.tagName !== "TEXTAREA") return;
+    el.style.height = "auto";
+    const maxH = window.innerWidth <= 768 ? 110 : 130;
+    el.style.height = Math.min(el.scrollHeight, maxH) + "px";
+}
+
+// 智能吸底滚动辅助（仅在用户接近底部时跟随，向上翻看历史时不抢夺滚动条）
+const _scrollJumpBtns = {};
+function isContainerNearBottom(container, threshold = 85) {
+    if (!container) return true;
+    return (container.scrollHeight - container.scrollTop - container.clientHeight) <= threshold;
+}
+
+function ensureScrollToBottomButton(moduleKey, container) {
+    if (!container || _scrollJumpBtns[moduleKey]) return;
+    const parent = container.parentElement;
+    if (!parent) return;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "scroll-bottom-fab";
+    btn.innerHTML = "↓ 回到底部";
+    btn.style.display = "none";
+    btn.onclick = () => {
+        container.scrollTo({ top: container.scrollHeight, behavior: "smooth" });
+        btn.style.display = "none";
+    };
+    parent.appendChild(btn);
+    _scrollJumpBtns[moduleKey] = btn;
+
+    container.addEventListener("scroll", () => {
+        const near = isContainerNearBottom(container, 110);
+        btn.style.display = near ? "none" : "inline-flex";
+    }, { passive: true });
+}
+
+// 创建带操作栏（复制 / 重新生成 / 朗读）的考亭先生答复气泡
+function createAssistantBubbleRow(moduleKey, rawText, sourceUserQuery = "", isStreaming = false) {
+    const row = document.createElement("div");
+    row.className = "message-row assistant";
+    row.dataset.rawText = rawText || "";
+    row.dataset.userQuery = sourceUserQuery || "";
+    row.dataset.moduleKey = moduleKey;
+
+    const statusText = isStreaming ? "考亭先生 · 讲授中" : "考亭先生 · 讲授完毕";
+    const bodyHtml = isStreaming
+        ? `<span class="typing-cursor">先生正在研精审理<span class="typing-dots"><span>.</span><span>.</span><span>.</span></span></span>`
+        : renderMarkdown(cleanParentheses(rawText || ""), false);
+
+    row.innerHTML = `
+        <div class="message-avatar"><img src="/static/avatar_ref_hd.png" alt="先生" class="msg-avatar-img"></div>
+        <div class="message-bubble parchment-bubble">
+            <div class="bubble-top-row">
+                <span class="speaker-label">${statusText}</span>
+                ${isStreaming ? `
+                <button type="button" class="bubble-stop-pill" onclick="stopGenerating('${moduleKey}')" title="立即停止生成 (Esc)">
+                    <span class="bubble-stop-sq">■</span> 停止生成
+                </button>` : ""}
+                <button type="button" class="tts-play-btn" onclick="playVoiceFromBubble(this)" style="${isStreaming ? "display:none;" : "display:inline-flex;"}">
+                    <span class="tts-icon">🔊</span> <span class="tts-text">聆听先生讲学</span>
+                </button>
+            </div>
+            <div class="message-text">${bodyHtml}</div>
+            <div class="bubble-footer-bar" style="${isStreaming ? "display:none;" : "display:flex;"}">
+                <div class="bubble-action-tools">
+                    <button type="button" class="bubble-tool-btn" data-action="copy-reply" title="复制本段答复">📋 复制</button>
+                    ${sourceUserQuery ? `<button type="button" class="bubble-tool-btn" data-action="regen-reply" title="重新向先生请益此问">↻ 重答</button>` : ""}
+                </div>
+                <div class="bubble-seal-mark">考亭印</div>
+            </div>
+        </div>
+    `;
+    return row;
+}
+
+// 绑定防中文输入法误提交的回车事件与拖拽上传事件
+function bindChatInputKeyHandlers() {
+    const bindInput = (id, handler) => {
+        const el = document.getElementById(id);
+        if (!el || el.dataset.imeBound) return;
+        el.dataset.imeBound = "1";
+        el.removeAttribute("onkeydown");
+        el.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" && !e.shiftKey && !e.isComposing && e.keyCode !== 229) {
+                e.preventDefault();
+                handler();
+            }
+        });
+        if (el.tagName === "TEXTAREA") {
+            el.addEventListener("input", () => autoResizeTextarea(el));
+        }
+    };
+
+    bindInput("qa-user-input", () => handleSendOrStop("qa"));
+    bindInput("recommend-user-input", () => handleSendOrStop("recommend"));
+    bindInput("corpus-keyword-input", () => executeCorpusSearch());
+}
+
+function bindUploadDragAndDrop() {
+    const bindZone = (panelId, inputId, handler) => {
+        const panel = document.getElementById(panelId);
+        if (!panel) return;
+        const zone = panel.querySelector(".upload-drop-zone");
+        if (!zone || zone.dataset.dndBound) return;
+        zone.dataset.dndBound = "1";
+
+        ["dragenter", "dragover"].forEach(evt => {
+            zone.addEventListener(evt, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                zone.classList.add("drag-over");
+            });
+        });
+        ["dragleave", "drop"].forEach(evt => {
+            zone.addEventListener(evt, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                zone.classList.remove("drag-over");
+            });
+        });
+        zone.addEventListener("drop", (e) => {
+            const files = e.dataTransfer && e.dataTransfer.files;
+            if (!files || files.length === 0) return;
+            const fakeInput = { files, value: "" };
+            handler(fakeInput);
+        });
+    };
+
+    bindZone("panel-upload-analyze", "analyze-file-input", handleDocumentAnalysis);
+    bindZone("panel-upload-corpus", "corpus-file-input", handleFileUpload);
+}
+
+// 全局事件委托：彻底消除动态 HTML 中的内联 onclick 字符串拼接 XSS 隐患
+function bindGlobalDelegatedActions() {
+    if (document.body.dataset.delegatedBound) return;
+    document.body.dataset.delegatedBound = "1";
+
+    document.addEventListener("click", (e) => {
+        // 1. 翻阅全卷委托按钮
+        const fulltextBtn = e.target.closest("[data-open-fulltext]");
+        if (fulltextBtn) {
+            e.preventDefault();
+            openFulltextFromProvenance(
+                fulltextBtn.dataset.bookKey || "",
+                fulltextBtn.dataset.bookTitle || "考亭原典",
+                fulltextBtn.dataset.snippet || "",
+                fulltextBtn.dataset.filename || "",
+                fulltextBtn.dataset.chapter || ""
+            );
+            return;
+        }
+
+        // 2. 实时刷新 OPAC 状态委托按钮
+        const refreshBtn = e.target.closest("[data-refresh-opac]");
+        if (refreshBtn) {
+            e.preventDefault();
+            window.refreshCitationOpacStatus(refreshBtn, refreshBtn.dataset.bookTitle || "");
+            return;
+        }
+
+        // 3. 气泡内复制回答
+        const copyBtn = e.target.closest('[data-action="copy-reply"]');
+        if (copyBtn) {
+            const row = copyBtn.closest(".message-row.assistant");
+            const text = (row && row.dataset.rawText) || (row && row.querySelector(".message-text") && row.querySelector(".message-text").innerText) || "";
+            copyTextSafe(text, "先生答复已复制至剪贴板");
+            return;
+        }
+
+        // 4. 气泡内重新生成 / 失败重试
+        const regenBtn = e.target.closest('[data-action="regen-reply"]');
+        if (regenBtn) {
+            const row = regenBtn.closest(".message-row.assistant");
+            const mod = (row && row.dataset.moduleKey) || "qa";
+            const q = (row && row.dataset.userQuery) || "";
+            if (q) {
+                sendQuery(mod, q);
+            }
+            return;
+        }
+
+        // 5. 角标定位至当前气泡内的参考资料条目（修复多轮重复 ID 错跳问题）
+        const citeBadge = e.target.closest(".cite-ref-badge");
+        if (citeBadge) {
+            const num = citeBadge.dataset.ref;
+            window.scrollToProvenanceRef(num, citeBadge);
+        }
+    });
+}
+
 // 页面加载就绪
 document.addEventListener("DOMContentLoaded", () => {
     loadKnowledgeStats();
     drawDailyQuote();
     initBgmPlayer();
-    updateBgmUI();
     tryAutoPlayBgm();
+    syncAutoTTSUI();
     loadReservationBooklist();
     preloadOpacBooks();
     renderHomeShowcaseBooks('sishu');
+    bindChatInputKeyHandlers();
+    bindUploadDragAndDrop();
+    bindGlobalDelegatedActions();
+
+    // 更新设置弹窗里的访问地址为当前真实访问 origin（替代写死的局域网 IP）
+    const lanUrlEl = document.getElementById("settings-lan-url");
+    if (lanUrlEl) {
+        lanUrlEl.textContent = window.location.origin + "/";
+    }
+
+    // 移动端检测：iOS 不支持 Fullscreen API，隐藏顶栏全屏按钮
+    if (isTouchDevice() || !document.documentElement.requestFullscreen) {
+        const fsBtn = document.getElementById("topbar-fullscreen-btn");
+        if (fsBtn) fsBtn.style.display = "none";
+    }
+
     if (window.avatarEngine) {
         window.avatarEngine.init();
     }
@@ -523,73 +896,98 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+    const qaContainer = document.getElementById("qa-messages");
+    if (qaContainer) ensureScrollToBottomButton("qa", qaContainer);
+
+    window.addEventListener("resize", () => {
+        if (window.avatarEngine && typeof window.avatarEngine.onResize === "function") {
+            window.avatarEngine.onResize();
+        }
+    }, { passive: true });
 
     const hash = window.location.hash.replace("#", "");
-    if (["qa", "class", "plan", "recommend"].includes(hash)) {
+    if (["qa", "class", "recommend"].includes(hash)) {
         switchNav(hash);
     }
 });
 
-// 全局 Esc 快捷键停止当前正在生成的对话
+// 全局 Esc 快捷键：停止正在生成的对话或关闭顶层弹窗/抽屉
 document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-        const activeKeys = Object.keys(activeAbortControllers);
-        if (activeKeys.length > 0) {
-            e.preventDefault();
-            activeKeys.forEach(k => stopGenerating(k));
-        }
+    if (e.key !== "Escape") return;
+
+    const activeKeys = Object.keys(activeAbortControllers);
+    if (activeKeys.length > 0) {
+        e.preventDefault();
+        activeKeys.forEach(k => stopGenerating(k));
+        return;
     }
+
+    // 依次关闭动态或静态顶层弹窗
+    const dynamicOverlay = document.querySelector(".fulltext-overlay, .reader-overlay, #galgame-inquire-dialog");
+    if (dynamicOverlay) {
+        dynamicOverlay.remove();
+        return;
+    }
+    const openModal = document.querySelector(".modal-overlay.active");
+    if (openModal) {
+        openModal.classList.remove("active");
+        return;
+    }
+    closeMobileNavDrawer();
 });
 
 // ========================================================
-// 导航视图切换控制器 (home / qa / class / plan / recommend)
+// 导航视图切换控制器 (home / qa / class / recommend)
 // ========================================================
 function switchNav(viewName) {
+    // 兼容旧链接：已停用的 plan 视图安全回落至 home
+    if (!["home", "qa", "class", "recommend"].includes(viewName)) {
+        viewName = "home";
+    }
+    currentActiveView = viewName;
     stopCurrentVoice(true);
+    closeMobileNavDrawer();
 
-    const views = ["home", "qa", "class", "plan", "recommend"];
+    // 切页时自动停止任何在录麦克风，防止后台悄悄录音
+    if (activeSpeechRecognition && currentVoiceModuleKey) {
+        stopVoiceInput(currentVoiceModuleKey, false);
+    }
+
+    const views = ["home", "qa", "class", "recommend"];
     views.forEach(v => {
         const el = document.getElementById(`view-${v}`);
         const nav = document.getElementById(`nav-${v}`);
+        const tab = document.getElementById(`mobile-tab-${v}`);
         if (el) el.classList.remove("active");
         if (nav) nav.classList.remove("active");
+        if (tab) tab.classList.remove("active");
     });
 
     const targetView = document.getElementById(`view-${viewName}`);
     const targetNav = document.getElementById(`nav-${viewName}`);
+    const targetTab = document.getElementById(`mobile-tab-${viewName}`);
 
     if (targetView) targetView.classList.add("active");
     if (targetNav) targetNav.classList.add("active");
+    if (targetTab) targetTab.classList.add("active");
 
     const scrollWrap = document.getElementById("main-scroll-wrap");
     if (scrollWrap) scrollWrap.scrollTop = 0;
 
-    // 自动挂载各引擎单例
     if (viewName === "class" && window.galGameEngine) {
         window.galGameEngine.init();
-    } else if (viewName === "plan" && window.studySupervisor) {
-        window.studySupervisor.init();
     } else if (viewName === "recommend" && window.library3DEngine) {
         window.library3DEngine.init();
     }
 
-    // 自动聚焦对应视图的专属输入框
     setTimeout(() => {
         if (viewName === "qa") {
-            const input = document.getElementById("qa-user-input");
-            if (input) input.focus();
+            safeFocus(document.getElementById("qa-user-input"));
             if (window.avatar3DEngine) {
                 window.avatar3DEngine.onResize();
             }
-        } else if (viewName === "class") {
-            const input = document.getElementById("class-user-input");
-            if (input) input.focus();
-        } else if (viewName === "plan") {
-            const input = document.getElementById("plan-user-input");
-            if (input) input.focus();
         } else if (viewName === "recommend") {
-            const input = document.getElementById("recommend-user-input");
-            if (input) input.focus();
+            safeFocus(document.getElementById("recommend-user-input"));
         }
     }, 100);
 }
@@ -632,7 +1030,7 @@ function sendFromHome(queryText) {
 }
 
 // ========================================================
-// 新建对答与清空功能（每个功能拥有完全独立的会话）
+// 新建对答与清空功能（归档当前会话至本地历史 + 退出专修态 + 安全确认）
 // ========================================================
 function startNewChat(moduleKey) {
     stopCurrentVoice(true);
@@ -640,41 +1038,53 @@ function startNewChat(moduleKey) {
     const sess = chatSessions[moduleKey];
     if (!sess) return;
 
+    // 归档当前非空问对
+    if (sess.history && sess.history.length > 0) {
+        persistCurrentSession(moduleKey);
+    }
+
+    if (moduleKey === "qa" && currentTaskFlow) {
+        exitTaskFlow(true);
+    }
+
     sess.id = moduleKey + "_" + Date.now().toString(36) + "_" + Math.random().toString(36).substring(2, 6);
     sess.history = [];
 
     const container = document.getElementById(sess.containerId);
     if (container) {
         container.innerHTML = sess.welcomeHtml;
+        container.scrollTop = 0;
     }
 
     const input = document.getElementById(sess.inputId);
     if (input) {
         input.value = "";
-        input.focus();
+        autoResizeTextarea(input);
+        safeFocus(input);
     }
 
     if (moduleKey === "qa" && window.avatarEngine) {
         avatarEngine.setState("idle");
         avatarEngine.setPose("standing", true);
-        avatarEngine.setMood("【端坐候教】");
+        avatarEngine.setMood("端坐候教");
     }
+    showToast("已开启全新问学对答（原对答已归档至历史记录）");
 }
 
 function clearCurrentMessages(moduleKey) {
+    const sess = chatSessions[moduleKey];
+    if (sess && sess.history && sess.history.length > 0) {
+        if (!confirm("确定清空当前屏幕上的问对记录吗？（原对话仍保存在历史归档中）")) {
+            return;
+        }
+    }
     startNewChat(moduleKey);
 }
 
 // ========================================================
-// 核心：多模块独立发送提问与流式接收（支持即时中断/停止生成）
+// 核心：多模块独立发送提问与流式接收（竞态令牌 + 智能吸底 + 复制/重答）
 // ========================================================
 async function sendQuery(moduleKey, queryOverride) {
-    // 若当前模块正处于生成中，再次点击发送按钮则作为“停止生成”处理
-    if (activeAbortControllers[moduleKey]) {
-        stopGenerating(moduleKey);
-        return;
-    }
-
     const sess = chatSessions[moduleKey];
     if (!sess) return;
 
@@ -682,14 +1092,21 @@ async function sendQuery(moduleKey, queryOverride) {
     const query = (queryOverride !== undefined ? queryOverride : (input ? input.value : "")).trim();
     if (!query) return;
 
+    // 若当前模块有在途请求：点击快捷词/新问题时先干净中止旧请求，绝不吞掉新提问
+    if (activeAbortControllers[moduleKey]) {
+        stopGenerating(moduleKey);
+    }
+
     if (input && queryOverride === undefined) {
         input.value = "";
+        autoResizeTextarea(input);
     }
 
     stopCurrentVoice(true);
 
     const container = document.getElementById(sess.containerId);
     if (!container) return;
+    ensureScrollToBottomButton(moduleKey, container);
 
     // 1. 追加用户发言卡片
     const userRow = document.createElement("div");
@@ -701,40 +1118,83 @@ async function sendQuery(moduleKey, queryOverride) {
     container.appendChild(userRow);
     container.scrollTop = container.scrollHeight;
 
-    // 2. 准备考亭先生回复信笺卡片 (内置即刻停止胶囊按钮)
-    const assistantRow = document.createElement("div");
-    assistantRow.className = "message-row assistant";
-    assistantRow.innerHTML = `
-        <div class="message-avatar"><img src="/static/avatar_ref_hd.png" alt="先生" class="msg-avatar-img"></div>
-        <div class="message-bubble parchment-bubble">
-            <div class="bubble-top-row">
-                <span class="speaker-label">考亭先生 · 讲授中</span>
-                <button class="bubble-stop-pill" onclick="stopGenerating('${moduleKey}')" title="立即停止生成 (Esc)">
-                    <span class="bubble-stop-sq">■</span> 停止生成
-                </button>
-                <button class="tts-play-btn" onclick="playVoiceFromBubble(this)" style="display:none;">
-                    <span class="tts-icon">🔊</span> <span class="tts-text">聆听先生讲学</span>
-                </button>
-            </div>
-            <div class="message-text"><span class="typing-cursor">先生正在研精审理...</span></div>
-            <div class="bubble-seal-mark">考亭印</div>
-        </div>
-    `;
+    // 2. 准备考亭先生回复信笺卡片
+    const assistantRow = createAssistantBubbleRow(moduleKey, "", query, true);
     container.appendChild(assistantRow);
     container.scrollTop = container.scrollHeight;
 
     const textEl = assistantRow.querySelector(".message-text");
     const ttsBtn = assistantRow.querySelector(".tts-play-btn");
+    const footerBar = assistantRow.querySelector(".bubble-footer-bar");
 
-    // 3. 注册 AbortController 并切换 UI 停止态
+    // 3. 注册 AbortController 与请求归属快照（彻底杜绝新建对话与并发竞态污染）
     const controller = new AbortController();
+    const reqSessionId = sess.id;
+    const historySnapshot = (sess.history || []).map(m => ({ ...m }));
     activeAbortControllers[moduleKey] = controller;
     setGeneratingUIState(moduleKey, true);
 
     let fullText = "";
+    let metaSources = [];
+    let isFallbackReply = false;
+    let streamErrorNotice = "";
+    let rafHandle = null;
+
     if (moduleKey === "qa" && window.avatarEngine) {
         avatarEngine.onUserSubmit(query);
     }
+
+    const cancelPendingFrame = () => {
+        if (rafHandle !== null) {
+            cancelAnimationFrame(rafHandle);
+            rafHandle = null;
+        }
+    };
+
+    const scheduleRender = () => {
+        if (rafHandle !== null) return;
+        rafHandle = requestAnimationFrame(() => {
+            rafHandle = null;
+            if (controller.signal.aborted) return;
+            const shouldStick = isContainerNearBottom(container);
+            textEl.innerHTML = renderMarkdown(fullText, true);
+            if (shouldStick) {
+                container.scrollTop = container.scrollHeight;
+            }
+        });
+    };
+
+    const processSseLine = (line) => {
+        if (!line || !line.startsWith("data:")) return;
+        const rawJson = line.slice(5).trim();
+        if (!rawJson || rawJson === "[DONE]") return;
+        try {
+            const event = JSON.parse(rawJson);
+            if (event.type === "meta") {
+                if (Array.isArray(event.sources)) metaSources = event.sources;
+                if (event.fallback) isFallbackReply = true;
+            } else if (event.type === "token") {
+                fullText += event.content || "";
+                scheduleRender();
+                if (moduleKey === "qa" && window.avatarEngine) {
+                    avatarEngine.onTokenStream(event.content || "", fullText);
+                }
+            } else if (event.type === "error") {
+                streamErrorNotice = event.message || "网络传信中途微恙";
+            } else if (event.type === "done") {
+                cancelPendingFrame();
+                fullText = cleanParentheses(fullText);
+                const shouldStick = isContainerNearBottom(container);
+                textEl.innerHTML = renderMarkdown(fullText, false);
+                if (shouldStick) container.scrollTop = container.scrollHeight;
+                if (moduleKey === "qa" && window.avatarEngine) {
+                    avatarEngine.onComplete(fullText);
+                }
+            }
+        } catch (err) {
+            console.warn("SSE JSON解析微恙:", err);
+        }
+    };
 
     try {
         const response = await fetch("/api/chat/stream", {
@@ -742,30 +1202,23 @@ async function sendQuery(moduleKey, queryOverride) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 query: query,
-                session_id: sess.id,
-                history: sess.history
+                session_id: reqSessionId,
+                history: historySnapshot,
+                mode: "qa"
             }),
             signal: controller.signal
         });
 
         if (!response.ok) {
-            throw new Error(`网络响应异常: ${response.status}`);
+            throw new Error(`网络响应异常: HTTP ${response.status}`);
+        }
+        if (!response.body) {
+            throw new Error("浏览器未返回可读流响应");
         }
 
         const reader = response.body.getReader();
         const decoder = new TextDecoder("utf-8");
         let buffer = "";
-        let renderScheduled = false;
-        const scheduleRender = () => {
-            if (!renderScheduled) {
-                renderScheduled = true;
-                requestAnimationFrame(() => {
-                    textEl.innerHTML = renderMarkdown(fullText);
-                    container.scrollTop = container.scrollHeight;
-                    renderScheduled = false;
-                });
-            }
-        };
 
         while (true) {
             if (controller.signal.aborted) break;
@@ -773,46 +1226,45 @@ async function sendQuery(moduleKey, queryOverride) {
             if (done) break;
 
             buffer += decoder.decode(value, { stream: true });
-            const lines = buffer.split("\n");
-            buffer = lines.pop();
-
+            const lines = buffer.split(/\r?\n/);
+            buffer = lines.pop() || "";
             for (const line of lines) {
-                if (line.startsWith("data: ")) {
-                    const rawJson = line.substring(6).trim();
-                    if (!rawJson) continue;
-
-                    try {
-                        const event = JSON.parse(rawJson);
-                        if (event.type === "token") {
-                            fullText += event.content;
-                            scheduleRender();
-                            if (moduleKey === "qa" && window.avatarEngine) {
-                                avatarEngine.onTokenStream(event.content, fullText);
-                            }
-                        } else if (event.type === "done") {
-                            fullText = cleanParentheses(fullText);
-                            textEl.innerHTML = renderMarkdown(fullText);
-                            container.scrollTop = container.scrollHeight;
-                            if (moduleKey === "qa" && window.avatarEngine) {
-                                avatarEngine.onComplete(fullText);
-                            }
-                        }
-                    } catch (err) {
-                        console.warn("JSON解析微恙:", err);
-                    }
-                }
+                processSseLine(line);
             }
         }
 
+        // 刷新末尾残余缓冲（避免丢弃缺少尾随换行符的最后一个事件）
+        buffer += decoder.decode();
+        if (buffer.trim()) {
+            buffer.split(/\r?\n/).forEach(processSseLine);
+        }
+
+        cancelPendingFrame();
+        if (!controller.signal.aborted && fullText.trim()) {
+            fullText = cleanParentheses(fullText);
+            textEl.innerHTML = renderMarkdown(fullText, false);
+            if (isFallbackReply) {
+                const fbBadge = document.createElement("div");
+                fbBadge.className = "stream-fallback-hint";
+                fbBadge.textContent = "💡 当前云端大模型暂忙，已由考亭书院本地认知引擎即时为您作答";
+                assistantRow.querySelector(".message-bubble").appendChild(fbBadge);
+            }
+            if (streamErrorNotice) {
+                const warnBadge = document.createElement("div");
+                warnBadge.className = "stream-stopped-hint";
+                warnBadge.textContent = `⚠ ${streamErrorNotice}`;
+                assistantRow.querySelector(".message-bubble").appendChild(warnBadge);
+            }
+        }
     } catch (err) {
+        cancelPendingFrame();
         if (moduleKey === "qa" && window.avatarEngine) {
             avatarEngine.setState("idle");
         }
         if (err.name === "AbortError" || controller.signal.aborted) {
-            console.log(`[生成中止] 模块 ${moduleKey} 已被学者主动停止`);
             if (fullText.trim()) {
                 fullText = cleanParentheses(fullText);
-                textEl.innerHTML = renderMarkdown(fullText);
+                textEl.innerHTML = renderMarkdown(fullText, false);
             } else {
                 textEl.innerHTML = `<span style="color:#64748b; font-style:italic;">学者已停止讲学</span>`;
             }
@@ -820,85 +1272,112 @@ async function sendQuery(moduleKey, queryOverride) {
             stoppedBadge.className = "stream-stopped-hint";
             stoppedBadge.innerHTML = `<span>⏹ 学者令止 · 考亭先生谨遵雅意，暂止于此</span>`;
             assistantRow.querySelector(".message-bubble").appendChild(stoppedBadge);
-            container.scrollTop = container.scrollHeight;
         } else {
             console.error("对话请求发生异常:", err);
-            textEl.innerHTML = `<span style="color:#ef4444;">抱歉，考亭书院网络传信遇阻，请稍后重新提问。(${escapeHtml(err.message)})</span>`;
+            textEl.innerHTML = `
+                <div class="chat-error-card">
+                    <span>抱歉，考亭书院网络传信遇阻（${escapeHtml(err.message)}）</span>
+                    <button type="button" class="chat-retry-inline-btn" data-action="regen-reply">↻ 点击重试</button>
+                </div>
+            `;
         }
     } finally {
+        cancelPendingFrame();
         if (moduleKey === "qa" && window.avatarEngine && controller.signal.aborted) {
             avatarEngine.setState("idle");
         }
-        // 移除气泡上的停止按钮
+
         const bubbleStop = assistantRow.querySelector(".bubble-stop-pill");
         if (bubbleStop) bubbleStop.remove();
 
-        // 更新状态标签
         const speakerLabel = assistantRow.querySelector(".speaker-label");
         if (speakerLabel) {
             speakerLabel.textContent = controller.signal.aborted ? "考亭先生 · 授毕暂歇" : "考亭先生 · 讲授完毕";
         }
 
-        // 保存进该模块的专属历史记录（防历史堆叠过长，彻底净化括号）
         fullText = cleanParentheses(fullText);
-        if (fullText.trim()) {
+        assistantRow.dataset.rawText = fullText;
+
+        if (footerBar) {
+            footerBar.style.display = "flex";
+        }
+
+        // 仅在仍属同一会话时写入历史并持久化，防止覆盖新会话
+        if (sess.id === reqSessionId && fullText.trim()) {
             sess.history.push({ role: "user", content: query });
             sess.history.push({ role: "assistant", content: fullText });
             if (sess.history.length > 30) {
                 sess.history = sess.history.slice(-30);
             }
+            persistCurrentSession(moduleKey);
         }
 
-        // 清理当前控制器与恢复 UI
-        delete activeAbortControllers[moduleKey];
-        setGeneratingUIState(moduleKey, false);
+        // 仅清理属于当前请求的控制器，避免误删后续新请求状态
+        if (activeAbortControllers[moduleKey] === controller) {
+            delete activeAbortControllers[moduleKey];
+            setGeneratingUIState(moduleKey, false);
+        }
 
-        // 显示并触发即时配音【实时毫秒级出声】
         if (ttsBtn && fullText.trim()) {
             ttsBtn.style.display = "inline-flex";
-            if (autoTTS && !controller.signal.aborted && fullText.length > 0) {
+            // 仅当用户仍停留在当前页面且主动开启 autoTTS 时播报，避免后台切页突然发声
+            if (autoTTS && !controller.signal.aborted && currentActiveView === moduleKey) {
                 speakInstantText(fullText, ttsBtn);
             }
         }
 
-        if (moduleKey === "qa") {
+        if (moduleKey === "qa" && sess.id === reqSessionId && fullText.trim()) {
             updateTaskFlowChips(fullText);
         }
 
-        if (input) {
-            input.focus();
+        if (currentActiveView === moduleKey) {
+            safeFocus(input);
         }
     }
 }
 
 // ========================================================
-// 实时语音朗诵控制器【统一唯一考亭大儒声线 zh-CN-YunjianNeural，杜绝杂乱声线】
+// 统一语音自动播报状态机（三处开关严格同步，唯一数据源）
 // ========================================================
 function speakInstantText(text, btnElement) {
-    // 坚决彻底停用并静音浏览器杂乱内置多音色，确保全局纯正考亭大儒唯一音色
     if ('speechSynthesis' in window) {
         try { window.speechSynthesis.cancel(); } catch (e) {}
     }
-    // 统一交由 playVoice 调度 Edge-TTS 考亭大儒专属音色
     playVoice(text, btnElement, "yunjian");
 }
 
-function toggleInstantTTS() {
-    autoTTS = !autoTTS;
-    const btn = document.getElementById("qa-tts-toggle-btn");
-    if (btn) {
-        if (autoTTS) {
-            btn.classList.add("active");
-            btn.innerHTML = `<span class="tts-status-icon">🔊</span><span class="tts-status-label">实时语音: 开</span>`;
-            showToast("实时语音已开启，先生讲学将实时发声");
-        } else {
-            btn.classList.remove("active");
-            btn.innerHTML = `<span class="tts-status-icon">🔇</span><span class="tts-status-label">实时语音: 关</span>`;
-            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-            stopCurrentVoice(false);
-            showToast("实时语音已关闭");
-        }
+function syncAutoTTSUI() {
+    const qaBtn = document.getElementById("qa-tts-toggle-btn");
+    if (qaBtn) {
+        qaBtn.classList.toggle("active", autoTTS);
+        qaBtn.innerHTML = autoTTS
+            ? `<span class="tts-status-icon">🔊</span><span class="tts-status-label">实时语音: 开</span>`
+            : `<span class="tts-status-icon">🔇</span><span class="tts-status-label">实时语音: 关</span>`;
     }
+    const topIcon = document.getElementById("tts-icon");
+    if (topIcon) {
+        topIcon.textContent = autoTTS ? "🔊" : "🔇";
+    }
+    const modalBtn = document.getElementById("modal-tts-toggle");
+    if (modalBtn) {
+        modalBtn.textContent = autoTTS ? "已开启" : "已关闭";
+        modalBtn.className = autoTTS ? "toggle-pill-btn" : "toggle-pill-btn off";
+    }
+}
+
+function setAutoTTS(enabled, silent = false) {
+    autoTTS = Boolean(enabled);
+    syncAutoTTSUI();
+    if (!autoTTS) {
+        stopCurrentVoice(true);
+    }
+    if (!silent) {
+        showToast(autoTTS ? "已开启实时语音，先生讲学将自动发声" : "已关闭实时自动语音（仍可随时点击气泡聆听）");
+    }
+}
+
+function toggleInstantTTS() {
+    setAutoTTS(!autoTTS);
 }
 
 // ========================================================
@@ -946,32 +1425,33 @@ const SCENERY_IMAGE_MAP = {
     }
 };
 
-function appendAssistantParchment(moduleKey, text) {
+function appendAssistantParchment(moduleKey, text, userSummary = null) {
     const sess = chatSessions[moduleKey];
     if (!sess) return;
     const container = document.getElementById(sess.containerId);
     if (!container) return;
 
-    const assistantRow = document.createElement("div");
-    assistantRow.className = "message-row assistant";
-    assistantRow.innerHTML = `
-        <div class="message-avatar"><img src="/static/avatar_ref_hd.png" alt="先生" class="msg-avatar-img"></div>
-        <div class="message-bubble parchment-bubble">
-            <div class="bubble-top-row">
-                <span class="speaker-label">考亭先生 · 专修亲授</span>
-                <button class="tts-play-btn" onclick="playVoiceFromBubble(this)">
-                    <span class="tts-icon">🔊</span> <span class="tts-text">聆听先生讲学</span>
-                </button>
-            </div>
-            <div class="message-text">${renderMarkdown(cleanParentheses(text))}</div>
-            <div class="bubble-seal-mark">考亭印</div>
-        </div>
-    `;
+    if (userSummary) {
+        const uRow = document.createElement("div");
+        uRow.className = "message-row user";
+        uRow.innerHTML = `<div class="message-bubble">${escapeHtml(userSummary)}</div><div class="message-avatar">生</div>`;
+        container.appendChild(uRow);
+    }
+
+    const assistantRow = createAssistantBubbleRow(moduleKey, text, "", false);
+    const labelEl = assistantRow.querySelector(".speaker-label");
+    if (labelEl) labelEl.textContent = "考亭先生 · 专修亲授";
     container.appendChild(assistantRow);
     container.scrollTop = container.scrollHeight;
 
-    if (sess.history) {
+    // 仅在存在对应用户发言时成对写入历史，避免向云端大模型发送孤立的 assistant 轮次
+    if (userSummary && sess.history) {
+        sess.history.push({ role: "user", content: userSummary });
         sess.history.push({ role: "assistant", content: text });
+        if (sess.history.length > 30) {
+            sess.history = sess.history.slice(-30);
+        }
+        persistCurrentSession(moduleKey);
     }
 }
 
@@ -981,29 +1461,40 @@ function startTaskFlow(flowKey) {
     const bar = document.getElementById("active-taskflow-bar");
     const chipsBar = document.getElementById("taskflow-quick-chips");
     const defaultChipsBar = document.getElementById("qa-default-chips-bar");
+    const qaMessagesEl = document.getElementById("qa-messages");
+    const qaInputBar = document.querySelector("#view-qa .view-bottom-input-bar");
     const iconEl = document.getElementById("active-flow-icon");
     const titleEl = document.getElementById("active-flow-title");
 
     if (bar) bar.style.display = "flex";
-    if (chipsBar) chipsBar.style.display = "flex";
     if (defaultChipsBar) defaultChipsBar.style.display = "none";
+
+    // 朱子文化论文写作指导：直接在当前考亭答疑原位置内嵌展开六阶段研撰工作台
+    if (flowKey === "thesis") {
+        if (iconEl) iconEl.textContent = "";
+        if (titleEl) titleEl.textContent = "当前专修：朱子文化论文写作指导";
+        if (chipsBar) chipsBar.style.display = "none";
+        if (qaMessagesEl) qaMessagesEl.style.display = "none";
+        if (qaInputBar) qaInputBar.style.display = "none";
+        if (window.thesisStudio) {
+            window.thesisStudio.open();
+        }
+        showToast("已开启朱子文化论文写作指导");
+        return;
+    }
+
+    // 切换至其他任务流时收起内嵌论文工作台，恢复常规对答消息流
+    if (window.thesisStudio) window.thesisStudio.close();
+    if (qaMessagesEl) qaMessagesEl.style.display = "";
+    if (qaInputBar) qaInputBar.style.display = "";
+    if (chipsBar) chipsBar.style.display = "flex";
 
     let flowTitle = "";
     let flowIcon = "";
     let openingMsg = "";
     let chipsHtml = "";
 
-    if (flowKey === "thesis") {
-        flowTitle = "论文写作指导";
-        flowIcon = "🎓";
-        openingMsg = "后学有志于理学学术研撰，诚乃光大考亭道统之大幸！研撰理学论文，首重立意高远、辨析精微。请点击上方任一论题方向，老夫当从论点破题、义理脉络与论证纲要予以系统指导；若有自拟论题，亦可直接在对话框中键入道来！";
-        chipsHtml = `
-            <button class="taskflow-quick-chip" onclick="selectThesisDirection('朱子‘理在气先’与本体宇宙论深析')">📜 论题一：理在气先与本体论</button>
-            <button class="taskflow-quick-chip" onclick="selectThesisDirection('从‘即物穷理’看朱子认识论与现代科学精神之异同')">🔬 论题二：即物穷理与科学精神</button>
-            <button class="taskflow-quick-chip" onclick="selectThesisDirection('‘心统性情’视野下朱子工夫论与当代身心安顿')">🌸 论题三：心统性情与身心安顿</button>
-            <button class="taskflow-quick-chip" onclick="selectThesisDirection('武夷精舍与考亭书院理学教育体系考论')">🏛️ 论题四：书院理学教育体系</button>
-        `;
-    } else if (flowKey === "poetry") {
+    if (flowKey === "poetry") {
         flowTitle = "古诗析理鉴赏";
         flowIcon = "📜";
         openingMsg = "老夫一生寄情于诗，诗中皆有理学生意。仁兄可点击下方诗歌名篇，亦可直接在对话框键入诗句，或点击输入栏右侧【📷 传图】按钮上传古诗墨宝、碑刻或书画照片。老夫当为仁兄由诗入道、开掘朱子文化与理学哲思！";
@@ -1045,20 +1536,27 @@ function startTaskFlow(flowKey) {
     if (chipsBar) chipsBar.innerHTML = chipsHtml;
 
     appendAssistantParchment("qa", openingMsg);
-    speakInstantText(openingMsg);
+    if (autoTTS) {
+        speakInstantText(openingMsg);
+    }
     showToast(`已开启【${flowTitle}】`);
 }
 
-function exitTaskFlow() {
+function exitTaskFlow(silent = false) {
     currentTaskFlow = null;
+    if (window.thesisStudio) window.thesisStudio.close();
     const bar = document.getElementById("active-taskflow-bar");
     const chipsBar = document.getElementById("taskflow-quick-chips");
     const defaultChipsBar = document.getElementById("qa-default-chips-bar");
+    const qaMessagesEl = document.getElementById("qa-messages");
+    const qaInputBar = document.querySelector("#view-qa .view-bottom-input-bar");
 
     if (bar) bar.style.display = "none";
     if (chipsBar) chipsBar.style.display = "none";
     if (defaultChipsBar) defaultChipsBar.style.display = "flex";
-    showToast("已退出当前专修任务流，恢复自由问学");
+    if (qaMessagesEl) qaMessagesEl.style.display = "";
+    if (qaInputBar) qaInputBar.style.display = "";
+    if (!silent) showToast("已退出当前专修任务流，恢复自由问学");
 }
 
 function selectThesisDirection(topic) {
@@ -1118,8 +1616,20 @@ function triggerPoetryImageUpload() {
 }
 
 async function handlePoetryImageFile(input) {
-    const file = input.files[0];
+    const file = input && input.files && input.files[0];
     if (!file) return;
+
+    const lowerName = file.name.toLowerCase();
+    if (!/\.(png|jpe?g|webp|bmp)$/.test(lowerName)) {
+        showToast("仅支持 PNG、JPG、JPEG、WEBP、BMP 格式的古诗墨宝图片");
+        if (input) input.value = "";
+        return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+        showToast("图片体积超过 10 MB，请压缩后再试");
+        if (input) input.value = "";
+        return;
+    }
 
     showToast(`正在呈交先生识读古诗墨宝《${file.name}》...`);
     const formData = new FormData();
@@ -1130,17 +1640,21 @@ async function handlePoetryImageFile(input) {
             method: "POST",
             body: formData
         });
-        const data = await res.json();
-        if (res.ok && data.prompt) {
-            sendQuery("qa", data.prompt);
-            showToast("古诗墨宝呈递成功，先生正即物穷理析理中");
+        let data = {};
+        try { data = await res.json(); } catch (e) {}
+
+        if (res.ok && data.analysis) {
+            switchNav("qa");
+            const userLabel = data.user_summary || `📷 已呈交古籍墨宝《${file.name}》，恭请先生朱砂手批。`;
+            appendAssistantParchment("qa", data.analysis, userLabel);
+            showToast(data.fallback ? "云端识图通道暂忙，已呈示先生请益指引" : "古诗墨宝朱砂手批已完成！");
         } else {
-            showToast(data.detail || "古诗墨宝识读失败，请重试");
+            showToast(data.detail || `古诗墨宝识读失败 (HTTP ${res.status})`);
         }
     } catch (err) {
         showToast(`识读遇阻: ${err.message}`);
     } finally {
-        input.value = "";
+        if (input) input.value = "";
     }
 }
 
@@ -1285,16 +1799,27 @@ function switchGalGameChapter(chapterId, btnEl) {
     }
 }
 
-function toggleGalGameSyllabusDrawer() {
+function toggleGalGameSyllabusDrawer(forceOpen) {
     ensureGalGameEngineSyllabusBridge();
     const drawer = document.getElementById("galgame-syllabus-drawer");
+    const backdrop = document.getElementById("galgame-drawer-backdrop");
     if (!drawer) return;
-    const isHidden = drawer.style.display === "none" || !drawer.style.display;
-    drawer.style.display = isHidden ? "flex" : "none";
-    if (isHidden && window.galGameEngine) {
-        const curId = window.galGameEngine.currentChapterId || "wuyi_jingshe";
-        if (typeof window.galGameEngine.updateSyllabusDrawer === "function") {
-            window.galGameEngine.updateSyllabusDrawer(curId);
+
+    const isMobileLike = window.innerWidth <= 1024;
+    if (isMobileLike) {
+        const willOpen = typeof forceOpen === "boolean" ? forceOpen : !drawer.classList.contains("mobile-drawer-open");
+        drawer.classList.toggle("mobile-drawer-open", willOpen);
+        drawer.style.display = "";
+        if (backdrop) backdrop.classList.toggle("active", willOpen);
+        if (willOpen && window.galGameEngine && typeof window.galGameEngine.updateSyllabusDrawer === "function") {
+            window.galGameEngine.updateSyllabusDrawer(window.galGameEngine.currentChapterId || "wuyi_jingshe");
+        }
+    } else {
+        const currentlyVisible = window.getComputedStyle(drawer).display !== "none";
+        const willShow = typeof forceOpen === "boolean" ? forceOpen : !currentlyVisible;
+        drawer.style.display = willShow ? "flex" : "none";
+        if (willShow && window.galGameEngine && typeof window.galGameEngine.updateSyllabusDrawer === "function") {
+            window.galGameEngine.updateSyllabusDrawer(window.galGameEngine.currentChapterId || "wuyi_jingshe");
         }
     }
 }
@@ -1374,10 +1899,16 @@ function submitReflectionToMaster() {
 }
 
 // ========================================================
-// 沧洲藏书交互 (藏书求径)
+// 沧洲藏书交互 (藏书求径 · 自动展开底部对答栏)
 // ========================================================
 function consultSpecificBook(bookTitle) {
     switchNav("recommend");
+    const dockBody = document.getElementById("library-dock-body");
+    const dockIcon = document.getElementById("library-dock-icon");
+    if (dockBody && dockBody.style.display !== "block") {
+        dockBody.style.display = "block";
+        if (dockIcon) dockIcon.textContent = "▼ 收起对答";
+    }
     const prompt = `后学欲研读《${bookTitle}》，请先生指点阅读次第、研读法门与核心宗旨。`;
     sendQuery("recommend", prompt);
 }
@@ -1437,15 +1968,7 @@ function consultMasterAboutSlip() {
 function copySlipQuote() {
     if (!currentDrawnSlip) return;
     const text = `${currentDrawnSlip.quote}\n${currentDrawnSlip.author}`;
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).then(() => {
-            showToast("箴言已复制至剪贴板");
-        }).catch(() => {
-            showToast("已复制");
-        });
-    } else {
-        showToast("已复制");
-    }
+    copyTextSafe(text, "箴言已复制至剪贴板");
 }
 
 // 全屏沉浸研学切换
@@ -1469,50 +1992,51 @@ function drawDailyQuote() {
 }
 
 // ========================================================
-// 典雅语音合成 (全局统一唯一考亭大儒声线，杜绝声线错乱与多重重叠)
+// 典雅语音合成 (防自动播放卡死 + Blob URL 释放 + BGM 自动闪避)
 // ========================================================
 async function playVoice(text, btnElement, voiceStyleOverride) {
-    // 1. 无条件彻底静音并停止当前任何在播音频或浏览器语音
     stopCurrentVoice(false);
     if ('speechSynthesis' in window) {
-        try {
-            window.speechSynthesis.cancel();
-        } catch (e) {}
+        try { window.speechSynthesis.cancel(); } catch (e) {}
     }
 
     activePlayId++;
     const thisPlayId = activePlayId;
     currentTTSButton = btnElement;
 
-    // 清洗文本用于纯净朗诵
-    let cleanText = text
+    // 剥离【参考资料】区块与格式符，与后端保持一致
+    let cleanText = String(text || "");
+    if (cleanText.includes("【参考资料】")) {
+        cleanText = cleanText.split("【参考资料】")[0];
+    }
+    cleanText = cleanText
         .replace(/[#*`_>~]/g, "")
-        .replace(/\[.*?\]/g, "")
-        .replace(/\(.*?\)/g, "")
-        .replace(/【.*?】/g, "")
-        .replace(/📜|💡|🎯|✨|🌟|🏮|🌅|☀️|🌙/g, "")
+        .replace(/【[0-9]{1,2}】|\[[0-9]{1,2}\]/g, "")
+        .replace(/📜|💡|🎯|✨|🌟|🏮|🌅|☀️|🌙|🔊|🔇|🏛️|📖/g, "")
         .trim();
 
-    if (cleanText.length > 500) {
-        cleanText = cleanText.substring(0, 500) + "。余言且待仁兄细味。";
+    if (cleanText.length > 480) {
+        cleanText = cleanText.substring(0, 480) + "。";
     }
-
     if (!cleanText) return;
 
     if (btnElement) {
         btnElement.classList.add("playing");
         const icon = btnElement.querySelector(".tts-icon");
         const label = btnElement.querySelector(".tts-text");
-        if (icon) icon.textContent = "🔊";
-        if (label) label.textContent = "夫子讲学中...";
+        if (icon) icon.textContent = "⏹";
+        if (label) label.textContent = "停止朗诵";
     }
 
-    // 唤醒全局播放条（统一考亭大儒标识）
     const audioDock = document.getElementById("audio-dock");
     if (audioDock) {
         audioDock.style.display = "flex";
         const dockTitle = document.getElementById("dock-title");
-        if (dockTitle) dockTitle.textContent = "考亭大儒 · 苍劲风骨 诵读中";
+        if (dockTitle) dockTitle.textContent = "考亭大儒 · 正在合成朗诵...";
+        const pIcon = document.getElementById("dock-play-pause-icon");
+        const pText = document.getElementById("dock-play-pause-text");
+        if (pIcon) pIcon.textContent = "⏸️";
+        if (pText) pText.textContent = "暂停";
     }
 
     try {
@@ -1522,7 +2046,7 @@ async function playVoice(text, btnElement, voiceStyleOverride) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 text: cleanText,
-                style: "yunjian"
+                style: voiceStyleOverride || "yunjian"
             }),
             signal: currentTTSAbortController.signal
         });
@@ -1530,19 +2054,26 @@ async function playVoice(text, btnElement, voiceStyleOverride) {
         if (thisPlayId !== activePlayId) return;
 
         if (!response.ok) {
-            throw new Error(`语音合成服务返回 ${response.status}`);
+            let errDetail = `语音服务暂忙 (HTTP ${response.status})`;
+            try {
+                const errJson = await response.json();
+                if (errJson.detail) errDetail = errJson.detail;
+            } catch (e) {}
+            throw new Error(errDetail);
         }
 
         const blob = await response.blob();
         if (thisPlayId !== activePlayId) return;
 
         const audioUrl = URL.createObjectURL(blob);
+        currentAudioUrl = audioUrl;
         currentAudio = new Audio(audioUrl);
+        currentAudio.playsInline = true;
         isVoicePlaying = true;
         isVoicePaused = false;
 
         currentAudio.onended = () => {
-            stopCurrentVoice(true);
+            if (thisPlayId === activePlayId) stopCurrentVoice(true);
         };
 
         currentAudio.onerror = (e) => {
@@ -1550,22 +2081,26 @@ async function playVoice(text, btnElement, voiceStyleOverride) {
             if (thisPlayId === activePlayId) stopCurrentVoice(true);
         };
 
-        await currentAudio.play().catch(playErr => {
-            console.warn("音频自动播放需用户手势触发:", playErr);
-            // 保持单一纯粹声线，绝不降级至杂乱机械语音
-            if (btnElement) {
-                const label = btnElement.querySelector(".tts-text");
-                if (label) label.textContent = "点击聆听夫子原声";
+        duckBgmForSpeech(true);
+        try {
+            await currentAudio.play();
+            const dockTitle = document.getElementById("dock-title");
+            if (dockTitle) dockTitle.textContent = "考亭大儒 · 苍劲风骨 诵读中";
+            if (window.avatarEngine && avatarEngine.currentState !== "speaking") {
+                avatarEngine.setState("speaking");
             }
-        });
-
-        if (window.avatarEngine && avatarEngine.currentState !== "speaking") {
-            avatarEngine.setState("speaking");
+        } catch (playErr) {
+            // 浏览器阻止自动播放：立即复位状态与数字人，防止永久卡死
+            console.warn("音频自动播放被浏览器策略阻止:", playErr);
+            if (thisPlayId === activePlayId) {
+                stopCurrentVoice(true);
+                showToast("浏览器限制了自动发声，请点击气泡内【聆听先生讲学】收听");
+            }
         }
-
     } catch (err) {
         if (err.name !== "AbortError") {
             console.warn("TTS 播放受限:", err);
+            showToast(err.message || "语音合成暂时不可用，请稍后重试");
         }
         if (thisPlayId === activePlayId) {
             stopCurrentVoice(true);
@@ -1573,24 +2108,28 @@ async function playVoice(text, btnElement, voiceStyleOverride) {
     }
 }
 
-// 严禁任何杂乱内建语音干扰：全局静默 SpeechSynthesis
 function cancelAnyBrowserSpeech() {
     if ('speechSynthesis' in window) {
         try { window.speechSynthesis.cancel(); } catch (e) {}
     }
 }
 
-// 全局暴露语音与对话派发工具
 window.playVoiceByText = (text, style) => playVoice(text, null, style);
 window.sendQuery = sendQuery;
 
-
 function playVoiceFromBubble(btn) {
+    // 若当前气泡正在播放，再次点击立即停止
+    if (btn && btn.classList.contains("playing")) {
+        stopCurrentVoice(true);
+        return;
+    }
     const bubble = btn.closest(".message-bubble");
     if (!bubble) return;
+    const row = btn.closest(".message-row");
     const textEl = bubble.querySelector(".message-text");
-    if (!textEl) return;
-    playVoice(textEl.innerText, btn);
+    const raw = (row && row.dataset.rawText) || (textEl ? textEl.innerText : "");
+    if (!raw.trim()) return;
+    playVoice(raw, btn);
 }
 
 function togglePauseVoice() {
@@ -1599,10 +2138,13 @@ function togglePauseVoice() {
     const text = document.getElementById("dock-play-pause-text");
 
     if (isVoicePaused) {
-        currentAudio.play();
-        isVoicePaused = false;
-        if (icon) icon.textContent = "⏸️";
-        if (text) text.textContent = "暂停";
+        currentAudio.play().then(() => {
+            isVoicePaused = false;
+            if (icon) icon.textContent = "⏸️";
+            if (text) text.textContent = "暂停";
+        }).catch(() => {
+            showToast("恢复播放受阻，请重新点击播放");
+        });
     } else {
         currentAudio.pause();
         isVoicePaused = true;
@@ -1618,18 +2160,22 @@ function stopCurrentVoice(hideDock = false) {
         currentTTSAbortController = null;
     }
     if (currentAudio) {
+        currentAudio.onended = null;
+        currentAudio.onerror = null;
         currentAudio.pause();
         currentAudio.src = "";
         currentAudio = null;
     }
-    // 强制终止浏览器一切原生语音朗读，防止声线重叠冲突
+    if (currentAudioUrl) {
+        try { URL.revokeObjectURL(currentAudioUrl); } catch (e) {}
+        currentAudioUrl = null;
+    }
     if ('speechSynthesis' in window) {
-        try {
-            window.speechSynthesis.cancel();
-        } catch (e) {}
+        try { window.speechSynthesis.cancel(); } catch (e) {}
     }
     isVoicePlaying = false;
     isVoicePaused = false;
+    duckBgmForSpeech(false);
 
     if (currentTTSButton) {
         currentTTSButton.classList.remove("playing");
@@ -1651,20 +2197,7 @@ function stopCurrentVoice(hideDock = false) {
 }
 
 function toggleAutoTTS() {
-    autoTTS = !autoTTS;
-    const ttsIcon = document.getElementById("tts-icon");
-    const modalBtn = document.getElementById("modal-tts-toggle");
-
-    if (autoTTS) {
-        if (ttsIcon) ttsIcon.textContent = "🔊";
-        if (modalBtn) { modalBtn.textContent = "已开启"; modalBtn.className = "toggle-pill-btn"; }
-        showToast("已开启先生回答自动配音");
-    } else {
-        stopCurrentVoice(true);
-        if (ttsIcon) ttsIcon.textContent = "🔇";
-        if (modalBtn) { modalBtn.textContent = "已关闭"; modalBtn.className = "toggle-pill-btn off"; }
-        showToast("已静音先生自动配音");
-    }
+    setAutoTTS(!autoTTS);
 }
 
 function changeVoiceStyle(val) {
@@ -1682,6 +2215,10 @@ function toggleTheme() {
 }
 
 function openUploadModal() {
+    const aStatus = document.getElementById("analysis-upload-status");
+    const uStatus = document.getElementById("upload-status");
+    if (aStatus) aStatus.textContent = "";
+    if (uStatus) uStatus.textContent = "";
     document.getElementById("upload-modal").classList.add("active");
     loadKnowledgeStats();
 }
@@ -1690,6 +2227,8 @@ function closeUploadModal() {
 }
 
 function openHistoryModal() {
+    closeMobileNavDrawer();
+    renderHistoryModalList();
     document.getElementById("history-modal").classList.add("active");
 }
 function closeHistoryModal() {
@@ -1701,6 +2240,8 @@ function openFavoriteModal() {
 }
 
 function openSettingsModal() {
+    closeMobileNavDrawer();
+    syncAutoTTSUI();
     document.getElementById("settings-modal").classList.add("active");
 }
 function closeSettingsModal() {
@@ -1712,7 +2253,7 @@ function minimizeWindow() { showToast("应用已最小化至任务栏"); }
 function toggleMaximize() { showToast("窗口最大化视图"); }
 function closeWindow() { showToast("学者且慢行，考亭常在。"); }
 
-// 知识库文件加载
+// 知识库文件加载（兼容 indexed_sources 与分类列表并严格转义）
 async function loadKnowledgeStats() {
     try {
         const res = await fetch("/api/knowledge/stats");
@@ -1721,10 +2262,13 @@ async function loadKnowledgeStats() {
             const countEl = document.getElementById("kb-count");
             if (countEl) countEl.textContent = `${data.total_chunks || 0} 章节切片`;
             const fileListEl = document.getElementById("corpus-files");
-            if (fileListEl && data.indexed_sources) {
-                fileListEl.innerHTML = data.indexed_sources.map(s => `
+            const sources = Array.isArray(data.indexed_sources) && data.indexed_sources.length > 0
+                ? data.indexed_sources
+                : [...(data.base_files || []), ...(data.ebooks_files || []), ...(data.custom_files || [])];
+            if (fileListEl) {
+                fileListEl.innerHTML = sources.map(s => `
                     <div style="font-size:12px; padding:4px 0; color:#475569; border-bottom:1px solid #f1f5f9;">
-                        📜 《${s}》
+                        📜 《${escapeHtml(String(s).replace(/\.(txt|md)$/i, ""))}》
                     </div>
                 `).join("");
             }
@@ -1766,12 +2310,30 @@ function switchUploadMode(mode) {
     }
 }
 
-// 模块四：即物穷理文献深度剖析 (支持 txt, md, docx, pdf)
+// 模块四：即物穷理文献深度剖析（单次请求直出剖析气泡，杜绝二次套娃调用与用户气泡错贴）
 async function handleDocumentAnalysis(input) {
-    const file = input.files[0];
+    const file = input && input.files && input.files[0];
     if (!file) return;
 
     const statusEl = document.getElementById("analysis-upload-status");
+    const lowerName = file.name.toLowerCase();
+    if (!/\.(txt|md|docx|pdf|png|jpe?g|webp|bmp)$/.test(lowerName)) {
+        if (statusEl) {
+            statusEl.textContent = "格式不支持：请上传 TXT、MD、DOCX、PDF 或 PNG/JPG/WEBP/BMP 图片";
+            statusEl.style.color = "#dc2626";
+        }
+        if (input) input.value = "";
+        return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+        if (statusEl) {
+            statusEl.textContent = "文件超过 10 MB 上限，请精简后再试";
+            statusEl.style.color = "#dc2626";
+        }
+        if (input) input.value = "";
+        return;
+    }
+
     if (statusEl) {
         statusEl.textContent = `考亭先生正在展卷细读《${file.name}》，即物穷理中...`;
         statusEl.style.color = "#2563eb";
@@ -1785,21 +2347,24 @@ async function handleDocumentAnalysis(input) {
             method: "POST",
             body: formData
         });
-        const data = await res.json();
-        if (res.ok && data.prompt) {
+        let data = {};
+        try { data = await res.json(); } catch (e) {}
+
+        if (res.ok && data.analysis) {
             if (statusEl) {
-                statusEl.textContent = `《${file.name}》研析完成，即刻移步考亭精舍呈交先生朱砂手批！`;
+                statusEl.textContent = `《${file.name}》研析完成，已呈送至考亭答疑精舍！`;
                 statusEl.style.color = "#16a34a";
             }
             setTimeout(() => {
                 closeUploadModal();
                 switchNav("qa");
-                sendQuery("qa", data.prompt);
-                showToast(`已将《${file.name}》呈递考亭先生即物穷理批阅`);
-            }, 700);
+                const userLabel = data.user_summary || `📄 已呈交文献《${file.name}》，恭请先生朱砂手批。`;
+                appendAssistantParchment("qa", data.analysis, userLabel);
+                showToast(data.fallback ? "云端通道暂忙，已呈示考亭四维研析指引" : `《${file.name}》朱砂手批已完成！`);
+            }, 450);
         } else {
             if (statusEl) {
-                statusEl.textContent = data.detail || "文献研析失败，请检查文件格式";
+                statusEl.textContent = data.detail || `文献研析失败 (HTTP ${res.status})`;
                 statusEl.style.color = "#dc2626";
             }
         }
@@ -1808,14 +2373,33 @@ async function handleDocumentAnalysis(input) {
             statusEl.textContent = `析理遇阻: ${err.message}`;
             statusEl.style.color = "#dc2626";
         }
+    } finally {
+        if (input) input.value = "";
     }
 }
 
 async function handleFileUpload(input) {
-    const file = input.files[0];
+    const file = input && input.files && input.files[0];
     if (!file) return;
 
     const statusEl = document.getElementById("upload-status");
+    if (!/\.(txt|md)$/i.test(file.name)) {
+        if (statusEl) {
+            statusEl.textContent = "目前仅支持上传 .txt 或 .md 纯文本特色文献";
+            statusEl.style.color = "#dc2626";
+        }
+        if (input) input.value = "";
+        return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+        if (statusEl) {
+            statusEl.textContent = "单文件上限为 5 MB，请拆分后上传";
+            statusEl.style.color = "#dc2626";
+        }
+        if (input) input.value = "";
+        return;
+    }
+
     if (statusEl) {
         statusEl.textContent = `正在上传并切片索引《${file.name}》...`;
         statusEl.style.color = "#2563eb";
@@ -1829,7 +2413,9 @@ async function handleFileUpload(input) {
             method: "POST",
             body: formData
         });
-        const data = await res.json();
+        let data = {};
+        try { data = await res.json(); } catch (e) {}
+
         if (res.ok) {
             if (statusEl) {
                 statusEl.textContent = `《${file.name}》收录成功，新增切片已融入书院知识库！`;
@@ -1838,7 +2424,7 @@ async function handleFileUpload(input) {
             loadKnowledgeStats();
         } else {
             if (statusEl) {
-                statusEl.textContent = data.detail || "上传失败";
+                statusEl.textContent = data.detail || `上传失败 (HTTP ${res.status})`;
                 statusEl.style.color = "#dc2626";
             }
         }
@@ -1847,65 +2433,131 @@ async function handleFileUpload(input) {
             statusEl.textContent = `上传遇阻: ${err.message}`;
             statusEl.style.color = "#dc2626";
         }
+    } finally {
+        if (input) input.value = "";
     }
 }
 
-// 彻底清除所有中英文圆括号，替换为典雅破折号，绝不误伤正文与典籍原名
+// 温和文本清洗（仅清除可能泄漏的系统内部规则注记，不再粗暴篡改书名或将圆括号转为破折号）
 function cleanParentheses(text) {
     if (!text) return "";
-    let t = text;
-
-    // 1. 将圆括号替换为文人破折号，绝不误删括号内的大段精辟义理
-    t = t.replace(/[（\(]([^\n()（）]{1,80})[）\)]/g, "——$1——");
-    t = t.replace(/[（\(\)）]/g, "");
-
-    // 2. 保护传世典籍真实馆藏原名（如《朱子语类》《朱子读书法》《朱子文集》等）
-    // 3. 将人名直呼温和转为宗师尊称
-    t = t.replace(/朱文公|朱夫子|朱老师|朱爷爷/g, "考亭先生");
+    let t = String(text);
+    t = t.replace(/[\(（]\s*(?:注[:：][^\)）\n]*(?:系统|规则|内部|提示|AI|模型|自动生成)|系统提示|提示词|内部规则|无括号|AI\s*注)[^\)）\n]*[\)）]/g, "");
+    t = t.replace(/朱夫子|朱老师|朱爷爷/g, "考亭先生");
     return t;
 }
 
-// 简易 Markdown 渲染器 (增强古典文风表现力，严禁输出任何括号与系统规则)
-function renderMarkdown(md) {
+// 增强型安全 Markdown 渲染器（修复 ①–⑨ 嵌套损坏 HTML、支持列表/斜体/代码、流式防闪烁、零双转义）
+function renderMarkdown(md, isStreaming = false) {
     if (!md) return "";
-    // 优先清除任何圆括号及其内部内容
     md = cleanParentheses(md);
-    let html = escapeHtml(md);
 
-    // 标题
-    html = html.replace(/^### (.*$)/gim, '<h4 class="md-h4">$1</h4>');
-    html = html.replace(/^## (.*$)/gim, '<h3 class="md-h3">$1</h3>');
-    html = html.replace(/^# (.*$)/gim, '<h2 class="md-h2">$1</h2>');
+    // 1. 拆分正文与【参考资料】区块，避免对【参考资料】做 HTML 破坏或二次转义
+    let bodyMd = md;
+    let provMd = "";
+    const provIdx = md.indexOf("【参考资料】");
+    if (provIdx !== -1) {
+        bodyMd = md.slice(0, provIdx).trimEnd();
+        provMd = md.slice(provIdx + "【参考资料】".length);
+    }
 
-    // 粗体与高亮
-    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    const lines = bodyMd.split(/\r?\n/);
+    const out = [];
+    let inUl = false;
+    let inOl = false;
 
-    // 引用块
-    html = html.replace(/^\&gt; (.*$)/gim, '<blockquote>$1</blockquote>');
+    const closeLists = () => {
+        if (inUl) { out.push("</ul>"); inUl = false; }
+        if (inOl) { out.push("</ol>"); inOl = false; }
+    };
 
-    // 换行保留
-    html = html.replace(/\n\n/g, '<br><br>');
-    html = html.replace(/\n/g, '<br>');
+    const formatInline = (rawLine) => {
+        let s = escapeHtml(rawLine);
+        s = s.replace(/`([^`]+)`/g, '<code class="md-inline-code">$1</code>');
+        s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+        s = s.replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, '$1<em>$2</em>');
+        // 单遍安全替换引注角标【1】/[1]（不含 title 内的 [num]，彻底消除嵌套 HTML 破坏！）
+        if (provIdx !== -1) {
+            s = s.replace(/(?:【([0-9]{1,2})】|\[([0-9]{1,2})\])(?!\d)/g, (_, p1, p2) => {
+                const num = p1 || p2;
+                return `<span class="cite-ref-badge" data-ref="${num}" title="查看武夷学院馆藏原典引注第${num}条">${num}</span>`;
+            });
+        }
+        return s;
+    };
 
-    // 转换正文引注角标 【1】 或 [1] 或 ① 为绿色圆圈徽标（完全匹配茶典智能体样式）
-    const circledNums = { '①': 1, '②': 2, '③': 3, '④': 4, '⑤': 5, '⑥': 6, '⑦': 7, '⑧': 8, '⑨': 9 };
-    html = html.replace(/[①②③④⑤⑥⑦⑧⑨]/g, (match) => {
-        const num = circledNums[match];
-        return `<span class="cite-ref-badge" data-ref="${num}" onclick="window.scrollToProvenanceRef(${num})" title="查看武夷学院馆藏原典引注 [${num}]">${num}</span>`;
-    });
-    html = html.replace(/(?:【([0-9]{1,2})】|\[([0-9]{1,2})\])(?!\d)/g, (match, p1, p2) => {
-        const num = p1 || p2;
-        return `<span class="cite-ref-badge" data-ref="${num}" onclick="window.scrollToProvenanceRef(${num})" title="查看武夷学院馆藏原典引注 [${num}]">${num}</span>`;
-    });
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        const trimmed = line.trim();
 
-    // 强化武夷学院自建特色库馆藏溯源与线下预约卡片
-    html = enrichCitationWithOpac(html);
+        if (!trimmed) {
+            closeLists();
+            if (out.length > 0 && out[out.length - 1] !== '<div class="md-spacer"></div>') {
+                out.push('<div class="md-spacer"></div>');
+            }
+            continue;
+        }
+        if (/^---+$/.test(trimmed)) {
+            closeLists();
+            out.push('<hr class="md-hr">');
+            continue;
+        }
+        if (/^###\s+/.test(trimmed)) {
+            closeLists();
+            out.push(`<h4 class="md-h4">${formatInline(trimmed.replace(/^###\s+/, ""))}</h4>`);
+            continue;
+        }
+        if (/^##\s+/.test(trimmed)) {
+            closeLists();
+            out.push(`<h3 class="md-h3">${formatInline(trimmed.replace(/^##\s+/, ""))}</h3>`);
+            continue;
+        }
+        if (/^#\s+/.test(trimmed)) {
+            closeLists();
+            out.push(`<h2 class="md-h2">${formatInline(trimmed.replace(/^#\s+/, ""))}</h2>`);
+            continue;
+        }
+        if (/^>\s*/.test(trimmed)) {
+            closeLists();
+            out.push(`<blockquote>${formatInline(trimmed.replace(/^>\s*/, ""))}</blockquote>`);
+            continue;
+        }
+        if (/^[-*•]\s+/.test(trimmed)) {
+            if (inOl) { out.push("</ol>"); inOl = false; }
+            if (!inUl) { out.push('<ul class="md-list">'); inUl = true; }
+            out.push(`<li>${formatInline(trimmed.replace(/^[-*•]\s+/, ""))}</li>`);
+            continue;
+        }
+        if (/^\d+\.\s+/.test(trimmed)) {
+            if (inUl) { out.push("</ul>"); inUl = false; }
+            if (!inOl) { out.push('<ol class="md-list md-ol">'); inOl = true; }
+            out.push(`<li>${formatInline(trimmed.replace(/^\d+\.\s+/, ""))}</li>`);
+            continue;
+        }
+
+        closeLists();
+        out.push(`<p class="md-p">${formatInline(trimmed)}</p>`);
+    }
+    closeLists();
+
+    let html = out.join("");
+
+    // 2. 渲染【参考资料】馆藏卡片（流式未完成时显示加载提示，完成后完整渲染防闪烁与防双转义）
+    if (provIdx !== -1) {
+        if (isStreaming) {
+            html += `<div class="prov-streaming-placeholder">📚 正在整理武夷学院逸夫图书馆馆藏溯源与 OPAC 排架号...</div>`;
+        } else {
+            html += renderLibraryProvenanceBlock(provMd);
+        }
+    } else if (!isStreaming && (html.includes("【典籍原典出处】") || html.includes("OPAC"))) {
+        html = enrichCitationWithOpac(html);
+    }
 
     return html;
 }
 
 function escapeHtml(str) {
-    return str
+    return String(str == null ? "" : str)
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
@@ -2031,14 +2683,13 @@ function renderLibraryProvenanceBlock(rawContent) {
         });
 
         const detailUrl = bibId ? `https://wyutsg.wuyiu.edu.cn/space/searchDetailLocal/${bibId}` : "https://wyutsg.wuyiu.edu.cn/space/index";
-        const safeTitle = escapeHtml(stdTitle).replace(/'/g, "\\'");
-        const safeCall = escapeHtml(callNumber).replace(/'/g, "\\'");
-        const statusClass = isBorrowable ? "status-ok" : "status-busy";
-        const statusText = isBorrowable ? "🟢 实时在架可借" : "🔴 借出·可预约";
+        const isReadingOnly = (opacEntry.status === "馆内阅览" || opacEntry.inLibraryOnly);
+        const statusClass = isBorrowable ? "status-ok" : (isReadingOnly ? "status-reading" : "status-busy");
+        const statusText = isBorrowable ? "🟢 实时在架可借" : (isReadingOnly ? "📘 特藏馆内阅览" : "🔴 借出·可预约");
 
         return `
-        <div class="prov-item-row" id="prov-ref-item-${num}">
-            <span class="prov-num-circle">${num}</span>
+        <div class="prov-item-row" data-prov-ref="${escapeHtml(num)}">
+            <span class="prov-num-circle">${escapeHtml(num)}</span>
             <div class="prov-item-body">
                 <div class="prov-item-line">
                     <strong class="prov-book-title">${escapeHtml(stdTitle)}</strong>
@@ -2051,10 +2702,10 @@ function renderLibraryProvenanceBlock(rawContent) {
                     <span class="prov-meta-source">来源：${escapeHtml(sourceDb)}</span>
                 </div>
                 <div class="prov-item-actions">
-                    <a href="${detailUrl}" target="_blank" rel="noopener noreferrer" class="prov-btn prov-opac-btn" title="直达武夷学院图书馆${escapeHtml(stdTitle)}官方预约系统">
+                    <a href="${escapeHtml(detailUrl)}" target="_blank" rel="noopener noreferrer" class="prov-btn prov-opac-btn" title="直达武夷学院图书馆${escapeHtml(stdTitle)}官方预约系统">
                         🏛️ 直达OPAC实体借阅预约 ➔
                     </a>
-                    <button type="button" class="prov-btn prov-read-btn" onclick="window.openFulltextFromProvenance('${bookKey}', '${safeTitle}', '', '', '')" title="在电子阅览器中翻阅全书">
+                    <button type="button" class="prov-btn prov-read-btn" data-open-fulltext="1" data-book-key="${escapeHtml(bookKey)}" data-book-title="${escapeHtml(stdTitle)}" title="在电子阅览器中翻阅全书">
                         📖 翻阅全卷
                     </button>
                     <span class="prov-status-tag ${statusClass}">${statusText}</span>
@@ -2079,8 +2730,7 @@ function renderLibraryProvenanceBlock(rawContent) {
     }
     const tagsHtml = relatedBooksList.map(bt => {
         const k = matchOpacBookKey(bt);
-        const sTitle = `《${escapeHtml(bt).replace(/'/g, "\\'")}》`;
-        return `<span class="prov-book-tag" onclick="window.openFulltextFromProvenance('${k}', '${sTitle}', '', '', '')" title="点击阅读《${escapeHtml(bt)}》">《${escapeHtml(bt)}》</span>`;
+        return `<span class="prov-book-tag" data-open-fulltext="1" data-book-key="${escapeHtml(k)}" data-book-title="《${escapeHtml(bt)}》" title="点击阅读《${escapeHtml(bt)}》">《${escapeHtml(bt)}》</span>`;
     }).join("");
 
     return `
@@ -2107,8 +2757,9 @@ function renderLibraryProvenanceBlock(rawContent) {
     `;
 }
 
-window.scrollToProvenanceRef = function(refNum) {
-    const el = document.getElementById(`prov-ref-item-${refNum}`);
+window.scrollToProvenanceRef = function(refNum, triggerEl) {
+    const scope = (triggerEl && triggerEl.closest && triggerEl.closest(".message-bubble")) || document;
+    const el = scope.querySelector(`[data-prov-ref="${refNum}"]`) || document.querySelector(`[data-prov-ref="${refNum}"]`);
     if (el) {
         el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         el.classList.add('prov-item-highlight');
@@ -2205,13 +2856,13 @@ function enrichCitationWithOpac(html) {
                             </div>
                         </div>
                         <div class="opac-card-actions-row">
-                            <a href="${detailUrl}" target="_blank" rel="noopener noreferrer" class="opac-action-btn opac-direct-reserve-btn" style="background:linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color:#fff; font-weight:700; border:none; text-decoration:none; padding:7px 15px; border-radius:6px; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 6px rgba(2,132,199,0.3); font-size:12.5px;" title="直达武夷学院图书馆${escapeHtml(bookTitle)}官方页面，点击页面内蓝色【预约】按钮即可登录并提交预约">
+                            <a href="${escapeHtml(detailUrl)}" target="_blank" rel="noopener noreferrer" class="opac-action-btn opac-direct-reserve-btn" style="background:linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color:#fff; font-weight:700; border:none; text-decoration:none; padding:7px 15px; border-radius:6px; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 6px rgba(2,132,199,0.3); font-size:12.5px;" title="直达武夷学院图书馆${escapeHtml(bookTitle)}官方页面">
                                 🏛️ 直达武夷学院官方预约系统（对应本书）➔
                             </a>
-                            <button type="button" class="opac-action-btn opac-fulltext-btn" style="background:#fff7ed; color:#b45309; border:1px solid #fed7aa; padding:7px 14px; border-radius:6px; font-weight:600; cursor:pointer;" onclick="window.openFulltextFromProvenance('${bookKey}', '${safeTitle}', '', '', '${safeChap}')" title="进入阅览器翻阅全卷并定位章节">
+                            <button type="button" class="opac-action-btn opac-fulltext-btn" style="background:#fff7ed; color:#b45309; border:1px solid #fed7aa; padding:7px 14px; border-radius:6px; font-weight:600; cursor:pointer;" data-open-fulltext="1" data-book-key="${escapeHtml(bookKey)}" data-book-title="${escapeHtml(bookTitle)}" data-chapter="${escapeHtml(titleWithChap.includes("·") ? titleWithChap.split("·")[1].trim() : "")}" title="进入阅览器翻阅全卷并定位章节">
                                 📖 翻阅全卷
                             </button>
-                            <button type="button" class="opac-action-btn opac-refresh-btn" onclick="window.refreshCitationOpacStatus(this, '${safeTitle}')" style="background:#fff; color:#0f766e; border:1px solid #0f766e; font-size:12px; padding:6px 12px; border-radius:6px; cursor:pointer;" title="强制直连武夷学院OPAC后台获取当前最新借阅在架数据">
+                            <button type="button" class="opac-action-btn opac-refresh-btn" data-refresh-opac="1" data-book-title="${escapeHtml(bookTitle)}" style="background:#fff; color:#0f766e; border:1px solid #0f766e; font-size:12px; padding:6px 12px; border-radius:6px; cursor:pointer;" title="强制直连武夷学院OPAC后台获取当前最新借阅在架数据">
                                 🔄 实时同步架位
                             </button>
                         </div>
@@ -2326,13 +2977,13 @@ function enrichCitationWithOpac(html) {
                     </div>
                 </div>
                 <div class="opac-card-actions-row">
-                    <a href="${detailUrl}" target="_blank" rel="noopener noreferrer" class="opac-action-btn opac-direct-reserve-btn" style="background:linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color:#fff; font-weight:700; border:none; text-decoration:none; padding:7px 15px; border-radius:6px; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 6px rgba(2,132,199,0.3); font-size:12.5px;" title="直达武夷学院图书馆${escapeHtml(bookTitle)}官方页面，点击页面内蓝色【预约】按钮即可登录并提交预约">
+                    <a href="${escapeHtml(detailUrl)}" target="_blank" rel="noopener noreferrer" class="opac-action-btn opac-direct-reserve-btn" style="background:linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color:#fff; font-weight:700; border:none; text-decoration:none; padding:7px 15px; border-radius:6px; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 6px rgba(2,132,199,0.3); font-size:12.5px;" title="直达武夷学院图书馆${escapeHtml(bookTitle)}官方页面">
                         🏛️ 直达武夷学院官方预约系统（对应本书）➔
                     </a>
-                    <button type="button" class="opac-action-btn opac-fulltext-btn" style="background:#fff7ed; color:#b45309; border:1px solid #fed7aa; padding:7px 14px; border-radius:6px; font-weight:600; cursor:pointer;" onclick="window.openFulltextFromProvenance('${bookKey}', '${safeTitle}', '', '', '${safeChap}')" title="进入阅览器翻阅全卷并定位章节">
+                    <button type="button" class="opac-action-btn opac-fulltext-btn" style="background:#fff7ed; color:#b45309; border:1px solid #fed7aa; padding:7px 14px; border-radius:6px; font-weight:600; cursor:pointer;" data-open-fulltext="1" data-book-key="${escapeHtml(bookKey)}" data-book-title="${escapeHtml(bookTitle)}" data-chapter="${escapeHtml(bookTitle.includes("·") ? bookTitle.split("·")[1].replace(/[《》]/g, "").trim() : "")}" title="进入阅览器翻阅全卷并定位章节">
                         📖 翻阅全卷
                     </button>
-                    <button type="button" class="opac-action-btn opac-refresh-btn" onclick="window.refreshCitationOpacStatus(this, '${safeTitle}')" style="background:#fff; color:#0f766e; border:1px solid #0f766e; font-size:12px; padding:6px 12px; border-radius:6px; cursor:pointer;" title="强制直连武夷学院OPAC后台获取当前最新借阅在架数据">
+                    <button type="button" class="opac-action-btn opac-refresh-btn" data-refresh-opac="1" data-book-title="${escapeHtml(bookTitle)}" style="background:#fff; color:#0f766e; border:1px solid #0f766e; font-size:12px; padding:6px 12px; border-radius:6px; cursor:pointer;" title="强制直连武夷学院OPAC后台获取当前最新借阅在架数据">
                         🔄 实时同步架位
                     </button>
                 </div>
@@ -3032,7 +3683,7 @@ const HOME_SHOWCASE_CATEGORIES = {
                 tag: "考亭论丛专柜",
                 status: "馆内在架 · 支持借阅预约",
                 bibId: "m2b6005a499aa4f3f50aa0f01f5adc36f",
-                txtFile: "04_第二届考亭论坛专辑_考亭书院理学研讨集.txt",
+                txtFile: "05_第二届考亭论坛专辑_融通朱子文化夯实文明根基.txt",
                 snippet: "考亭论坛汇集海内外学者，探求理学新命。",
                 chapter: "考亭论坛前言"
             },
@@ -3045,7 +3696,7 @@ const HOME_SHOWCASE_CATEGORIES = {
                 tag: "国际传播专架",
                 status: "馆内在架 · 支持借阅预约",
                 bibId: "m9750078ba9d212e3b9a8c8ddd7e281f2",
-                txtFile: "05_朱子文化在海外_武夷学院朱子学研究中心.txt",
+                txtFile: "04_朱子文化在海外_东亚与欧美传播谱系.txt",
                 snippet: "朱子之学，东渐日本朝鲜，远播欧美，润物无声。",
                 chapter: "序言"
             }
@@ -3087,13 +3738,9 @@ function renderHomeShowcaseBooks(catId = "sishu") {
     const books = cat.books || [];
 
     grid.innerHTML = books.map(b => {
-        const isBusy = !b.isAvailable || (b.borrowStatus && b.borrowStatus.includes("借出")) || (b.status && b.status.includes("借出"));
+        const isBusy = b.isAvailable === false || b.isBusy === true || (b.borrowStatus && b.borrowStatus.includes("借出")) || (b.status && b.status.includes("借出"));
         const pillClass = isBusy ? "borrowed" : "available";
-        const borrowText = b.borrowStatus || (isBusy ? "🔴 租借情况：特藏借出【支持线上预约】" : "🟢 租借情况：在架可借【实时在架】");
-        const safeTitle = escapeHtml(b.title).replace(/'/g, "\\'");
-        const safeSnippet = escapeHtml(b.snippet || "").replace(/'/g, "\\'");
-        const safeFile = escapeHtml(b.txtFile || "").replace(/'/g, "\\'");
-        const safeChap = escapeHtml(b.chapter || "").replace(/'/g, "\\'");
+        const borrowText = b.borrowStatus || (isBusy ? "📘 馆藏状态：特藏阅览 / 支持线上预约" : "🟢 馆藏状态：实时在架可借");
 
         return `
             <div class="lib-book-card">
@@ -3106,8 +3753,8 @@ function renderHomeShowcaseBooks(catId = "sishu") {
                     <span class="borrow-status-pill ${pillClass}">${escapeHtml(borrowText)}</span>
                 </div>
                 <div class="lbc-actions">
-                    <button type="button" class="lbc-btn read" onclick="openFulltextFromProvenance('${b.key}', '${safeTitle}', '${safeSnippet}', '${safeFile}', '${safeChap}')">📖 翻阅电子版</button>
-                    <button type="button" class="lbc-btn reserve" onclick="openReservationModal('${b.key}')">🔖 OPAC预约借阅</button>
+                    <button type="button" class="lbc-btn read" data-open-fulltext="1" data-book-key="${escapeHtml(b.key)}" data-book-title="${escapeHtml(b.title)}" data-snippet="${escapeHtml(b.snippet || "")}" data-filename="${escapeHtml(b.txtFile || "")}" data-chapter="${escapeHtml(b.chapter || "")}">📖 翻阅电子版</button>
+                    <button type="button" class="lbc-btn reserve" onclick="openReservationModal('${escapeHtml(b.key)}')">🔖 OPAC预约借阅</button>
                 </div>
             </div>
         `;
@@ -3200,37 +3847,33 @@ function renderReservationBooksList(targetCategory = null, highlightKey = null) 
             <div style="display:flex; flex-direction:column; gap:8px;">
                 ${books.map(b => {
                     const isHighlighted = (highlightKey && highlightKey === b.key);
-                    const isBusy = !b.isAvailable || (b.borrowStatus && b.borrowStatus.includes("借出")) || (b.status && b.status.includes("借出"));
+                    const isBusy = b.isAvailable === false || b.isBusy === true || (b.borrowStatus && b.borrowStatus.includes("借出")) || (b.status && b.status.includes("借出"));
                     const pillClass = isBusy ? "borrowed" : "available";
-                    const borrowText = b.borrowStatus || (isBusy ? "🔴 租借情况：特藏借出【支持线上预约】" : "🟢 租借情况：在架可借【实时在架】");
+                    const borrowText = b.borrowStatus || (isBusy ? "📘 特藏阅览 / 支持预约" : "🟢 实时在架可借");
                     const highlightClass = isHighlighted ? "res-book-highlighted" : "";
                     const highlightBorder = isHighlighted ? "border:2px solid #0284c7; background:#f0f9ff; box-shadow:0 0 0 3px rgba(2,132,199,0.15);" : "border:1px solid #e2e8f0; background:#f8fafc;";
-                    const directUrl = `https://wyutsg.wuyiu.edu.cn/space/searchDetailLocal/${b.bibId}`;
-                    const safeTitle = escapeHtml(b.title).replace(/'/g, "\\'");
-                    const safeSnippet = escapeHtml(b.snippet || "").replace(/'/g, "\\'");
-                    const safeFile = escapeHtml(b.txtFile || "").replace(/'/g, "\\'");
-                    const safeChap = escapeHtml(b.chapter || "").replace(/'/g, "\\'");
+                    const directUrl = b.bibId ? `https://wyutsg.wuyiu.edu.cn/space/searchDetailLocal/${b.bibId}` : "https://wyutsg.wuyiu.edu.cn/space/index";
 
                     return `
                         <div class="res-category-book-item ${highlightClass}" style="display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-radius:6px; ${highlightBorder} transition:all 0.2s; flex-wrap:wrap; gap:8px;">
-                            <div style="display:flex; flex-direction:column; gap:4px; flex:1; min-width:240px;">
+                            <div class="res-book-info-col" style="display:flex; flex-direction:column; gap:4px; flex:1; min-width:0;">
                                 <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
                                     <strong style="font-size:13.5px; color:#0f172a; font-family:var(--font-serif);">${escapeHtml(b.title)}</strong>
                                     <span class="borrow-status-pill ${pillClass}">${escapeHtml(borrowText)}</span>
                                     ${isHighlighted ? `<span style="font-size:11px; background:#0284c7; color:#fff; padding:1px 6px; border-radius:3px; font-weight:700;">★ 当前选定课本</span>` : ''}
                                 </div>
-                                <div style="font-size:11.5px; color:#64748b; display:flex; gap:12px; flex-wrap:wrap;">
+                                <div style="font-size:11.5px; color:#64748b; display:flex; gap:10px; flex-wrap:wrap;">
                                     <span>索书号：<code style="color:#b45309; font-weight:700;">${escapeHtml(b.callNumber)}</code></span>
                                     <span>馆藏：${escapeHtml(b.location)}</span>
                                     <span>著者：${escapeHtml(b.author)}</span>
                                 </div>
                             </div>
-                            <div style="display:flex; align-items:center; gap:8px;">
-                                <button type="button" onclick="openFulltextFromProvenance('${b.key}', '${safeTitle}', '${safeSnippet}', '${safeFile}', '${safeChap}')" style="background:#fff; color:#475569; border:1px solid #cbd5e1; font-size:11.5px; font-weight:600; padding:5px 10px; border-radius:5px; cursor:pointer;" title="在电子阅览器中翻阅此典籍全文">
+                            <div class="res-book-actions-col" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                                <button type="button" data-open-fulltext="1" data-book-key="${escapeHtml(b.key)}" data-book-title="${escapeHtml(b.title)}" data-snippet="${escapeHtml(b.snippet || "")}" data-filename="${escapeHtml(b.txtFile || "")}" data-chapter="${escapeHtml(b.chapter || "")}" style="background:#fff; color:#475569; border:1px solid #cbd5e1; font-size:11.5px; font-weight:600; padding:6px 10px; border-radius:5px; cursor:pointer;" title="在电子阅览器中翻阅此典籍全文">
                                     📖 翻阅
                                 </button>
-                                <a href="${directUrl}" target="_blank" rel="noopener noreferrer" style="background:linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color:#fff; text-decoration:none; padding:6px 14px; border-radius:5px; font-size:12px; font-weight:700; display:inline-flex; align-items:center; gap:4px; box-shadow:0 2px 4px rgba(2,132,199,0.3);" title="直达武夷学院图书馆${escapeHtml(b.title)}页面，点击页面内蓝色【预约】按钮即可登录学号并提交预约">
-                                    🏛️ 直达该课本官方预约 ➔
+                                <a href="${escapeHtml(directUrl)}" target="_blank" rel="noopener noreferrer" style="background:linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color:#fff; text-decoration:none; padding:6px 14px; border-radius:5px; font-size:12px; font-weight:700; display:inline-flex; align-items:center; gap:4px; box-shadow:0 2px 4px rgba(2,132,199,0.3);" title="直达武夷学院图书馆${escapeHtml(b.title)}官方页面">
+                                    🏛️ 直达官方预约 ➔
                                 </a>
                             </div>
                         </div>
@@ -3641,39 +4284,44 @@ async function preloadOpacBooks() {
 }
 
 
-// 雅致吐司提示
-function showToast(msg) {
+// 雅致吐司提示（防定时器重叠 + 支持自定义停留时长）
+let _toastTimer = null;
+function showToast(msg, duration = 2600) {
     let toast = document.getElementById("app-toast");
     if (!toast) {
         toast = document.createElement("div");
         toast.id = "app-toast";
         toast.style.cssText = `
             position: fixed;
-            top: 24px;
+            top: calc(20px + env(safe-area-inset-top, 0px));
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(30, 41, 59, 0.9);
+            background: rgba(30, 41, 59, 0.92);
             color: #ffffff;
-            padding: 8px 18px;
+            padding: 9px 18px;
             border-radius: 20px;
             font-size: 13px;
+            max-width: min(90vw, 440px);
+            text-align: center;
+            line-height: 1.45;
             font-family: var(--font-serif);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-            z-index: 9999;
-            transition: opacity 0.3s, transform 0.3s;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+            z-index: 10050;
+            transition: opacity 0.25s, transform 0.25s;
             pointer-events: none;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.4px;
         `;
         document.body.appendChild(toast);
     }
+    clearTimeout(_toastTimer);
     toast.textContent = msg;
     toast.style.opacity = "1";
     toast.style.transform = "translateX(-50%) translateY(0)";
 
-    setTimeout(() => {
+    _toastTimer = setTimeout(() => {
         toast.style.opacity = "0";
         toast.style.transform = "translateX(-50%) translateY(-8px)";
-    }, 2400);
+    }, Math.max(1200, duration));
 }
 
 // ========================================================
@@ -3702,12 +4350,12 @@ function quickFillLetterIdea(themeKey) {
 }
 
 function openLetterModal() {
+    closeMobileNavDrawer();
     stopCurrentVoice(true);
     const modal = document.getElementById("letter-modal");
     if (!modal) return;
     modal.classList.add("active");
-    const input = document.getElementById("letter-content-input");
-    if (input) input.focus();
+    safeFocus(document.getElementById("letter-content-input"));
 }
 
 function closeLetterModal(e) {
@@ -3724,7 +4372,7 @@ function resetLetterCompose() {
     if (replyArea) replyArea.style.display = "none";
     if (input) {
         input.value = "";
-        input.focus();
+        safeFocus(input);
     }
 }
 
@@ -3751,7 +4399,11 @@ async function sendAncientLetter() {
                 content: text
             })
         });
-        const data = await res.json();
+        let data = {};
+        try { data = await res.json(); } catch (e) {}
+        if (!res.ok || !data.reply) {
+            throw new Error(data.detail || `信札代拟服务响应异常 (HTTP ${res.status})`);
+        }
         const reply = cleanParentheses(data.reply || "");
         const dateStr = cleanParentheses(data.date || "宋庆元四年春 门生谨书");
         const sealStr = cleanParentheses(data.seal || "主敬<br>存诚");
@@ -3764,21 +4416,19 @@ async function sendAncientLetter() {
         const replyArea = document.getElementById("letter-reply-area");
         const contentEl = document.getElementById("letter-reply-content");
         const dateEl = document.getElementById("letter-reply-date");
-        const sealEl = document.getElementById("letter-seal-stamp");
+        const sealEl = document.getElementById("letter-seal-stamp") || document.querySelector(".letter-reply-seal-stamp");
 
         if (composeArea) composeArea.style.display = "none";
         if (replyArea) replyArea.style.display = "block";
-        if (contentEl) contentEl.innerHTML = renderMarkdown(reply);
+        if (contentEl) contentEl.innerHTML = renderMarkdown(reply, false);
         if (dateEl) dateEl.textContent = dateStr;
         if (sealEl) sealEl.innerHTML = sealStr;
 
-        // 自动绘制高清宣纸毛笔长卷图片
         renderLetterToCanvas(reply, dateStr, sealStr);
 
         if (autoTTS && reply) {
             playVoice(reply);
         }
-
     } catch (err) {
         showToast(`代拟信札遇阻: ${err.message}`);
     } finally {
@@ -3955,14 +4605,37 @@ function renderLetterToCanvas(text, dateStr, sealStr) {
 function downloadLetterImage() {
     const canvas = document.getElementById("letter-canvas-render");
     if (!canvas) return;
-    const dataUrl = canvas.toDataURL("image/png");
-    const link = document.createElement("a");
-    link.download = `考亭尺牍墨宝_${Date.now()}.png`;
-    link.href = dataUrl;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    showToast("已成功保存高清尺牍墨宝图片至本地！");
+    if (canvas.toBlob) {
+        canvas.toBlob((blob) => {
+            if (!blob) return;
+            const fileName = `考亭尺牍墨宝_${Date.now()}.png`;
+            // 移动端 iOS / 现代手机浏览器优先唤起系统分享保存
+            if (isTouchDevice() && navigator.share && navigator.canShare) {
+                try {
+                    const file = new File([blob], fileName, { type: "image/png" });
+                    if (navigator.canShare({ files: [file] })) {
+                        navigator.share({ files: [file], title: "考亭尺牍墨宝" }).catch(() => {});
+                        return;
+                    }
+                } catch (e) {}
+            }
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.download = fileName;
+            link.href = url;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            setTimeout(() => URL.revokeObjectURL(url), 3000);
+            showToast(isTouchDevice() ? "若手机浏览器未自动下载，请直接长按下方长卷图片保存到相册" : "已成功保存高清尺牍墨宝图片至本地！", 3200);
+        }, "image/png");
+    } else {
+        const link = document.createElement("a");
+        link.download = `考亭尺牍墨宝_${Date.now()}.png`;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+        showToast("已保存尺牍墨宝图片！");
+    }
 }
 
 function playVoiceFromLetter() {
@@ -3974,13 +4647,7 @@ function playVoiceFromLetter() {
 function copyLetterReply() {
     if (!lastLetterReplyText) return;
     const fullText = `【考亭尺牍·理学墨韵】\n\n${lastLetterReplyText}\n\n—— ${lastLetterDate || "宋代文人手札"}`;
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(fullText).then(() => {
-            showToast("先生墨宝尺牍已抄录入剪贴板");
-        });
-    } else {
-        showToast("已呈示尺牍全文，供仁兄温习");
-    }
+    copyTextSafe(fullText, "先生墨宝尺牍已抄录入剪贴板");
 }
 
 // ========================================================
@@ -3992,7 +4659,10 @@ let quizSelectedAnswers = {};
 let quizResultData = null;
 let currentQuizCategory = "all";
 
+let quizLoadSeq = 0;
+
 async function openQuizModal() {
+    closeMobileNavDrawer();
     stopCurrentVoice(true);
     const modal = document.getElementById("quiz-modal");
     if (!modal) return;
@@ -4000,6 +4670,14 @@ async function openQuizModal() {
 
     const activeArea = document.getElementById("quiz-active-area");
     const resultArea = document.getElementById("quiz-result-area");
+
+    // 若上次已评卷完毕，重新打开时展示成绩单（也可点“再赴考场”重测）
+    if (quizResultData) {
+        if (activeArea) activeArea.style.display = "none";
+        if (resultArea) resultArea.style.display = "block";
+        return;
+    }
+
     if (activeArea) activeArea.style.display = "block";
     if (resultArea) resultArea.style.display = "none";
 
@@ -4033,11 +4711,14 @@ async function switchQuizCategory(category, btnEl) {
 }
 
 async function loadQuizQuestions(category = "all") {
+    const reqSeq = ++quizLoadSeq;
     const titleEl = document.getElementById("quiz-question-text");
     if (titleEl) titleEl.textContent = "夫子正在武夷精舍简选研学试题...";
     try {
         const res = await fetch(`/api/quiz/questions?category=${encodeURIComponent(category)}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
+        if (reqSeq !== quizLoadSeq) return;
         if (data.questions && data.questions.length > 0) {
             quizQuestions = data.questions;
             quizCurrentIdx = 0;
@@ -4047,6 +4728,7 @@ async function loadQuizQuestions(category = "all") {
             if (titleEl) titleEl.textContent = "试题未能传回，请稍后重新开启";
         }
     } catch (err) {
+        if (reqSeq !== quizLoadSeq) return;
         if (titleEl) titleEl.textContent = `试题调阅遇阻: ${err.message}`;
     }
 }
@@ -4077,10 +4759,11 @@ function renderQuizQuestion(idx) {
         q.options.forEach((opt, optIdx) => {
             const optText = typeof opt === "string" ? opt : (opt.text || "");
             const optLetter = letters[optIdx] || String(optIdx + 1);
-            const isSelected = selectedVal === optIdx;
+            const origIndex = (Array.isArray(q.option_indices) && q.option_indices[optIdx] !== undefined) ? q.option_indices[optIdx] : optIdx;
+            const isSelected = selectedVal === origIndex;
             const optBtn = document.createElement("div");
             optBtn.className = `quiz-option-card ${isSelected ? "selected" : ""}`;
-            optBtn.onclick = () => selectQuizOption(optIdx);
+            optBtn.onclick = () => selectQuizOption(origIndex);
             optBtn.innerHTML = `
                 <div class="option-key-circle">${escapeHtml(optLetter)}</div>
                 <div class="option-text-content">${escapeHtml(cleanParentheses(optText))}</div>
@@ -4096,10 +4779,10 @@ function renderQuizQuestion(idx) {
     if (submitBtn) submitBtn.style.display = isLast ? "inline-flex" : "none";
 }
 
-function selectQuizOption(optIdx) {
+function selectQuizOption(origIdx) {
     const q = quizQuestions[quizCurrentIdx];
     if (!q) return;
-    quizSelectedAnswers[q.id] = optIdx;
+    quizSelectedAnswers[q.id] = origIdx;
     renderQuizQuestion(quizCurrentIdx);
 }
 
@@ -4116,9 +4799,11 @@ function prevQuizQuestion() {
 }
 
 async function submitQuizExam() {
-    const answeredCount = Object.keys(quizSelectedAnswers).length;
-    if (answeredCount < quizQuestions.length) {
-        showToast(`尚有试题未作答，共完成 ${answeredCount} / ${quizQuestions.length} 题`);
+    const unansweredIdx = quizQuestions.findIndex(q => quizSelectedAnswers[q.id] === undefined);
+    if (unansweredIdx !== -1) {
+        showToast(`尚有第 ${unansweredIdx + 1} 题未作答，请答完全部 ${quizQuestions.length} 题后再呈交答卷！`);
+        renderQuizQuestion(unansweredIdx);
+        return;
     }
 
     const submitBtn = document.getElementById("quiz-submit-btn");
@@ -4131,9 +4816,16 @@ async function submitQuizExam() {
         const res = await fetch("/api/quiz/submit", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ answers: quizSelectedAnswers })
+            body: JSON.stringify({
+                answers: quizSelectedAnswers,
+                question_ids: quizQuestions.map(q => q.id)
+            })
         });
-        const data = await res.json();
+        let data = {};
+        try { data = await res.json(); } catch (e) {}
+        if (!res.ok) {
+            throw new Error(data.detail || `答卷批阅失败 (HTTP ${res.status})`);
+        }
         quizResultData = data;
 
         const activeArea = document.getElementById("quiz-active-area");
@@ -4148,36 +4840,35 @@ async function submitQuizExam() {
         const certIdEl = document.getElementById("cert-id-val");
         const reviewListEl = document.getElementById("quiz-review-list");
 
-        const letters = ["甲", "乙", "丙", "丁"];
         const degreeText = data.rank || data.degree || "秀才及格";
         const critiqueText = data.zhupi_comment || data.critique || "老夫观卿答卷，知平日用功颇有条理。";
 
         if (scoreEl) scoreEl.textContent = data.score ?? 0;
         if (rankEl) rankEl.textContent = cleanParentheses(degreeText);
-        if (descEl) descEl.textContent = `答对 ${data.correct_count} 题，共 ${data.total_count || data.total || 5} 题`;
+        if (descEl) descEl.textContent = `答对 ${data.correct_count ?? 0} 题，共 ${data.total_count || quizQuestions.length} 题`;
         if (zhupiEl) zhupiEl.textContent = cleanParentheses(critiqueText);
         if (certIdEl) certIdEl.textContent = data.certificate_id || `KT-2026-${Date.now().toString(36).toUpperCase()}`;
 
         const detailsList = data.details || [];
         if (reviewListEl && Array.isArray(detailsList)) {
             reviewListEl.innerHTML = detailsList.map((exp, i) => {
-                const userChoiceLetter = exp.user_choice !== undefined && exp.user_choice !== null && letters[exp.user_choice] ? letters[exp.user_choice] : "未作答";
-                const correctChoiceLetter = letters[exp.correct_choice] || "甲";
+                const userAnsDisplay = exp.user_answer_text || "未作答";
+                const correctAnsDisplay = exp.correct_answer_text || "";
                 const isRight = exp.is_correct;
                 return `
-                    <div class="review-item-card ${isRight ? "correct" : "wrong"}">
+                    <div class="review-item-card review-item ${isRight ? "correct" : "wrong"}">
                         <div class="review-head">
-                            <span class="review-status-tag ${isRight ? "green" : "red"}">${isRight ? "✓ 正确" : "✗ 需悟"}</span>
+                            <span class="review-status-tag review-badge ${isRight ? "green" : "red"}">${isRight ? "✓ 正确" : "✗ 需悟"}</span>
                             <span class="review-q-title">第 ${i + 1} 题：${escapeHtml(cleanParentheses(exp.question))}</span>
                         </div>
-                        <div class="review-meta-row">
-                            <span class="meta-label">汝之作答：<strong>${escapeHtml(userChoiceLetter)}</strong></span>
-                            <span class="meta-label">夫子定按：<strong>${escapeHtml(correctChoiceLetter)}</strong></span>
+                        <div class="review-meta-row review-ans-row">
+                            <span class="meta-label">汝之作答：<strong>${escapeHtml(userAnsDisplay)}</strong></span>
+                            <span class="meta-label">夫子定按：<strong>${escapeHtml(correctAnsDisplay)}</strong></span>
                             <span class="meta-book-src">${escapeHtml(cleanParentheses(exp.book_title || "考亭典籍"))}</span>
                         </div>
-                        <div class="review-explanation-box">
+                        <div class="review-explanation-box review-exp-text">
                             <div class="exp-title">【夫子义理解构】：</div>
-                            <div class="exp-content">${escapeHtml(cleanParentheses(exp.explanation || exp.analysis || "考亭先生考释：学者当熟读深思，即物穷理，知行相须，方得圣贤真传。"))}</div>
+                            <div class="exp-content">${escapeHtml(cleanParentheses(exp.explanation || exp.analysis || "考亭先生考释：学者当熟读深思，即物穷理，知行相须。"))}</div>
                         </div>
                     </div>
                 `;
@@ -4212,26 +4903,20 @@ async function resetAndRestartQuiz() {
 function printOrShareCertificate() {
     if (!quizResultData) return;
     const certText = `【宋·考亭书院武夷理学研学结业文牒】\n编号：${quizResultData.certificate_id}\n等第：${quizResultData.rank || quizResultData.degree}\n得分：${quizResultData.score} 分\n夫子朱批：“${quizResultData.zhupi_comment || quizResultData.critique}”\n立牒年月：庆元四年春 · 考亭讲筵`;
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(certText).then(() => {
-            showToast("已将武夷研学结业文牒复制至剪贴板");
-        });
-    } else {
-        showToast("已呈示结业文牒，供仁兄存念");
-    }
+    copyTextSafe(certText, "已将武夷研学结业文牒复制至剪贴板");
 }
 
 // ========================================================
-// 模块：典籍考据 · 古籍全文精确检索引擎
+// 模块：典籍考据 · 古籍全文精确检索引擎（防正则崩溃 + 竞态取消 + 无 XSS）
 // ========================================================
+let corpusSearchController = null;
+
 function openCorpusSearchModal() {
+    closeMobileNavDrawer();
     const modal = document.getElementById("corpus-search-modal");
     if (!modal) return;
     modal.classList.add("active");
-    const input = document.getElementById("corpus-keyword-input");
-    if (input) {
-        input.focus();
-    }
+    safeFocus(document.getElementById("corpus-keyword-input"));
 }
 
 function closeCorpusSearchModal(e) {
@@ -4244,7 +4929,7 @@ function clearCorpusInput() {
     const input = document.getElementById("corpus-keyword-input");
     if (input) {
         input.value = "";
-        input.focus();
+        safeFocus(input);
     }
 }
 
@@ -4259,7 +4944,8 @@ function quickCorpusSearch(term) {
 function highlightCorpusSnippet(text, kw) {
     if (!text || !kw) return escapeHtml(text || "");
     const safeText = escapeHtml(text);
-    const safeKw = escapeHtml(kw);
+    const safeKw = escapeHtml(kw).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    if (!safeKw) return safeText;
     const reg = new RegExp(safeKw, "gi");
     return safeText.replace(reg, match => `<mark class="corpus-highlight-kw">${match}</mark>`);
 }
@@ -4272,6 +4958,11 @@ async function executeCorpusSearch(termOverride) {
         return;
     }
 
+    if (corpusSearchController) {
+        try { corpusSearchController.abort(); } catch (e) {}
+    }
+    corpusSearchController = new AbortController();
+
     const summaryEl = document.getElementById("corpus-result-summary");
     const listEl = document.getElementById("corpus-results-list");
 
@@ -4281,7 +4972,10 @@ async function executeCorpusSearch(termOverride) {
     }
 
     try {
-        const res = await fetch(`/api/corpus/search?q=${encodeURIComponent(kw)}&limit=15`);
+        const res = await fetch(`/api/corpus/search?q=${encodeURIComponent(kw)}&limit=15`, {
+            signal: corpusSearchController.signal
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         const results = data.results || [];
 
@@ -4306,7 +5000,7 @@ async function executeCorpusSearch(termOverride) {
                                 <span class="result-book-title">${escapeHtml(cleanParentheses(item.book_title || "考亭典籍"))}</span>
                                 <span class="result-chapter-badge">${escapeHtml(cleanParentheses(item.chapter || ""))}</span>
                             </div>
-                            <button class="corpus-read-whole-btn" onclick="openFulltextFromProvenance('${escapeHtml(item.book_key || "")}', '${escapeHtml(cleanParentheses(item.book_title || "考亭典籍"))}', '${escapeHtml(cleanParentheses(item.snippet || kw))}', '${escapeHtml(item.filename || "")}', '${escapeHtml(cleanParentheses(item.chapter || ""))}')">
+                            <button type="button" class="corpus-read-whole-btn" data-open-fulltext="1" data-book-key="${escapeHtml(item.book_key || "")}" data-book-title="${escapeHtml(cleanParentheses(item.book_title || "考亭典籍"))}" data-snippet="${escapeHtml(cleanParentheses(item.snippet || kw))}" data-filename="${escapeHtml(item.filename || "")}" data-chapter="${escapeHtml(cleanParentheses(item.chapter || ""))}">
                                 📖 翻阅全卷
                             </button>
                         </div>
@@ -4321,6 +5015,7 @@ async function executeCorpusSearch(termOverride) {
             }
         }
     } catch (err) {
+        if (err && err.name === "AbortError") return;
         if (summaryEl) summaryEl.textContent = `考据发生异常: ${err.message}`;
         if (listEl) listEl.innerHTML = `<div class="corpus-empty-state"><p style="color:#ef4444;">检阅遇阻: ${escapeHtml(err.message)}</p></div>`;
     }
@@ -4395,7 +5090,7 @@ function renderSourcesCard(bubbleEl, sources) {
                     </div>
                     <div class="rag-snippet-text">${escapeHtml(s.snippet)}</div>
                     <div class="rag-item-footer">
-                        <button class="rag-read-btn" onclick="openFulltextFromProvenance('${escapeHtml(s.book_key)}', '${escapeHtml(s.title)}', '${escapeHtml(cleanParentheses(s.snippet))}', '${escapeHtml(s.filename)}', '${escapeHtml(cleanParentheses(s.chapter))}');">
+                        <button type="button" class="rag-read-btn" data-open-fulltext="1" data-book-key="${escapeHtml(s.book_key)}" data-book-title="${escapeHtml(s.title)}" data-snippet="${escapeHtml(cleanParentheses(s.snippet))}" data-filename="${escapeHtml(s.filename)}" data-chapter="${escapeHtml(cleanParentheses(s.chapter))}">
                             📖 翻阅全卷典籍文献（定位并标注）
                         </button>
                     </div>
@@ -4435,19 +5130,23 @@ function toggleVoiceInput(moduleKey) {
 function startVoiceInput(moduleKey) {
     stopCurrentVoice(true);
 
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-        showToast("当前浏览器未开放语音识别接口，建议使用 Google Chrome 或 Edge 浏览器");
+    if (!window.isSecureContext && location.hostname !== "localhost" && location.hostname !== "127.0.0.1") {
+        showToast("手机局域网 HTTP 环境受浏览器安全策略限制无法调用麦克风，请使用 HTTPS 或直接打字输入", 3600);
         return;
     }
 
-    if (activeSpeechRecognition) {
-        try {
-            activeSpeechRecognition.abort();
-        } catch (e) {}
-        activeSpeechRecognition = null;
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        showToast("当前浏览器未开放语音识别接口，建议使用 Chrome / Edge 或手机输入法自带语音键盘");
+        return;
     }
 
+    // 若另一模块正在录音，先彻底复位原模块 UI
+    if (activeSpeechRecognition && currentVoiceModuleKey) {
+        stopVoiceInput(currentVoiceModuleKey, false);
+    }
+
+    duckBgmForSpeech(true);
     currentVoiceModuleKey = moduleKey;
     const inputEl = document.getElementById(`${moduleKey}-user-input`);
     const micBtn = document.getElementById(`${moduleKey}-mic-btn`);
@@ -4479,6 +5178,7 @@ function startVoiceInput(moduleKey) {
         };
 
         recognition.onresult = (event) => {
+            if (activeSpeechRecognition !== recognition) return;
             let interimTranscript = "";
             for (let i = event.resultIndex; i < event.results.length; ++i) {
                 const chunk = event.results[i][0].transcript;
@@ -4492,6 +5192,7 @@ function startVoiceInput(moduleKey) {
             const currentText = (finalTranscript + interimTranscript).trim();
             if (inputEl) {
                 inputEl.value = currentText;
+                autoResizeTextarea(inputEl);
             }
             if (labelEl) {
                 labelEl.textContent = interimTranscript ? `已辨：“${interimTranscript}”` : "正在聆听仁兄问学 请开口道来...";
@@ -4530,13 +5231,17 @@ function startVoiceInput(moduleKey) {
 }
 
 function stopVoiceInput(moduleKey, autoSend = false) {
-    if (activeSpeechRecognition) {
-        try {
-            activeSpeechRecognition.stop();
-        } catch (e) {}
-        activeSpeechRecognition = null;
-    }
+    const rec = activeSpeechRecognition;
+    activeSpeechRecognition = null;
     currentVoiceModuleKey = null;
+    if (rec) {
+        try {
+            rec.onresult = null;
+            rec.onend = null;
+            rec.stop();
+        } catch (e) {}
+    }
+    duckBgmForSpeech(false);
 
     const micBtn = document.getElementById(`${moduleKey}-mic-btn`);
     const dockEl = document.getElementById(`${moduleKey}-voice-dock`);
@@ -4551,7 +5256,7 @@ function stopVoiceInput(moduleKey, autoSend = false) {
     }
 
     if (inputEl) {
-        inputEl.focus();
+        safeFocus(inputEl);
         if (autoSend) {
             const val = inputEl.value.trim();
             if (val) {
@@ -4644,3 +5349,12 @@ window.HOME_SHOWCASE_CATEGORIES = HOME_SHOWCASE_CATEGORIES;
 window.switchHomeShowcaseCategory = switchHomeShowcaseCategory;
 window.renderHomeShowcaseBooks = renderHomeShowcaseBooks;
 window.switchOpacModalCategory = switchOpacModalCategory;
+window.toggleMobileNavDrawer = toggleMobileNavDrawer;
+window.closeMobileNavDrawer = closeMobileNavDrawer;
+window.restoreChatThread = restoreChatThread;
+window.deleteChatThread = deleteChatThread;
+window.clearAllSavedHistory = clearAllSavedHistory;
+window.setAutoTTS = setAutoTTS;
+window.copyTextSafe = copyTextSafe;
+window.openHistoryModal = openHistoryModal;
+window.closeHistoryModal = closeHistoryModal;

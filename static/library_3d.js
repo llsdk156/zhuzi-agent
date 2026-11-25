@@ -649,8 +649,9 @@ class Library3DEngine {
         });
     }
 
-    // 挂载 3D 鼠标透视视差动力学 (令整个多层书架具有立体景深感)
+    // 挂载 3D 鼠标透视视差动力学 (仅在支持悬停的桌面端启用，节省移动端性能)
     setupParallaxTilt() {
+        if (window.matchMedia && window.matchMedia("(hover: none)").matches) return;
         const frame = document.getElementById("stereoscopic-bookshelf-frame");
         if (!frame || this.parallaxBound) return;
         this.parallaxBound = true;
@@ -1174,6 +1175,60 @@ class Library3DEngine {
         };
     }
 
+    _esc(str) {
+        return String(str == null ? "" : str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    _copyTextSafe(text, okMsg = "已复制至剪贴板", btnEl = null) {
+        const done = () => {
+            if (btnEl) {
+                const orig = btnEl.dataset.origLabel || btnEl.textContent;
+                btnEl.dataset.origLabel = orig;
+                btnEl.textContent = "✅ 已复制";
+                setTimeout(() => { btnEl.textContent = orig; }, 2000);
+            }
+            if (typeof showToast === "function") showToast(okMsg);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(done).catch(() => this._fallbackExecCopy(text, done));
+        } else {
+            this._fallbackExecCopy(text, done);
+        }
+    }
+
+    _fallbackExecCopy(text, onSuccess) {
+        try {
+            const ta = document.createElement("textarea");
+            ta.value = text;
+            ta.style.cssText = "position:fixed;top:-9999px;left:-9999px;opacity:0;";
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand("copy");
+            document.body.removeChild(ta);
+            if (onSuccess) onSuccess();
+        } catch (e) {
+            if (typeof showToast === "function") showToast("当前环境不支持自动复制，请长按手动选择复制");
+        }
+    }
+
+    _formatStatusPill(status) {
+        if (status === "可借") {
+            return { cls: "status-ok", bg: "#dcfce7", color: "#15803d", border: "#86efac", text: "🟢 实时在架 · 可借" };
+        }
+        if (status === "馆内阅览") {
+            return { cls: "status-reading", bg: "#fef3c7", color: "#92400e", border: "#fcd34d", text: "📘 特藏珍本 · 馆内阅览" };
+        }
+        if (status === "未查得馆藏") {
+            return { cls: "status-busy", bg: "#f1f5f9", color: "#475569", border: "#cbd5e1", text: "⚪ 暂未查得纸本馆藏" };
+        }
+        return { cls: "status-busy", bg: "#fee2e2", color: "#b91c1c", border: "#fca5a5", text: "🔴 已全部借出 · 可预约" };
+    }
+
     // 打开立体古籍阅览器
     openBookReader(bookKey) {
         const existingModal = document.querySelector(".reader-overlay");
@@ -1191,6 +1246,7 @@ class Library3DEngine {
             accessUrl: "https://wyutsg.wuyiu.edu.cn/space/index",
             vpnGuide: "逸夫图书馆三楼与特藏室均有纸本直接外借，亦可通过 CADAL / 超星数字平台在线查阅。"
         };
+        const pill = this._formatStatusPill(lib.status);
 
         const modalHtml = `
             <div class="book-reader-modal">
@@ -1260,15 +1316,15 @@ class Library3DEngine {
                                 <h3 style="color:#92400e; margin:0;">【武夷学院图书馆 · 逸夫特藏实时馆藏与获取指引】</h3>
                             </div>
                             <div style="display:flex; align-items:center; gap:8px;">
-                                <span id="lib-reader-status-tag-${bookKey}" class="borrow-status-tag ${lib.status === '可借' ? 'status-ok' : 'status-busy'}" style="padding:4px 12px; border-radius:12px; font-size:12px; font-weight:700; ${lib.status === '可借' ? 'background:#dcfce7; color:#15803d; border:1px solid #86efac;' : 'background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5;'}">
-                                    ${lib.status === '可借' ? '🟢 实时在架 · 可借' : '🔴 已全部借出 · 需预约'}
+                                <span id="lib-reader-status-tag-${bookKey}" class="borrow-status-tag ${pill.cls}" style="padding:4px 12px; border-radius:12px; font-size:12px; font-weight:700; background:${pill.bg}; color:${pill.color}; border:1px solid ${pill.border};">
+                                    ${pill.text}
                                 </span>
-                                <button type="button" id="btn-refresh-live-opac-${bookKey}" onclick="library3DEngine.refreshLiveOpacStatus('${bookKey}', '${book.title}')" style="background:#fff; border:1px solid #d97706; color:#b45309; padding:3px 10px; border-radius:12px; font-size:11.5px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:4px;" title="强制直连武夷学院OPAC后台刷新当前最新借阅在架状态">
+                                <button type="button" id="btn-refresh-live-opac-${bookKey}" onclick="library3DEngine.refreshLiveOpacStatus('${bookKey}', '${this._esc(book.title)}')" style="background:#fff; border:1px solid #d97706; color:#b45309; padding:3px 10px; border-radius:12px; font-size:11.5px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:4px;" title="强制直连武夷学院OPAC后台刷新当前最新借阅在架状态">
                                     <span>🔄 实时刷新状态</span>
                                 </button>
                             </div>
                         </div>
-                        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px; margin:10px 0; font-size:12.5px;">
+                        <div class="reader-meta-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap:10px; margin:10px 0; font-size:12.5px;">
                             <div style="background:#fff; padding:8px 12px; border-radius:6px; border:1px solid #fde68a;">
                                 <strong style="color:#b45309;">📌 索书号：</strong><code id="lib-reader-callno-${bookKey}" style="font-weight:700; color:#1e293b; background:#fef08a; padding:1px 6px; border-radius:4px;">${lib.callNumber}</code>
                             </div>
@@ -1325,23 +1381,23 @@ class Library3DEngine {
                         </div>
 
                         <!-- 全网四大主流平台直达通道网格卡片 -->
-                        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:10px;">
+                        <div class="reader-platforms-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap:10px;">
                             ${(video.platforms || []).map(p => `
                                 <div style="background:${p.bgColor}; border:1.5px solid ${p.borderColor}; border-radius:8px; padding:12px 14px; display:flex; flex-direction:column; justify-content:space-between; gap:8px;">
                                     <div>
-                                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+                                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; gap:6px; flex-wrap:wrap;">
                                             <strong style="color:${p.color}; font-size:13px; display:flex; align-items:center; gap:6px;">
-                                                <span>${p.icon}</span> <span>${p.name}</span>
+                                                <span>${p.icon}</span> <span>${this._esc(p.name)}</span>
                                             </strong>
-                                            <span style="font-size:10.5px; background:#fff; color:${p.color}; border:1px solid ${p.borderColor}; padding:1px 6px; border-radius:4px; font-weight:700;">${p.tag}</span>
+                                            <span style="font-size:10.5px; background:#fff; color:${p.color}; border:1px solid ${p.borderColor}; padding:1px 6px; border-radius:4px; font-weight:700;">${this._esc(p.tag)}</span>
                                         </div>
-                                        <p style="margin:0; font-size:12px; color:#475569; line-height:1.45;">${p.desc}</p>
+                                        <p style="margin:0; font-size:12px; color:#475569; line-height:1.45;">${this._esc(p.desc)}</p>
                                     </div>
                                     <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:4px;">
-                                        <a href="${p.url}" target="_blank" rel="noopener noreferrer" style="flex:1; display:inline-flex; align-items:center; justify-content:center; gap:6px; background:${p.color}; color:#ffffff; padding:7px 12px; border-radius:6px; font-size:12.5px; text-decoration:none; font-weight:700; text-align:center;">
+                                        <a href="${this._esc(p.url)}" target="_blank" rel="noopener noreferrer" style="flex:1; display:inline-flex; align-items:center; justify-content:center; gap:6px; background:${p.color}; color:#ffffff; padding:7px 12px; border-radius:6px; font-size:12.5px; text-decoration:none; font-weight:700; text-align:center;">
                                             <span>进入观看 ➔</span>
                                         </a>
-                                        <button class="copy-link-btn" onclick="navigator.clipboard.writeText('${p.url}').then(()=>{ this.textContent='✅ 已复制'; setTimeout(()=>this.textContent='📋 复制', 2000); })" style="background:#ffffff; border:1px solid ${p.borderColor}; color:${p.color}; font-size:11.5px; padding:6px 10px; border-radius:6px; cursor:pointer; font-weight:600; white-space:nowrap;">📋 复制</button>
+                                        <button type="button" class="copy-link-btn" data-copy-url="${this._esc(p.url)}" onclick="library3DEngine._copyTextSafe(this.dataset.copyUrl, '讲座观看链接已复制', this)" style="background:#ffffff; border:1px solid ${p.borderColor}; color:${p.color}; font-size:11.5px; padding:6px 10px; border-radius:6px; cursor:pointer; font-weight:600; white-space:nowrap;">📋 复制</button>
                                     </div>
                                 </div>
                             `).join('')}
@@ -1400,13 +1456,14 @@ class Library3DEngine {
             const res = await fetch(`/api/opac/status?keyword=${encodeURIComponent(bookTitle || bookKey)}&force=true`);
             if (res.ok) {
                 const data = await res.json();
+                const pill = this._formatStatusPill(data.status);
                 const isAvail = (data.status === "可借");
                 if (tag) {
-                    tag.className = `borrow-status-tag ${isAvail ? 'status-ok' : 'status-busy'}`;
-                    tag.style.background = isAvail ? '#dcfce7' : '#fee2e2';
-                    tag.style.color = isAvail ? '#15803d' : '#b91c1c';
-                    tag.style.borderColor = isAvail ? '#86efac' : '#fca5a5';
-                    tag.textContent = isAvail ? '🟢 实时在架 · 可借' : '🔴 已全部借出 · 需预约';
+                    tag.className = `borrow-status-tag ${pill.cls}`;
+                    tag.style.background = pill.bg;
+                    tag.style.color = pill.color;
+                    tag.style.borderColor = pill.border;
+                    tag.textContent = pill.text;
                 }
                 if (callnoEl && data.callNumber) callnoEl.textContent = data.callNumber;
                 if (holdingEl && data.location) holdingEl.textContent = data.location;
@@ -1437,9 +1494,12 @@ class Library3DEngine {
         }
     }
 
-    // 展开完整文章阅读器（支持关键字/文段特别黄色标注并精准定位）
+    // 展开完整文章阅读器（全面防 XSS + 移动端目录抽屉与全屏沉浸式适配）
     async openFulltextReader(bookKey, bookTitle, highlightSnippet = "", filename = "", chapterName = "") {
         try {
+            const existingFt = document.querySelector(".fulltext-overlay");
+            if (existingFt) existingFt.remove();
+
             const queryParams = new URLSearchParams();
             if (bookKey) queryParams.set("book_key", bookKey);
             if (filename) queryParams.set("filename", filename);
@@ -1447,14 +1507,13 @@ class Library3DEngine {
 
             const res = await fetch(`/api/book/content?${queryParams.toString()}`);
             if (!res.ok) {
-                alert("未找到该典籍正文，请稍后再试");
+                if (typeof showToast === "function") showToast("未找到该典籍正文，请稍后再试");
                 return;
             }
             const data = await res.json();
             const chapters = data.chapters || [];
             const fullText = data.full_text || "";
 
-            // 净化定位文句，提取核心关键词（2-8字）
             const cleanTarget = (highlightSnippet || "")
                 .replace(/[#*`_>~[\]()（）“”，。！？；：、与和及在的是]/g, " ")
                 .replace(/\s+/g, " ")
@@ -1470,7 +1529,6 @@ class Library3DEngine {
             targetWords = Array.from(new Set(targetWords.filter(w => w && w.length >= 2)));
             let hasMarked = false;
 
-            // 预先寻找目标章节索引
             let targetChIdx = -1;
             if (chapterName) {
                 const cleanCh = chapterName.replace(/[#*`_]/g, "").trim();
@@ -1483,67 +1541,72 @@ class Library3DEngine {
                 });
             }
 
-            const formatHeader = (title) => {
+            const highlightSafeText = (rawText) => {
+                const escaped = this._esc(rawText);
                 if (!hasMarked && targetWords.length > 0) {
                     for (const kw of targetWords) {
-                        if (title.includes(kw)) {
+                        const safeKw = this._esc(kw);
+                        if (safeKw && escaped.includes(safeKw)) {
                             hasMarked = true;
-                            const markedTitle = title.split(kw).join(`<mark id="ft-highlight-target" style="background:#fef08a; color:#854d0e; padding:3px 8px; border-radius:4px; font-weight:bold; box-shadow:0 0 12px rgba(234,179,8,0.7); border:1.5px solid #eab308; display:inline-block;">${kw}</mark>`);
-                            return markedTitle;
+                            return {
+                                matched: true,
+                                html: escaped.split(safeKw).join(`<mark id="ft-highlight-target" class="ft-highlight-mark">${safeKw}</mark>`)
+                            };
                         }
                     }
                 }
-                return title;
+                return { matched: false, html: escaped };
             };
 
+            const formatHeader = (title) => highlightSafeText(title || "").html;
             const formatLine = (line) => {
-                const trimmed = line.trim();
+                const trimmed = (line || "").trim();
                 if (!trimmed) return '';
-                if (!hasMarked && targetWords.length > 0) {
-                    for (const kw of targetWords) {
-                        if (trimmed.includes(kw)) {
-                            hasMarked = true;
-                            const markedLine = trimmed.split(kw).join(`<mark id="ft-highlight-target" style="background:#fef08a; color:#854d0e; padding:3px 8px; border-radius:4px; font-weight:bold; box-shadow:0 0 12px rgba(234,179,8,0.7); border:1.5px solid #eab308; display:inline-block;">${kw}</mark>`);
-                            return `<p style="margin:8px 0; text-indent:2em; background:rgba(254,240,138,0.18); border-left:3px solid #eab308; padding:4px 8px;">${markedLine}</p>`;
-                        }
-                    }
-                }
-                return `<p style="margin:8px 0; text-indent:2em;">${trimmed}</p>`;
+                const r = highlightSafeText(trimmed);
+                return r.matched
+                    ? `<p class="ft-para ft-para-marked">${r.html}</p>`
+                    : `<p class="ft-para">${r.html}</p>`;
             };
 
+            const safeBookTitle = this._esc(data.title || bookTitle || "考亭原典");
             const ftModalHtml = `
-                <div class="fulltext-reader-modal" style="width:92%; max-width:980px; height:85vh; background:#fdfbf7; border-radius:12px; display:flex; flex-direction:column; overflow:hidden; border:2px solid #c59b4c; box-shadow:0 20px 40px rgba(0,0,0,0.45);">
-                    <div style="background:#8b1d1d; color:#fff; padding:12px 20px; display:flex; justify-content:space-between; align-items:center;">
-                        <div style="display:flex; align-items:center; gap:10px;">
-                            <span style="background:#d97706; color:#fff; font-size:11px; padding:2px 8px; border-radius:10px; font-weight:700;">原典特藏文献</span>
-                            <h3 style="margin:0; font-size:17px; font-family:var(--font-serif);">${data.title || bookTitle}</h3>
-                            <span style="font-size:12px; opacity:0.85;">全篇共 ${data.char_count || fullText.length} 字</span>
-                            ${(highlightSnippet || chapterName) ? `<span style="background:#fef3c7; color:#92400e; font-size:11.5px; padding:2px 8px; border-radius:10px; font-weight:700; border:1px solid #f59e0b;">🎯 已精准定位至该文段所在处并黄底高亮标注</span>` : ''}
+                <div class="fulltext-reader-modal">
+                    <div class="ft-header">
+                        <div class="ft-title-group">
+                            ${chapters.length > 1 ? `<button type="button" class="ft-btn ft-toc-toggle-btn" onclick="library3DEngine.toggleFtSidebar()" title="展开或收起章节目录">📑 目录</button>` : ''}
+                            <span class="ft-tag">原典特藏</span>
+                            <h3 class="ft-book-title">${safeBookTitle}</h3>
+                            <span class="ft-char-count">共 ${Number(data.char_count || fullText.length)} 字</span>
+                            ${(highlightSnippet || chapterName) ? `<span class="ft-locate-pill">🎯 已定位文段</span>` : ''}
                         </div>
-                        <div style="display:flex; align-items:center; gap:8px;">
-                            <button onclick="library3DEngine.adjustFontSize(1)" style="background:rgba(255,255,255,0.2); border:none; color:#fff; padding:4px 10px; border-radius:4px; cursor:pointer;" title="放大字号">A+</button>
-                            <button onclick="library3DEngine.adjustFontSize(-1)" style="background:rgba(255,255,255,0.2); border:none; color:#fff; padding:4px 10px; border-radius:4px; cursor:pointer;" title="缩小字号">A-</button>
-                            <button onclick="library3DEngine.copyBookText()" style="background:rgba(255,255,255,0.2); border:none; color:#fff; padding:4px 10px; border-radius:4px; cursor:pointer;" title="复制全文">📋 复制</button>
-                            <button onclick="this.closest('.fulltext-overlay').remove()" style="background:none; border:none; color:#fff; font-size:18px; cursor:pointer; padding:0 6px;">✕</button>
+                        <div class="ft-actions">
+                            <button type="button" class="ft-btn" onclick="library3DEngine.adjustFontSize(1)" title="放大字号">A+</button>
+                            <button type="button" class="ft-btn" onclick="library3DEngine.adjustFontSize(-1)" title="缩小字号">A-</button>
+                            <button type="button" class="ft-btn" onclick="library3DEngine.copyBookText()" title="复制全文">📋 复制</button>
+                            <button type="button" class="ft-close-btn" onclick="this.closest('.fulltext-overlay').remove()" title="关闭阅读器">✕</button>
                         </div>
                     </div>
-                    <div style="flex:1; display:flex; overflow:hidden;">
+                    <div class="ft-body">
                         ${chapters.length > 1 ? `
-                        <div style="width:230px; border-right:1px solid #e2d9c8; background:#f7f3ec; overflow-y:auto; padding:10px;">
-                            <div style="font-size:12px; font-weight:700; color:#8b1d1d; margin-bottom:8px; padding-bottom:4px; border-bottom:1px solid #e2d9c8;">卷次与篇章导航</div>
-                            <ul style="list-style:none; padding:0; margin:0;">
+                        <aside class="ft-sidebar" id="ft-sidebar-drawer">
+                            <div class="ft-sidebar-head">
+                                <span>卷次与篇章导航</span>
+                                <button type="button" class="ft-sidebar-close" onclick="library3DEngine.toggleFtSidebar(false)">✕</button>
+                            </div>
+                            <ul class="ft-toc-list">
                                 ${chapters.map((ch, idx) => `
-                                    <li class="ft-ch-item ${idx === targetChIdx ? 'active' : ''}" onclick="library3DEngine.jumpToChapter(${idx}, this)" style="padding:6px 8px; font-size:12.5px; border-radius:4px; cursor:pointer; margin-bottom:3px; color:#451a03; border-left:2px solid ${idx === targetChIdx ? '#8b1d1d' : 'transparent'}; background:${idx === targetChIdx ? '#fef3c7' : 'none'}; font-weight:${idx === targetChIdx ? 'bold' : 'normal'};">
-                                        ${idx + 1}. ${ch.title || `第${idx + 1}章`}
+                                    <li class="ft-ch-item ${idx === targetChIdx ? 'active' : ''}" onclick="library3DEngine.jumpToChapter(${idx}, this)">
+                                        ${idx + 1}. ${this._esc(ch.title || `第${idx + 1}章`)}
                                     </li>
                                 `).join('')}
                             </ul>
-                        </div>
+                        </aside>
+                        <div class="ft-sidebar-backdrop" id="ft-sidebar-backdrop" onclick="library3DEngine.toggleFtSidebar(false)"></div>
                         ` : ''}
-                        <div id="ft-scroll-content" style="flex:1; padding:20px 28px; overflow-y:auto; font-size:15.5px; line-height:1.9; color:#1e293b; font-family:var(--font-serif);">
+                        <div id="ft-scroll-content" class="ft-content">
                             ${chapters.length > 0 ? chapters.map((ch, idx) => `
-                                <div id="ft-ch-${idx}" style="margin-bottom:28px;">
-                                    <h4 style="color:#8b1d1d; font-size:17px; margin-top:0; border-bottom:1px dashed #d1c7b7; padding-bottom:6px;">${formatHeader(ch.title || '')}</h4>
+                                <div id="ft-ch-${idx}" class="ft-chapter-block">
+                                    <h4 class="ft-chapter-heading">${formatHeader(ch.title || '')}</h4>
                                     <div>
                                         ${(ch.lines || (ch.content ? ch.content.split('\n') : [])).map(formatLine).join('')}
                                     </div>
@@ -1567,7 +1630,6 @@ class Library3DEngine {
             });
             document.body.appendChild(ftOverlay);
 
-            // 自动毫秒级平滑滚动至黄底高亮标注目标处或章节处
             setTimeout(() => {
                 const target = document.getElementById("ft-highlight-target");
                 if (target) {
@@ -1578,33 +1640,37 @@ class Library3DEngine {
                         chHeader.scrollIntoView({ behavior: "smooth", block: "start" });
                     }
                 }
-            }, 250);
+            }, 220);
         } catch (err) {
-            alert(`获取典籍全文失败: ${err.message}`);
+            if (typeof showToast === "function") showToast(`获取典籍全文失败: ${err.message}`);
         }
     }
 
+    toggleFtSidebar(forceOpen) {
+        const sidebar = document.getElementById("ft-sidebar-drawer");
+        const backdrop = document.getElementById("ft-sidebar-backdrop");
+        if (!sidebar) return;
+        const shouldOpen = typeof forceOpen === "boolean" ? forceOpen : !sidebar.classList.contains("open");
+        sidebar.classList.toggle("open", shouldOpen);
+        if (backdrop) backdrop.classList.toggle("open", shouldOpen);
+    }
+
     jumpToChapter(idx, itemEl) {
-        document.querySelectorAll(".ft-ch-item").forEach(el => {
-            el.style.background = "none";
-            el.style.borderLeftColor = "transparent";
-            el.style.fontWeight = "normal";
-        });
-        if (itemEl) {
-            itemEl.style.background = "#eedfc8";
-            itemEl.style.borderLeftColor = "#8b1d1d";
-            itemEl.style.fontWeight = "bold";
-        }
+        document.querySelectorAll(".ft-ch-item").forEach(el => el.classList.remove("active"));
+        if (itemEl) itemEl.classList.add("active");
         const target = document.getElementById(`ft-ch-${idx}`);
         if (target) {
             target.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+        if (window.innerWidth <= 768) {
+            this.toggleFtSidebar(false);
         }
     }
 
     adjustFontSize(delta) {
         const content = document.getElementById("ft-scroll-content");
         if (!content) return;
-        const currentSize = parseFloat(window.getComputedStyle(content).fontSize) || 15.5;
+        const currentSize = parseFloat(window.getComputedStyle(content).fontSize) || 16;
         const newSize = Math.max(13, Math.min(26, currentSize + delta * 2));
         content.style.fontSize = `${newSize}px`;
     }
@@ -1612,11 +1678,7 @@ class Library3DEngine {
     copyBookText() {
         const content = document.getElementById("ft-scroll-content");
         if (!content) return;
-        navigator.clipboard.writeText(content.innerText).then(() => {
-            alert("典籍全文已成功复制至剪贴板！");
-        }).catch(() => {
-            alert("复制完成，请自行粘贴。");
-        });
+        this._copyTextSafe(content.innerText, "典籍全文已成功复制至剪贴板！");
     }
 
     // 联动至讲筵课堂

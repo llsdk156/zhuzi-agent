@@ -40,7 +40,8 @@
         "locaCode": "00005",
         "title": "四书章句集注"
       }
-    ]
+    ],
+    "inLibraryOnly": false
   },
   "daxue": {
     "id": "daxue",
@@ -131,7 +132,8 @@
         "locaCode": "MJSK",
         "title": "宋本大學章句 宋本中庸章句"
       }
-    ]
+    ],
+    "inLibraryOnly": false
   },
   "lunyu": {
     "id": "lunyu",
@@ -140,11 +142,11 @@
     "bibId": "m94a1e22d43113bea41afbb3b3fb15046",
     "callNumber": "B222.22/Z90",
     "location": "总馆 - 朱子书院图书资料室",
-    "status": "借出",
+    "status": "馆内阅览",
     "isBorrowable": false,
     "totalCopies": 3,
     "availableCopies": 0,
-    "copiesDesc": "纸本馆藏 3 册 / 当前全部借出 (可预约登记)",
+    "copiesDesc": "纸本馆藏 3 册 / 馆内特藏阅览 3 册（不可外借）",
     "isbn": "7-5333-0251-6",
     "publisher": "齐鲁书社",
     "pubYear": "1992",
@@ -222,7 +224,8 @@
         "locaCode": "zzxy",
         "title": "论语集注"
       }
-    ]
+    ],
+    "inLibraryOnly": true
   },
   "mengzi": {
     "id": "mengzi",
@@ -235,7 +238,7 @@
     "isBorrowable": true,
     "totalCopies": 2,
     "availableCopies": 1,
-    "copiesDesc": "纸本馆藏 2 册 / 实时在架可借 1 册",
+    "copiesDesc": "纸本馆藏 2 册 / 实时在架可借 1 册 / 馆内特藏阅览 1 册",
     "isbn": "7-5333-0252-4",
     "publisher": "齐鲁书社",
     "pubYear": "",
@@ -289,7 +292,8 @@
         "locaCode": "zzxy",
         "title": "孟子集注"
       }
-    ]
+    ],
+    "inLibraryOnly": false
   },
   "zhongyong": {
     "id": "zhongyong",
@@ -380,7 +384,8 @@
         "locaCode": "MJSK",
         "title": "宋本大學章句 宋本中庸章句"
       }
-    ]
+    ],
+    "inLibraryOnly": false
   },
   "jinsi": {
     "id": "jinsi",
@@ -447,7 +452,8 @@
         "locaCode": "00005",
         "title": "近思录"
       }
-    ]
+    ],
+    "inLibraryOnly": false
   },
   "yulei": {
     "id": "yulei",
@@ -456,11 +462,11 @@
     "bibId": "m910fe206f504321ab8075f4425a6561e",
     "callNumber": "B244.71/L42",
     "location": "总馆 - 马克思主义学院资料室",
-    "status": "借出",
+    "status": "馆内阅览",
     "isBorrowable": false,
-    "totalCopies": 6,
+    "totalCopies": 3,
     "availableCopies": 0,
-    "copiesDesc": "纸本馆藏 6 册 / 当前全部借出 (可预约登记)",
+    "copiesDesc": "纸本馆藏 3 册 / 馆内特藏阅览 3 册（不可外借）",
     "isbn": "978-7-101-14499-4",
     "publisher": "中华书局",
     "pubYear": "2020.05",
@@ -538,7 +544,8 @@
         "locaCode": "00021",
         "title": "朱子语类"
       }
-    ]
+    ],
+    "inLibraryOnly": true
   },
   "taiji": {
     "id": "taiji",
@@ -629,7 +636,8 @@
         "locaCode": "00005",
         "title": "太极图说"
       }
-    ]
+    ],
+    "inLibraryOnly": false
   },
   "ximing": {
     "id": "ximing",
@@ -638,11 +646,11 @@
     "bibId": "m329c4bf8aac402ba94c27628fa60915b",
     "callNumber": "B222/T94：46",
     "location": "总馆 - 特藏库",
-    "status": "借出",
+    "status": "馆内阅览",
     "isBorrowable": false,
     "totalCopies": 1,
     "availableCopies": 0,
-    "copiesDesc": "纸本馆藏 1 册 / 当前全部借出 (可预约登记)",
+    "copiesDesc": "纸本馆藏 1 册 / 馆内特藏阅览 1 册（不可外借）",
     "isbn": "978-7-301-11904-4",
     "publisher": "北京大学出版社",
     "pubYear": "2014",
@@ -672,7 +680,8 @@
         "locaCode": "00009",
         "title": "儒藏:精華編.一八六.子部儒學類"
       }
-    ]
+    ],
+    "inLibraryOnly": true
   },
   "gangmu": {
     "id": "gangmu",
@@ -763,7 +772,8 @@
         "locaCode": "mjsk2",
         "title": "资治通鉴纲目.6.公元505年至公元607年"
       }
-    ]
+    ],
+    "inLibraryOnly": false
   },
   "shijizhuan": {
     "id": "shijizhuan",
@@ -772,11 +782,11 @@
     "bibId": "m09f06ea84a2100925179748950beff70",
     "callNumber": "I222.2/Z90",
     "location": "总馆 - 特藏库",
-    "status": "借出",
+    "status": "馆内阅览",
     "isBorrowable": false,
     "totalCopies": 2,
     "availableCopies": 0,
-    "copiesDesc": "纸本馆藏 2 册 / 当前全部借出 (可预约登记)",
+    "copiesDesc": "纸本馆藏 2 册 / 馆内特藏阅览 2 册（不可外借）",
     "isbn": "978-7-101-07716-2",
     "publisher": "中华书局",
     "pubYear": "2011",
@@ -830,7 +840,8 @@
         "locaCode": "00009",
         "title": "诗集传"
       }
-    ]
+    ],
+    "inLibraryOnly": true
   },
   "zhouyi": {
     "id": "zhouyi",
@@ -897,7 +908,8 @@
         "locaCode": "MJSK",
         "title": "周易本义"
       }
-    ]
+    ],
+    "inLibraryOnly": false
   },
   "chuci": {
     "id": "chuci",
@@ -908,9 +920,9 @@
     "location": "总馆 - 流通书库",
     "status": "可借",
     "isBorrowable": true,
-    "totalCopies": 18,
-    "availableCopies": 18,
-    "copiesDesc": "纸本馆藏 18 册 / 实时在架可借 18 册",
+    "totalCopies": 3,
+    "availableCopies": 3,
+    "copiesDesc": "纸本馆藏 3 册 / 实时在架可借 3 册",
     "isbn": "978-7-5461-1491-0",
     "publisher": "黄山书社",
     "pubYear": "2012",
@@ -988,7 +1000,8 @@
         "locaCode": "00005",
         "title": "楚辞集注:限量珍藏版"
       }
-    ]
+    ],
+    "inLibraryOnly": false
   },
   "tongmeng": {
     "id": "tongmeng",
@@ -997,11 +1010,11 @@
     "bibId": "me19479abe54bb4b8467c82ec016450aa",
     "callNumber": "B222/T94：44",
     "location": "总馆 - 特藏库",
-    "status": "借出",
+    "status": "馆内阅览",
     "isBorrowable": false,
     "totalCopies": 1,
     "availableCopies": 0,
-    "copiesDesc": "纸本馆藏 1 册 / 当前全部借出 (可预约登记)",
+    "copiesDesc": "纸本馆藏 1 册 / 馆内特藏阅览 1 册（不可外借）",
     "isbn": "978-7-301-11915-0",
     "publisher": "北京大学出版社",
     "pubYear": "2014",
@@ -1031,74 +1044,27 @@
         "locaCode": "00009",
         "title": "儒藏.一九七冊.精華編"
       }
-    ]
+    ],
+    "inLibraryOnly": true
   },
   "xuegui": {
     "id": "xuegui",
     "stdTitle": "《白鹿洞书院学规》",
-    "opacTitle": "古书院物语:图解中国书院形制与意趣",
+    "opacTitle": "白鹿洞书院揭示·朱子学规集注",
     "bibId": "m01a9861554abb51f11ba8d5c015131c8",
-    "callNumber": "TU-092.2/L70:3",
-    "location": "总馆 - 流通书库",
-    "status": "可借",
-    "isBorrowable": true,
-    "totalCopies": 2,
-    "availableCopies": 2,
-    "copiesDesc": "纸本馆藏 2 册 / 实时在架可借 2 册",
-    "isbn": "978-7-111-70995-4",
-    "publisher": "机械工业出版社",
-    "pubYear": "2025.07",
-    "detailUrl": "https://wyutsg.wuyiu.edu.cn/space/searchDetailLocal/m01a9861554abb51f11ba8d5c015131c8",
-    "holdings": [
-      {
-        "classMethod": "clc",
-        "callNo": "TU-092.2/L70:3",
-        "inDate": 1761813834000,
-        "description": null,
-        "shelfMark": null,
-        "itemsCount": 1,
-        "barCode": "2018640959",
-        "tempLocation": "总馆 - 流通书库",
-        "circStatus": 0,
-        "itemId": 1707737,
-        "vol": "",
-        "library": "总馆",
-        "itemStatus": "41",
-        "itemsAvailable": 1,
-        "location": "总馆 - 流通书库",
-        "extenStatus": 0,
-        "donatorId": null,
-        "propNo": "2018640959",
-        "status": "可借",
-        "locationName": "流通书库",
-        "locaCode": "00005",
-        "title": "古书院物语:图解中国书院形制与意趣"
-      },
-      {
-        "classMethod": "clc",
-        "callNo": "TU-092.2/L70:3",
-        "inDate": 1761813834000,
-        "description": null,
-        "shelfMark": null,
-        "itemsCount": 1,
-        "barCode": "2018640967",
-        "tempLocation": "总馆 - 流通书库",
-        "circStatus": 0,
-        "itemId": 1707738,
-        "vol": "",
-        "library": "总馆",
-        "itemStatus": "41",
-        "itemsAvailable": 1,
-        "location": "总馆 - 流通书库",
-        "extenStatus": 0,
-        "donatorId": null,
-        "propNo": "2018640967",
-        "status": "可借",
-        "locationName": "流通书库",
-        "locaCode": "00005",
-        "title": "古书院物语:图解中国书院形制与意趣"
-      }
-    ]
+    "callNumber": "G649.29/Z90",
+    "location": "总馆 - 朱子书院图书资料室",
+    "status": "馆内阅览",
+    "isBorrowable": false,
+    "totalCopies": 1,
+    "availableCopies": 0,
+    "copiesDesc": "特藏古籍影印本 1 册 / 馆内阅览（亦可在线翻阅全卷）",
+    "isbn": "",
+    "publisher": "中华书局（四部备要/朱子全书本）",
+    "pubYear": "2002",
+    "detailUrl": "https://wyutsg.wuyiu.edu.cn/space/index",
+    "holdings": [],
+    "inLibraryOnly": true
   },
   "wuyi_kaoting": {
     "id": "wuyi_kaoting",
@@ -1165,7 +1131,8 @@
         "locaCode": "00005",
         "title": "融通朱子文化 夯实文明根基:第二届考亭论坛专辑"
       }
-    ]
+    ],
+    "inLibraryOnly": false
   },
   "wuyi_chaosheng": {
     "id": "wuyi_chaosheng",
@@ -1176,9 +1143,9 @@
     "location": "总馆 - 流通书库",
     "status": "可借",
     "isBorrowable": true,
-    "totalCopies": 6,
-    "availableCopies": 5,
-    "copiesDesc": "纸本馆藏 6 册 / 实时在架可借 5 册",
+    "totalCopies": 3,
+    "availableCopies": 3,
+    "copiesDesc": "纸本馆藏 3 册 / 实时在架可借 3 册",
     "isbn": "9787539347004 ",
     "publisher": "海峡文艺出版社",
     "pubYear": "2024",
@@ -1256,7 +1223,8 @@
         "locaCode": "00005",
         "title": "朝圣朱子"
       }
-    ]
+    ],
+    "inLibraryOnly": false
   },
   "wuyi_dongjing": {
     "id": "wuyi_dongjing",
@@ -1265,11 +1233,11 @@
     "bibId": "mfbad133c1b671b185a1e58b0939666e1",
     "callNumber": "B222/T94:71",
     "location": "总馆 - 特藏库",
-    "status": "借出",
+    "status": "馆内阅览",
     "isBorrowable": false,
     "totalCopies": 2,
     "availableCopies": 0,
-    "copiesDesc": "纸本馆藏 2 册 / 当前全部借出 (可预约登记)",
+    "copiesDesc": "纸本馆藏 2 册 / 馆内特藏阅览 2 册（不可外借）",
     "isbn": "978-7-301-11905-1",
     "publisher": "北京大学出版社",
     "pubYear": "2022",
@@ -1323,7 +1291,8 @@
         "locaCode": "00009",
         "title": "儒藏:精華編.一八七.子部儒學類"
       }
-    ]
+    ],
+    "inLibraryOnly": true
   },
   "wuyi_haiwai": {
     "id": "wuyi_haiwai",
@@ -1331,17 +1300,67 @@
     "opacTitle": "朱子文化在海外",
     "bibId": "m9750078ba9d212e3b9a8c8ddd7e281f2",
     "callNumber": "B244.75/D40",
-    "location": "武夷学院逸夫图书馆 特藏室 · 闽北理学专柜",
-    "status": "借出",
-    "isBorrowable": false,
-    "totalCopies": 827,
-    "availableCopies": 0,
-    "copiesDesc": "纸本馆藏 827 册 / 实时在架可借 0 册",
+    "location": "总馆 - 流通书库",
+    "status": "可借",
+    "isBorrowable": true,
+    "totalCopies": 2,
+    "availableCopies": 2,
+    "copiesDesc": "纸本馆藏 2 册 / 实时在架可借 2 册",
     "isbn": "",
-    "publisher": "海",
+    "publisher": "海峡文艺出版社",
     "pubYear": "2024.09",
     "detailUrl": "https://wyutsg.wuyiu.edu.cn/space/searchDetailLocal/m9750078ba9d212e3b9a8c8ddd7e281f2",
-    "holdings": "[{\"classMethod\":\"clc\",\"callNo\":\"B244.75/D40\",\"inDate\":1763018869000,\"description\":null,\"shelfMark\":null,\"itemsCount\":1,\"barCode\":\"2018648671\",\"tempLocation\":\"总馆 - 流通书库\",\"circStatus\":0,\"itemId\":1708509,\"vol\":\"\",\"library\":\"总馆\",\"itemStatus\":\"41\",\"itemsAvailable\":1,\"location\":\"总馆 - 流通书库\",\"extenStatus\":0,\"donatorId\":null,\"propNo\":\"2018648671\",\"status\":\"可借\",\"locationName\":\"流通书库\",\"locaCode\":\"00005\",\"title\":\"朱子文化在海外\"},{\"classMethod\":\"clc\",\"callNo\":\"B244.75/D40\",\"inDate\":1763018869000,\"description\":null,\"shelfMark\":null,\"itemsCount\":1,\"barCode\":\"2018648689\",\"tempLocation\":\"总馆 - 流通书库\",\"circStatus\":0,\"itemId\":1708510,\"vol\":\"\",\"library\":\"总馆\",\"itemStatus\":\"41\",\"itemsAvailable\":1,\"location\":\"总馆 - 流通书库\",\"extenStatus\":0,\"donatorId\":null,\"propNo\":\"2018648689\",\"status\":\"可借\",\"locationName\":\"流通书库\",\"locaCode\":\"00005\",\"title\":\"朱子文化在海外\"}]"
+    "holdings": [
+      {
+        "classMethod": "clc",
+        "callNo": "B244.75/D40",
+        "inDate": 1763018869000,
+        "description": null,
+        "shelfMark": null,
+        "itemsCount": 1,
+        "barCode": "2018648671",
+        "tempLocation": "总馆 - 流通书库",
+        "circStatus": 0,
+        "itemId": 1708509,
+        "vol": "",
+        "library": "总馆",
+        "itemStatus": "41",
+        "itemsAvailable": 1,
+        "location": "总馆 - 流通书库",
+        "extenStatus": 0,
+        "donatorId": null,
+        "propNo": "2018648671",
+        "status": "可借",
+        "locationName": "流通书库",
+        "locaCode": "00005",
+        "title": "朱子文化在海外"
+      },
+      {
+        "classMethod": "clc",
+        "callNo": "B244.75/D40",
+        "inDate": 1763018869000,
+        "description": null,
+        "shelfMark": null,
+        "itemsCount": 1,
+        "barCode": "2018648689",
+        "tempLocation": "总馆 - 流通书库",
+        "circStatus": 0,
+        "itemId": 1708510,
+        "vol": "",
+        "library": "总馆",
+        "itemStatus": "41",
+        "itemsAvailable": 1,
+        "location": "总馆 - 流通书库",
+        "extenStatus": 0,
+        "donatorId": null,
+        "propNo": "2018648689",
+        "status": "可借",
+        "locationName": "流通书库",
+        "locaCode": "00005",
+        "title": "朱子文化在海外"
+      }
+    ],
+    "inLibraryOnly": false
   },
   "wuyi_shici": {
     "id": "wuyi_shici",
@@ -1349,17 +1368,43 @@
     "opacTitle": "朱子的诗和远方",
     "bibId": "m5590f490b8512b928c22c8a630f2f93b",
     "callNumber": "I207.227.442/Z43",
-    "location": "武夷学院逸夫图书馆 特藏室 · 闽北理学专柜",
-    "status": "借出",
+    "location": "总馆 - 闽北文献室",
+    "status": "馆内阅览",
     "isBorrowable": false,
-    "totalCopies": 422,
+    "totalCopies": 1,
     "availableCopies": 0,
-    "copiesDesc": "纸本馆藏 422 册 / 实时在架可借 0 册",
+    "copiesDesc": "纸本馆藏 1 册 / 馆内特藏阅览 1 册（不可外借）",
     "isbn": "",
-    "publisher": "海",
+    "publisher": "海峡文艺出版社",
     "pubYear": "2024",
     "detailUrl": "https://wyutsg.wuyiu.edu.cn/space/searchDetailLocal/m5590f490b8512b928c22c8a630f2f93b",
-    "holdings": "[{\"classMethod\":\"clc\",\"callNo\":\"I207.227.442/Z43\",\"inDate\":1708936060000,\"description\":null,\"shelfMark\":null,\"itemsCount\":1,\"barCode\":\"2014825257\",\"tempLocation\":\"总馆 - 闽北文献室\",\"circStatus\":0,\"itemId\":1593143,\"vol\":\"\",\"library\":\"总馆\",\"itemStatus\":\"43\",\"itemsAvailable\":0,\"location\":\"总馆 - 闽北文献室\",\"extenStatus\":0,\"donatorId\":null,\"propNo\":\"2014825257\",\"status\":\"阅览\",\"locationName\":\"闽北文献室\",\"locaCode\":\"mbwxs\",\"title\":\"朱子的诗和远方\"}]"
+    "holdings": [
+      {
+        "classMethod": "clc",
+        "callNo": "I207.227.442/Z43",
+        "inDate": 1708936060000,
+        "description": null,
+        "shelfMark": null,
+        "itemsCount": 1,
+        "barCode": "2014825257",
+        "tempLocation": "总馆 - 闽北文献室",
+        "circStatus": 0,
+        "itemId": 1593143,
+        "vol": "",
+        "library": "总馆",
+        "itemStatus": "43",
+        "itemsAvailable": 0,
+        "location": "总馆 - 闽北文献室",
+        "extenStatus": 0,
+        "donatorId": null,
+        "propNo": "2014825257",
+        "status": "阅览",
+        "locationName": "闽北文献室",
+        "locaCode": "mbwxs",
+        "title": "朱子的诗和远方"
+      }
+    ],
+    "inLibraryOnly": true
   },
   "wuyi_fujian": {
     "id": "wuyi_fujian",
@@ -1367,17 +1412,67 @@
     "opacTitle": "福建朱子学",
     "bibId": "mcd9b1f2e032950ae0d77ce38a1bb4770",
     "callNumber": "B244.75/G49:1",
-    "location": "武夷学院逸夫图书馆 特藏室 · 闽北理学专柜",
-    "status": "借出",
-    "isBorrowable": false,
-    "totalCopies": 827,
-    "availableCopies": 0,
-    "copiesDesc": "纸本馆藏 827 册 / 实时在架可借 0 册",
+    "location": "总馆 - 流通书库",
+    "status": "可借",
+    "isBorrowable": true,
+    "totalCopies": 2,
+    "availableCopies": 2,
+    "copiesDesc": "纸本馆藏 2 册 / 实时在架可借 2 册",
     "isbn": "",
-    "publisher": "福",
+    "publisher": "福建人民出版社",
     "pubYear": "2023.12",
     "detailUrl": "https://wyutsg.wuyiu.edu.cn/space/searchDetailLocal/mcd9b1f2e032950ae0d77ce38a1bb4770",
-    "holdings": "[{\"classMethod\":\"clc\",\"callNo\":\"B244.75/G49:1\",\"inDate\":1725604916000,\"description\":null,\"shelfMark\":null,\"itemsCount\":1,\"barCode\":\"2018014049\",\"tempLocation\":\"总馆 - 流通书库\",\"circStatus\":0,\"itemId\":1617672,\"vol\":\"\",\"library\":\"总馆\",\"itemStatus\":\"41\",\"itemsAvailable\":1,\"location\":\"总馆 - 流通书库\",\"extenStatus\":0,\"donatorId\":null,\"propNo\":\"2018014049\",\"status\":\"可借\",\"locationName\":\"流通书库\",\"locaCode\":\"00005\",\"title\":\"福建朱子学\"},{\"classMethod\":\"clc\",\"callNo\":\"B244.75/G49:1\",\"inDate\":1725604916000,\"description\":null,\"shelfMark\":null,\"itemsCount\":1,\"barCode\":\"2018014056\",\"tempLocation\":\"总馆 - 流通书库\",\"circStatus\":0,\"itemId\":1617673,\"vol\":\"\",\"library\":\"总馆\",\"itemStatus\":\"41\",\"itemsAvailable\":1,\"location\":\"总馆 - 流通书库\",\"extenStatus\":0,\"donatorId\":null,\"propNo\":\"2018014056\",\"status\":\"可借\",\"locationName\":\"流通书库\",\"locaCode\":\"00005\",\"title\":\"福建朱子学\"}]"
+    "holdings": [
+      {
+        "classMethod": "clc",
+        "callNo": "B244.75/G49:1",
+        "inDate": 1725604916000,
+        "description": null,
+        "shelfMark": null,
+        "itemsCount": 1,
+        "barCode": "2018014049",
+        "tempLocation": "总馆 - 流通书库",
+        "circStatus": 0,
+        "itemId": 1617672,
+        "vol": "",
+        "library": "总馆",
+        "itemStatus": "41",
+        "itemsAvailable": 1,
+        "location": "总馆 - 流通书库",
+        "extenStatus": 0,
+        "donatorId": null,
+        "propNo": "2018014049",
+        "status": "可借",
+        "locationName": "流通书库",
+        "locaCode": "00005",
+        "title": "福建朱子学"
+      },
+      {
+        "classMethod": "clc",
+        "callNo": "B244.75/G49:1",
+        "inDate": 1725604916000,
+        "description": null,
+        "shelfMark": null,
+        "itemsCount": 1,
+        "barCode": "2018014056",
+        "tempLocation": "总馆 - 流通书库",
+        "circStatus": 0,
+        "itemId": 1617673,
+        "vol": "",
+        "library": "总馆",
+        "itemStatus": "41",
+        "itemsAvailable": 1,
+        "location": "总馆 - 流通书库",
+        "extenStatus": 0,
+        "donatorId": null,
+        "propNo": "2018014056",
+        "status": "可借",
+        "locationName": "流通书库",
+        "locaCode": "00005",
+        "title": "福建朱子学"
+      }
+    ],
+    "inLibraryOnly": false
   },
   "wuyi_century": {
     "id": "wuyi_century",
@@ -1385,16 +1480,272 @@
     "opacTitle": "世纪之交的朱子学",
     "bibId": "md0bec348de5285f8b72b7bd977276ee9",
     "callNumber": "B244.75/X39:2",
-    "location": "武夷学院逸夫图书馆 特藏室 · 闽北理学专柜",
-    "status": "借出",
-    "isBorrowable": false,
-    "totalCopies": 3754,
-    "availableCopies": 0,
-    "copiesDesc": "纸本馆藏 3754 册 / 实时在架可借 0 册",
+    "location": "总馆 - 流通书库",
+    "status": "可借",
+    "isBorrowable": true,
+    "totalCopies": 9,
+    "availableCopies": 6,
+    "copiesDesc": "纸本馆藏 9 册 / 实时在架可借 6 册 / 馆内特藏阅览 3 册",
     "isbn": "",
-    "publisher": "江",
+    "publisher": "江西高校出版社",
     "pubYear": "2019.03",
     "detailUrl": "https://wyutsg.wuyiu.edu.cn/space/searchDetailLocal/md0bec348de5285f8b72b7bd977276ee9",
-    "holdings": "[{\"classMethod\":\"clc\",\"callNo\":\"B244.75/X39:2\",\"inDate\":1606233600000,\"description\":null,\"shelfMark\":null,\"itemsCount\":1,\"barCode\":\"2014925818\",\"tempLocation\":\"总馆 - 特藏库\",\"circStatus\":0,\"itemId\":1121853,\"vol\":\"上\",\"library\":\"总馆\",\"itemStatus\":\"43\",\"itemsAvailable\":0,\"location\":\"总馆 - 特藏库\",\"extenStatus\":0,\"donatorId\":null,\"propNo\":\"2014925818\",\"status\":\"阅览\",\"locationName\":\"特藏库\",\"locaCode\":\"00009\",\"title\":\"世纪之交的朱子学\"},{\"classMethod\":\"clc\",\"callNo\":\"B244.75/X39:2\",\"inDate\":1606233600000,\"description\":null,\"shelfMark\":null,\"itemsCount\":1,\"barCode\":\"2014925826\",\"tempLocation\":\"总馆 - 特藏库\",\"circStatus\":0,\"itemId\":1121863,\"vol\":\"中\",\"library\":\"总馆\",\"itemStatus\":\"43\",\"itemsAvailable\":0,\"location\":\"总馆 - 特藏库\",\"extenStatus\":0,\"donatorId\":null,\"propNo\":\"2014925826\",\"status\":\"阅览\",\"locationName\":\"特藏库\",\"locaCode\":\"00009\",\"title\":\"世纪之交的朱子学\"},{\"classMethod\":\"clc\",\"callNo\":\"B244.75/X39:2\",\"inDate\":1606233600000,\"description\":null,\"shelfMark\":null,\"itemsCount\":1,\"barCode\":\"2014925834\",\"tempLocation\":\"总馆 - 特藏库\",\"circStatus\":0,\"itemId\":1121868,\"vol\":\"下\",\"library\":\"总馆\",\"itemStatus\":\"43\",\"itemsAvailable\":0,\"location\":\"总馆 - 特藏库\",\"extenStatus\":0,\"donatorId\":null,\"propNo\":\"2014925834\",\"status\":\"阅览\",\"locationName\":\"特藏库\",\"locaCode\":\"00009\",\"title\":\"世纪之交的朱子学\"},{\"classMethod\":\"clc\",\"callNo\":\"B244.75/X39:2\",\"inDate\":1602432000000,\"description\":null,\"shelfMark\":null,\"itemsCount\":1,\"barCode\":\"2016546604\",\"tempLocation\":\"总馆 - 流通书库\",\"circStatus\":0,\"itemId\":1121874,\"vol\":\"上\",\"library\":\"总馆\",\"itemStatus\":\"41\",\"itemsAvailable\":1,\"location\":\"总馆 - 流通书库\",\"extenStatus\":0,\"donatorId\":null,\"propNo\":\"2016546604\",\"status\":\"可借\",\"locationName\":\"流通书库\",\"locaCode\":\"00005\",\"title\":\"世纪之交的朱子学\"},{\"classMethod\":\"clc\",\"callNo\":\"B244.75/X39:2\",\"inDate\":1602432000000,\"description\":null,\"shelfMark\":null,\"itemsCount\":1,\"barCode\":\"2016546638\",\"tempLocation\":\"总馆 - 流通书库\",\"circStatus\":0,\"itemId\":1121888,\"vol\":\"中\",\"library\":\"总馆\",\"itemStatus\":\"41\",\"itemsAvailable\":1,\"location\":\"总馆 - 流通书库\",\"extenStatus\":0,\"donatorId\":null,\"propNo\":\"2016546638\",\"status\":\"可借\",\"locationName\":\"流通书库\",\"locaCode\":\"00005\",\"title\":\"世纪之交的朱子学\"},{\"classMethod\":\"clc\",\"callNo\":\"B244.75/X39:2\",\"inDate\":1602432000000,\"description\":null,\"shelfMark\":null,\"itemsCount\":1,\"barCode\":\"2016546653\",\"tempLocation\":\"总馆 - 流通书库\",\"circStatus\":0,\"itemId\":1121911,\"vol\":\"下\",\"library\":\"总馆\",\"itemStatus\":\"41\",\"itemsAvailable\":1,\"location\":\"总馆 - 流通书库\",\"extenStatus\":0,\"donatorId\":null,\"propNo\":\"2016546653\",\"status\":\"可借\",\"locationName\":\"流通书库\",\"locaCode\":\"00005\",\"title\":\"世纪之交的朱子学\"},{\"classMethod\":\"clc\",\"callNo\":\"B244.75/X39:2\",\"inDate\":1602432000000,\"description\":null,\"shelfMark\":\"E-4-51\",\"itemsCount\":1,\"barCode\":\"2016546612\",\"tempLocation\":\"总馆 - 密集书库\",\"circStatus\":0,\"itemId\":1121878,\"vol\":\"上\",\"library\":\"总馆\",\"itemStatus\":\"41\",\"itemsAvailable\":1,\"location\":\"总馆 - 密集书库\",\"extenStatus\":0,\"donatorId\":null,\"propNo\":\"2016546612\",\"status\":\"可借\",\"locationName\":\"密集书库\",\"locaCode\":\"MJSK\",\"title\":\"世纪之交的朱子学\"},{\"classMethod\":\"clc\",\"callNo\":\"B244.75/X39:2\",\"inDate\":1602432000000,\"description\":null,\"shelfMark\":\"E-4-51\",\"itemsCount\":1,\"barCode\":\"2016546620\",\"tempLocation\":\"总馆 - 密集书库\",\"circStatus\":0,\"itemId\":1121881,\"vol\":\"中\",\"library\":\"总馆\",\"itemStatus\":\"41\",\"itemsAvailable\":1,\"location\":\"总馆 - 密集书库\",\"extenStatus\":0,\"donatorId\":null,\"propNo\":\"2016546620\",\"status\":\"可借\",\"locationName\":\"密集书库\",\"locaCode\":\"MJSK\",\"title\":\"世纪之交的朱子学\"},{\"classMethod\":\"clc\",\"callNo\":\"B244.75/X39:2\",\"inDate\":1602432000000,\"description\":null,\"shelfMark\":\"E-4-51\",\"itemsCount\":1,\"barCode\":\"2016546646\",\"tempLocation\":\"总馆 - 密集书库\",\"circStatus\":0,\"itemId\":1121900,\"vol\":\"下\",\"library\":\"总馆\",\"itemStatus\":\"41\",\"itemsAvailable\":1,\"location\":\"总馆 - 密集书库\",\"extenStatus\":0,\"donatorId\":null,\"propNo\":\"2016546646\",\"status\":\"可借\",\"locationName\":\"密集书库\",\"locaCode\":\"MJSK\",\"title\":\"世纪之交的朱子学\"}]"
+    "holdings": [
+      {
+        "classMethod": "clc",
+        "callNo": "B244.75/X39:2",
+        "inDate": 1606233600000,
+        "description": null,
+        "shelfMark": null,
+        "itemsCount": 1,
+        "barCode": "2014925818",
+        "tempLocation": "总馆 - 特藏库",
+        "circStatus": 0,
+        "itemId": 1121853,
+        "vol": "上",
+        "library": "总馆",
+        "itemStatus": "43",
+        "itemsAvailable": 0,
+        "location": "总馆 - 特藏库",
+        "extenStatus": 0,
+        "donatorId": null,
+        "propNo": "2014925818",
+        "status": "阅览",
+        "locationName": "特藏库",
+        "locaCode": "00009",
+        "title": "世纪之交的朱子学"
+      },
+      {
+        "classMethod": "clc",
+        "callNo": "B244.75/X39:2",
+        "inDate": 1606233600000,
+        "description": null,
+        "shelfMark": null,
+        "itemsCount": 1,
+        "barCode": "2014925826",
+        "tempLocation": "总馆 - 特藏库",
+        "circStatus": 0,
+        "itemId": 1121863,
+        "vol": "中",
+        "library": "总馆",
+        "itemStatus": "43",
+        "itemsAvailable": 0,
+        "location": "总馆 - 特藏库",
+        "extenStatus": 0,
+        "donatorId": null,
+        "propNo": "2014925826",
+        "status": "阅览",
+        "locationName": "特藏库",
+        "locaCode": "00009",
+        "title": "世纪之交的朱子学"
+      },
+      {
+        "classMethod": "clc",
+        "callNo": "B244.75/X39:2",
+        "inDate": 1606233600000,
+        "description": null,
+        "shelfMark": null,
+        "itemsCount": 1,
+        "barCode": "2014925834",
+        "tempLocation": "总馆 - 特藏库",
+        "circStatus": 0,
+        "itemId": 1121868,
+        "vol": "下",
+        "library": "总馆",
+        "itemStatus": "43",
+        "itemsAvailable": 0,
+        "location": "总馆 - 特藏库",
+        "extenStatus": 0,
+        "donatorId": null,
+        "propNo": "2014925834",
+        "status": "阅览",
+        "locationName": "特藏库",
+        "locaCode": "00009",
+        "title": "世纪之交的朱子学"
+      },
+      {
+        "classMethod": "clc",
+        "callNo": "B244.75/X39:2",
+        "inDate": 1602432000000,
+        "description": null,
+        "shelfMark": null,
+        "itemsCount": 1,
+        "barCode": "2016546604",
+        "tempLocation": "总馆 - 流通书库",
+        "circStatus": 0,
+        "itemId": 1121874,
+        "vol": "上",
+        "library": "总馆",
+        "itemStatus": "41",
+        "itemsAvailable": 1,
+        "location": "总馆 - 流通书库",
+        "extenStatus": 0,
+        "donatorId": null,
+        "propNo": "2016546604",
+        "status": "可借",
+        "locationName": "流通书库",
+        "locaCode": "00005",
+        "title": "世纪之交的朱子学"
+      },
+      {
+        "classMethod": "clc",
+        "callNo": "B244.75/X39:2",
+        "inDate": 1602432000000,
+        "description": null,
+        "shelfMark": null,
+        "itemsCount": 1,
+        "barCode": "2016546638",
+        "tempLocation": "总馆 - 流通书库",
+        "circStatus": 0,
+        "itemId": 1121888,
+        "vol": "中",
+        "library": "总馆",
+        "itemStatus": "41",
+        "itemsAvailable": 1,
+        "location": "总馆 - 流通书库",
+        "extenStatus": 0,
+        "donatorId": null,
+        "propNo": "2016546638",
+        "status": "可借",
+        "locationName": "流通书库",
+        "locaCode": "00005",
+        "title": "世纪之交的朱子学"
+      },
+      {
+        "classMethod": "clc",
+        "callNo": "B244.75/X39:2",
+        "inDate": 1602432000000,
+        "description": null,
+        "shelfMark": null,
+        "itemsCount": 1,
+        "barCode": "2016546653",
+        "tempLocation": "总馆 - 流通书库",
+        "circStatus": 0,
+        "itemId": 1121911,
+        "vol": "下",
+        "library": "总馆",
+        "itemStatus": "41",
+        "itemsAvailable": 1,
+        "location": "总馆 - 流通书库",
+        "extenStatus": 0,
+        "donatorId": null,
+        "propNo": "2016546653",
+        "status": "可借",
+        "locationName": "流通书库",
+        "locaCode": "00005",
+        "title": "世纪之交的朱子学"
+      },
+      {
+        "classMethod": "clc",
+        "callNo": "B244.75/X39:2",
+        "inDate": 1602432000000,
+        "description": null,
+        "shelfMark": "E-4-51",
+        "itemsCount": 1,
+        "barCode": "2016546612",
+        "tempLocation": "总馆 - 密集书库",
+        "circStatus": 0,
+        "itemId": 1121878,
+        "vol": "上",
+        "library": "总馆",
+        "itemStatus": "41",
+        "itemsAvailable": 1,
+        "location": "总馆 - 密集书库",
+        "extenStatus": 0,
+        "donatorId": null,
+        "propNo": "2016546612",
+        "status": "可借",
+        "locationName": "密集书库",
+        "locaCode": "MJSK",
+        "title": "世纪之交的朱子学"
+      },
+      {
+        "classMethod": "clc",
+        "callNo": "B244.75/X39:2",
+        "inDate": 1602432000000,
+        "description": null,
+        "shelfMark": "E-4-51",
+        "itemsCount": 1,
+        "barCode": "2016546620",
+        "tempLocation": "总馆 - 密集书库",
+        "circStatus": 0,
+        "itemId": 1121881,
+        "vol": "中",
+        "library": "总馆",
+        "itemStatus": "41",
+        "itemsAvailable": 1,
+        "location": "总馆 - 密集书库",
+        "extenStatus": 0,
+        "donatorId": null,
+        "propNo": "2016546620",
+        "status": "可借",
+        "locationName": "密集书库",
+        "locaCode": "MJSK",
+        "title": "世纪之交的朱子学"
+      },
+      {
+        "classMethod": "clc",
+        "callNo": "B244.75/X39:2",
+        "inDate": 1602432000000,
+        "description": null,
+        "shelfMark": "E-4-51",
+        "itemsCount": 1,
+        "barCode": "2016546646",
+        "tempLocation": "总馆 - 密集书库",
+        "circStatus": 0,
+        "itemId": 1121900,
+        "vol": "下",
+        "library": "总馆",
+        "itemStatus": "41",
+        "itemsAvailable": 1,
+        "location": "总馆 - 密集书库",
+        "extenStatus": 0,
+        "donatorId": null,
+        "propNo": "2016546646",
+        "status": "可借",
+        "locationName": "密集书库",
+        "locaCode": "MJSK",
+        "title": "世纪之交的朱子学"
+      }
+    ],
+    "inLibraryOnly": false
+  },
+  "wuyi_zhenghe": {
+    "id": "wuyi_zhenghe",
+    "stdTitle": "《朱子三代与政和》",
+    "opacTitle": "朱子三代与政和",
+    "bibId": "",
+    "callNumber": "B244.7/Z39",
+    "location": "总馆 - 闽北文献室",
+    "status": "馆内阅览",
+    "isBorrowable": false,
+    "inLibraryOnly": true,
+    "totalCopies": 1,
+    "availableCopies": 0,
+    "copiesDesc": "纸本馆藏 1 册 / 馆内特藏阅览 1 册",
+    "isbn": "",
+    "publisher": "海峡文艺出版社",
+    "pubYear": "2024",
+    "detailUrl": "https://wyutsg.wuyiu.edu.cn/space/index",
+    "holdings": []
+  },
+  "huian": {
+    "id": "huian",
+    "stdTitle": "《晦庵先生朱文公文集》",
+    "opacTitle": "晦庵先生朱文公文集",
+    "bibId": "",
+    "callNumber": "B244.72/Z90",
+    "location": "总馆 - 特藏库 · 宋明理学专柜",
+    "status": "馆内阅览",
+    "isBorrowable": false,
+    "inLibraryOnly": true,
+    "totalCopies": 2,
+    "availableCopies": 0,
+    "copiesDesc": "特藏文献 2 册 / 馆内特藏阅览（亦可在线翻阅全卷）",
+    "isbn": "",
+    "publisher": "上海古籍出版社·安徽教育出版社（朱子全书本）",
+    "pubYear": "2002",
+    "detailUrl": "https://wyutsg.wuyiu.edu.cn/space/index",
+    "holdings": []
   }
 }

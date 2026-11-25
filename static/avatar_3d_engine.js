@@ -87,24 +87,16 @@ class Avatar3DEngine {
         ];
 
         this.preloadAssets();
-        this.preloadVideos();
     }
 
     preloadAssets() {
-        Object.values(this.assets).forEach(src => {
-            const img = new Image();
-            img.src = src;
-        });
+        // 仅预加载默认 3/4 立绘；移动端按需加载其他角度以节省流量
+        const img = new Image();
+        img.src = this.assets.three_quarter;
     }
 
     preloadVideos() {
-        // 预加载所有状态视频，确保情境切换零等待、零卡顿
-        Object.values(this.videoAssets).forEach(src => {
-            const v = document.createElement("video");
-            v.src = src;
-            v.preload = "auto";
-            v.load();
-        });
+        // 已停用：#view-qa 使用纯净高清立绘模式，避免白白下载 ~2MB 隐藏视频
     }
 
     init() {
@@ -153,14 +145,17 @@ class Avatar3DEngine {
             });
         }
 
+        // 平板与手机端默认收起右侧立绘面板，释放 100% 聊天宽度
+        if (window.innerWidth <= 1024 && this.paneEl) {
+            this.isCollapsed = true;
+            this.paneEl.classList.add("collapsed");
+        }
+
         // 默认显示待机候教情境
         this.setState("idle");
 
         // 绑定事件
         this.bindEvents();
-
-        // 启动 3D 渲染动力学物理循环 (鼠标视差追踪与惯性平滑)
-        this.startPhysicsLoop();
 
         // 1.5秒后轻柔浮现初始欢迎箴规
         setTimeout(() => {
@@ -169,7 +164,7 @@ class Avatar3DEngine {
             }
         }, 1500);
 
-        console.log("✔ 考亭先生无界 3D 连贯视频数字人系统初始化完毕");
+        console.log("✔ 考亭先生数字人系统初始化完毕");
     }
 
     // 手动循环演示所有动作
@@ -233,11 +228,15 @@ class Avatar3DEngine {
             }
         });
 
-        // 移动端触摸支持
+        // 移动端触摸支持（增加水平滑动意图判定，避免误触与垂直滚动冲突）
+        this.dragStartY = 0;
+        this.touchIntentLocked = null;
         this.boxEl.addEventListener("touchstart", (e) => {
             if (e.touches.length === 1) {
                 this.isDragging = true;
+                this.touchIntentLocked = null;
                 this.dragStartX = e.touches[0].clientX;
+                this.dragStartY = e.touches[0].clientY;
                 this.dragStartAngle = this.targetOrbitAngle;
             }
         }, { passive: true });
@@ -245,34 +244,29 @@ class Avatar3DEngine {
         window.addEventListener("touchmove", (e) => {
             if (!this.isDragging || e.touches.length !== 1) return;
             const deltaX = e.touches[0].clientX - this.dragStartX;
+            const deltaY = e.touches[0].clientY - this.dragStartY;
+            if (!this.touchIntentLocked) {
+                if (Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10) return;
+                this.touchIntentLocked = Math.abs(deltaX) > Math.abs(deltaY) ? "h" : "v";
+            }
+            if (this.touchIntentLocked !== "h") return;
             this.targetOrbitAngle = (this.dragStartAngle + deltaX * 0.6) % 360;
             this.onOrbitAngleChange(this.targetOrbitAngle);
         }, { passive: true });
 
         window.addEventListener("touchend", () => {
             if (this.isDragging) {
+                const wasHorizontal = this.touchIntentLocked === "h";
                 this.isDragging = false;
-                this.snapToNearestAngle();
+                this.touchIntentLocked = null;
+                if (wasHorizontal) this.snapToNearestAngle();
             }
         });
     }
 
-    // 动力学平滑渲染循环 (Spring Lerp)
+    // 动力学平滑渲染循环 (按需休眠，节省移动设备电量)
     startPhysicsLoop() {
-        const update = () => {
-            this.currentTilt.x += (this.targetTilt.x - this.currentTilt.x) * 0.08;
-            this.currentTilt.y += (this.targetTilt.y - this.currentTilt.y) * 0.08;
-            this.orbitAngle += (this.targetOrbitAngle - this.orbitAngle) * 0.12;
-
-            if (this.wrapperEl && !this.isCollapsed) {
-                const combinedRotY = this.currentTilt.y + (this.isDragging ? (this.orbitAngle % 30) * 0.2 : 0);
-                const rotX = this.currentTilt.x;
-                this.wrapperEl.style.transform = `perspective(900px) rotateY(${combinedRotY.toFixed(2)}deg) rotateX(${rotX.toFixed(2)}deg)`;
-            }
-
-            this.rafId = requestAnimationFrame(update);
-        };
-        this.rafId = requestAnimationFrame(update);
+        // 当前立绘采用纯净静态防抖显示，无需空转 60FPS rAF
     }
 
     onOrbitAngleChange(angle) {
@@ -539,6 +533,14 @@ class Avatar3DEngine {
         if (this.actionTextEl) {
             this.actionTextEl.textContent = activeLabel;
         }
+        const mobileStatusEl = document.getElementById("qa-mobile-avatar-status");
+        if (mobileStatusEl) {
+            mobileStatusEl.textContent = activeLabel;
+        }
+        const mobileDotEl = document.getElementById("qa-mobile-avatar-dot");
+        if (mobileDotEl) {
+            mobileDotEl.className = `live-dot-pulse ${state}`;
+        }
 
         if (this.liveDotEl) {
             this.liveDotEl.className = `live-dot-pulse ${state}`;
@@ -571,8 +573,9 @@ class Avatar3DEngine {
     }
 
     setMood(moodText) {
+        const cleanMood = String(moodText || "").replace(/^【|】$/g, "");
         if (this.moodPill) {
-            this.moodPill.textContent = `【${moodText}】`;
+            this.moodPill.textContent = `【${cleanMood}】`;
         }
     }
 
@@ -680,8 +683,12 @@ class Avatar3DEngine {
         }, 4200);
     }
 
-    // 显示开示浮动气泡
+    // 显示开示浮动气泡（同步更新移动端紧凑状态栏语录）
     showSpeechBubble(text, duration = 4000) {
+        const mobileQuoteEl = document.getElementById("qa-mobile-avatar-quote");
+        if (mobileQuoteEl && text) {
+            mobileQuoteEl.textContent = text;
+        }
         if (!this.speechBubble) return;
         this.speechBubble.textContent = text;
         this.speechBubble.classList.add("visible");
@@ -724,28 +731,44 @@ class Avatar3DEngine {
         }, 4200);
     }
 
-    // 展开/收起
+    // 展开/收起（兼容桌面折叠栏与移动端浮层立绘）
     toggleCollapse() {
         if (!this.paneEl) return;
         this.isCollapsed = !this.isCollapsed;
         if (this.isCollapsed) {
             this.paneEl.classList.add("collapsed");
+            this.paneEl.classList.remove("mobile-avatar-open");
         } else {
             this.paneEl.classList.remove("collapsed");
+            if (window.innerWidth <= 1024) {
+                this.paneEl.classList.add("mobile-avatar-open");
+            }
         }
     }
 
-    expandIfCollapsed() {
+    expandIfCollapsed(e) {
         if (this.paneEl && this.isCollapsed) {
+            if (e && typeof e.stopPropagation === "function") e.stopPropagation();
             this.toggleCollapse();
         }
     }
 
     onResize() {
-        // 自适应调整
+        if (!this.paneEl) return;
+        if (window.innerWidth > 1024) {
+            this.paneEl.classList.remove("mobile-avatar-open");
+        } else if (!this.paneEl.classList.contains("mobile-avatar-open")) {
+            this.isCollapsed = true;
+            this.paneEl.classList.add("collapsed");
+        }
     }
 
     setPose(poseName, resetMode = false) {
+        if (poseName === "standing") {
+            this.setState("idle");
+            this.onOrbitAngleChange(0);
+            return;
+        }
         if (this.videoAssets[poseName]) {
             this.setState(poseName);
         } else if (this.assets[poseName]) {

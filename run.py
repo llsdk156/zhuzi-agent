@@ -6,10 +6,18 @@ import os
 import sys
 import socket
 
-# 确保项目根目录在 sys.path
+# 确保项目根目录在 sys.path 并加载 .env
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
+
+try:
+    from dotenv import load_dotenv
+    _env_file = os.path.join(BASE_DIR, ".env")
+    if os.path.exists(_env_file):
+        load_dotenv(_env_file, override=False)
+except ImportError:
+    pass
 
 import uvicorn
 from rag.rag_service import rag_service

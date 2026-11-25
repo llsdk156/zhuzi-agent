@@ -25,6 +25,10 @@ class GalGameEngine {
         this.typewriterTimer = null;
         this.isTyping = false;
         this.currentFullText = "";
+        this._initialized = false;
+        this._inquirySeq = 0;
+        this._inquiryAbortController = null;
+        this.sessionId = "galgame_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 7);
 
         // 原典研习六大专属讲义核心库
         this.syllabusDatabase = {
@@ -997,6 +1001,15 @@ class GalGameEngine {
         this.init();
     }
 
+    _esc(str) {
+        return String(str == null ? "" : str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
     init() {
         this.containerEl = document.getElementById("galgame-screen-wrap");
         this.charImgEl = document.getElementById("galgame-char-img");
@@ -1013,26 +1026,41 @@ class GalGameEngine {
             return;
         }
 
-        // 初始化研学履历初始记录
+        // 若已初始化过，切回讲筵标签页时保留当前进度，不再重置回第一章
+        if (this._initialized) {
+            this.renderStudyRecords();
+            this.updateStudyStats();
+            this.updateScoreDisplay();
+            return;
+        }
+        this._initialized = true;
+
+        // 初始化研学履历初始记录（与第一章《武夷精舍》保持一致）
         if (this.studyRecords.length === 0) {
             this.studyRecords.push({
                 time: new Date().toLocaleTimeString(),
-                stepName: "第一节 · 升堂定纲",
-                choiceText: "步入书院讲筵，端坐静听先生开篇讲授《大学》三纲八目。",
+                stepName: "第一节 · 精舍初筵",
+                choiceText: "步入武夷精舍讲筵，端坐静听考亭先生开篇讲授。",
                 gainScore: 0,
-                masterReply: "诸生后学端坐！子程子尝言：《大学》，孔氏之遗书，而初学入德之门也。"
+                masterReply: "诸生进前！今日老夫在武夷山隐屏峰下武夷精舍开席论道。"
             });
         }
         this.renderStudyRecords();
         this.updateStudyStats();
 
-        // 默认载入《大学》首讲
+        // 默认载入武夷精舍首讲
         this.loadChapter("wuyi_jingshe", 0);
     }
 
     // 载入章节与步骤
     loadChapter(chapterId, stepIndex = 0) {
         if (!this.chapters[chapterId]) return;
+        // 切换章节/步骤时取消在途的自由请益请求，防止陈旧响应覆盖新场景
+        if (this._inquiryAbortController) {
+            try { this._inquiryAbortController.abort(); } catch (e) {}
+            this._inquiryAbortController = null;
+        }
+        this._inquirySeq++;
         this.currentChapterId = chapterId;
         this.currentStepIndex = stepIndex;
 
@@ -1086,7 +1114,7 @@ class GalGameEngine {
     }
 
     // 渲染剧情步骤
-    renderStep(step) {
+    renderStep(step, options = {}) {
         if (!step) return;
 
         // 1. 切换先生体态与神态特写 (确保单一人物自然融合，绝不重叠两尊人物)
@@ -1141,11 +1169,12 @@ class GalGameEngine {
         // 7. 更新悟性与持敬指标
         this.updateScoreDisplay();
 
-        // 8. 实时语音配音 (考亭大儒苍劲风骨)
-        if (typeof autoTTS !== "undefined" && autoTTS && step.text) {
-            setTimeout(() => {
+        // 8. 实时语音配音（仅在开启 autoTTS 且非占位提示时触发一次，杜绝重叠调用）
+        if (!options.skipAutoVoice && typeof autoTTS !== "undefined" && autoTTS && step.text) {
+            clearTimeout(this._autoVoiceTimer);
+            this._autoVoiceTimer = setTimeout(() => {
                 this.playCurrentVoice();
-            }, 300);
+            }, 260);
         }
     }
 
@@ -1202,7 +1231,7 @@ class GalGameEngine {
         choices.forEach((choice, idx) => {
             const btn = document.createElement("button");
             btn.className = "gal-choice-btn";
-            btn.innerHTML = `<span class="choice-prefix">${String.fromCharCode(65 + idx)}.</span> <span class="choice-text">${choice.text}</span>`;
+            btn.innerHTML = `<span class="choice-prefix">${String.fromCharCode(65 + idx)}.</span> <span class="choice-text">${this._esc(choice.text)}</span>`;
             
             btn.onclick = () => {
                 if (choice.gainScore) {
@@ -1232,8 +1261,13 @@ class GalGameEngine {
                     this.submitInquiry(choice.followUpQuery);
                     return;
                 }
+                if (choice.nextAction === "nav_quiz") {
+                    if (window.openQuizModal) window.openQuizModal();
+                    return;
+                }
                 if (choice.nextAction === "nav_plan") {
-                    if (window.switchNav) switchNav("plan");
+                    if (window.openQuizModal) window.openQuizModal();
+                    else if (window.switchNav) switchNav("qa");
                     return;
                 }
                 if (choice.nextAction === "nav_qa") {
@@ -1350,18 +1384,18 @@ class GalGameEngine {
         listEl.innerHTML = this.studyRecords.map(rec => `
             <div class="study-record-card">
                 <div class="record-card-top">
-                    <span class="record-time">⏱️ ${rec.time}</span>
-                    <span class="record-chapter-tag">${rec.stepName || '研学论学'}</span>
-                    ${rec.gainScore ? `<span class="record-score-gain">+${rec.gainScore} 悟性</span>` : ''}
+                    <span class="record-time">⏱️ ${this._esc(rec.time)}</span>
+                    <span class="record-chapter-tag">${this._esc(rec.stepName || '研学论学')}</span>
+                    ${rec.gainScore ? `<span class="record-score-gain">+${this._esc(rec.gainScore)} 悟性</span>` : ''}
                 </div>
                 <div class="record-choice-line">
                     <strong class="choice-prefix-mark">【生问/所择】</strong>
-                    <span>${rec.choiceText}</span>
+                    <span>${this._esc(rec.choiceText)}</span>
                 </div>
                 ${rec.masterReply ? `
                 <div class="record-master-line">
                     <span class="master-prefix-mark">【先生点拨】</span>
-                    <span>${rec.masterReply}</span>
+                    <span>${this._esc(rec.masterReply)}</span>
                 </div>` : ''}
             </div>
         `).join("");
@@ -1404,8 +1438,8 @@ class GalGameEngine {
         const scoreE = document.getElementById("cert-score-enlightenment");
         const scoreR = document.getElementById("cert-score-reverence");
         const dateEl = document.getElementById("cert-date-text");
-        if (scoreE) scoreE.textContent = Math.max(92, this.enlightenment);
-        if (scoreR) scoreR.textContent = Math.max(90, this.reverence);
+        if (scoreE) scoreE.textContent = this.enlightenment;
+        if (scoreR) scoreR.textContent = this.reverence;
         const now = new Date();
         if (dateEl) {
             dateEl.textContent = `宋庆元四年 · 岁次戊午春（公历 ${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日）`;
@@ -1469,29 +1503,55 @@ class GalGameEngine {
                     仁兄对先生方才所授经义有何创见或疑惑？亦或欲听先生讲述何种理学精义？可自拟论题或点击常研论题：
                 </p>
                 <div class="inquire-preset-topics">
-                    ${presetTopics.map(t => `<button class="preset-topic-btn" onclick="document.getElementById('inquire-custom-text').value='${t}'; document.querySelectorAll('.preset-topic-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active');">${t}</button>`).join('')}
+                    ${presetTopics.map(t => `<button type="button" class="preset-topic-btn" data-topic="${this._esc(t)}">${this._esc(t)}</button>`).join('')}
                 </div>
                 <textarea id="inquire-custom-text" class="inquire-textarea" placeholder="在此键入仁兄心境之惑、经史疑义或考亭史迹..."></textarea>
                 <div class="inquire-actions-row">
-                    <button class="action-pill-btn outline" onclick="this.closest('.galgame-inquire-modal').remove()">
+                    <button type="button" class="action-pill-btn outline" id="inquire-cancel-btn">
                         <span>暂且收回</span>
                     </button>
-                    <button class="action-pill-btn gold" id="inquire-submit-btn">
+                    <button type="button" class="action-pill-btn gold" id="inquire-submit-btn">
                         <span>呈请先生开示 ➔</span>
                     </button>
                 </div>
             </div>
         `;
 
-        modal.querySelector("#inquire-submit-btn").onclick = () => {
-            const val = modal.querySelector("#inquire-custom-text").value.trim();
+        const textarea = modal.querySelector("#inquire-custom-text");
+        modal.querySelectorAll(".preset-topic-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                if (textarea) textarea.value = btn.dataset.topic || "";
+                modal.querySelectorAll(".preset-topic-btn").forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+            });
+        });
+
+        const doSubmit = () => {
+            const val = (textarea ? textarea.value : "").trim();
             if (!val) {
-                alert("请先键入或点击上方常研论题！");
+                if (typeof showToast === "function") showToast("请先键入或点击上方常研论题！");
                 return;
             }
             modal.remove();
             this.submitInquiry(val);
         };
+
+        modal.querySelector("#inquire-submit-btn").onclick = doSubmit;
+        modal.querySelector("#inquire-cancel-btn").onclick = () => modal.remove();
+
+        if (textarea) {
+            textarea.addEventListener("keydown", (e) => {
+                if (e.key === "Enter" && !e.shiftKey && !e.isComposing && e.keyCode !== 229) {
+                    e.preventDefault();
+                    doSubmit();
+                } else if (e.key === "Escape") {
+                    modal.remove();
+                }
+            });
+            if (!window.matchMedia || !window.matchMedia("(pointer: coarse)").matches) {
+                setTimeout(() => textarea.focus(), 60);
+            }
+        }
 
         modal.addEventListener("click", (e) => {
             if (e.target === modal) modal.remove();
@@ -1639,7 +1699,8 @@ class GalGameEngine {
         }
 
         if (matched) {
-            // 直接以与其他讲席步骤完全一致的 GalGame 格式渲染！
+            this.enlightenment = Math.min(100, this.enlightenment + 8);
+            this.reverence = Math.min(100, this.reverence + 6);
             this.renderStep({
                 speaker: "考亭先生",
                 pose: matched.pose || "pose_3_gesture",
@@ -1649,13 +1710,18 @@ class GalGameEngine {
                 choices: matched.choices
             });
             this.showScoreFloatNotice("+8 悟性");
-            if (window.playVoiceByText) {
-                window.playVoiceByText(matched.text, "yunjian");
-            }
             return;
         }
 
-        // 自定义全新论题：平滑打出考亭讲筵提示，并实时连线 AI 认知大模型
+        // 取消之前的自由请益请求并绑定本次请求序列号（防止并发覆盖）
+        if (this._inquiryAbortController) {
+            try { this._inquiryAbortController.abort(); } catch (e) {}
+        }
+        const seq = ++this._inquirySeq;
+        const controller = new AbortController();
+        this._inquiryAbortController = controller;
+
+        // 展示加载过渡对白（skipAutoVoice 防止误播加载提示语）
         this.renderStep({
             speaker: "考亭先生",
             pose: "pose_7_beard",
@@ -1663,25 +1729,34 @@ class GalGameEngine {
             blackboard: `学者当堂请益\n${query.slice(0, 8)}...`,
             text: `“善哉！仁兄发问：‘${query}’，且稍候片刻，待老夫梳理先儒成训，当堂为汝剖析精义——”`,
             choices: []
-        });
+        }, { skipAutoVoice: true });
 
         try {
-            const prompt = `【考亭讲筵第一人称简答指令】请完全以考亭先生朱熹本人的第一人称讲席口吻（自称“老夫”或“老朽”，称学者“仁兄”或“后学”）回答门生在书院课堂上的请益：“${query}”。
-严格要求：
-1. 态度温厚威严、文人风骨，语气自然生动，字数控制在100至140字之间，适合作为 GalGame 对白逐字念出；
-2. 严禁使用任何Markdown标题、严禁输出“【微言大义】”、严禁输出索书号或文献格式；
-3. 请在最后一行单独输出八字工整黑板箴言，格式必须为：[板书] 四字一句 四字一句（例如：[板书] 涵养定静 澄心内省）。`;
-
             const res = await fetch("/api/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    query: prompt,
-                    session_id: `galgame_lecture_${this.currentChapterId}`
-                })
+                    query: query,
+                    mode: "galgame",
+                    session_id: `${this.sessionId}_${this.currentChapterId}`
+                }),
+                signal: controller.signal
             });
+            if (seq !== this._inquirySeq) return;
+            if (!res.ok) {
+                throw new Error(`HTTP ${res.status}`);
+            }
             const data = await res.json();
-            const rawReply = (data.reply || "").trim();
+            if (seq !== this._inquirySeq) return;
+
+            let rawReply = (data.reply || "").trim();
+            if (!rawReply) {
+                throw new Error("空回复");
+            }
+            // 剥离可能残留的参考资料区块
+            if (rawReply.includes("【参考资料】")) {
+                rawReply = rawReply.split("【参考资料】")[0].trim();
+            }
 
             let blackboardText = "即物穷理 居敬存诚\n知行合一 体认身心";
             let speechText = rawReply;
@@ -1690,7 +1765,7 @@ class GalGameEngine {
                 const parts = rawReply.split("[板书]");
                 speechText = parts[0].trim();
                 const bbRaw = parts[1].trim().split("\n")[0].trim();
-                const bbWords = bbRaw.split(/\s+/);
+                const bbWords = bbRaw.split(/\s+/).filter(Boolean);
                 if (bbWords.length >= 2) {
                     blackboardText = `${bbWords[0]}\n${bbWords.slice(1).join(" ")}`;
                 } else if (bbRaw) {
@@ -1698,12 +1773,14 @@ class GalGameEngine {
                 }
             }
 
-            // 清理多余 markdown
-            speechText = speechText.replace(/[#*`_~[\]]/g, '').trim();
-            if (speechText.length > 180) {
-                speechText = speechText.slice(0, 160) + "...";
+            speechText = speechText.replace(/[#*`_~]/g, '').replace(/\n+/g, ' ').trim();
+            if (speechText.length > 220) {
+                const cut = Math.max(speechText.lastIndexOf("。", 210), speechText.lastIndexOf("！", 210), speechText.lastIndexOf("？", 210));
+                speechText = cut > 80 ? speechText.slice(0, cut + 1) : (speechText.slice(0, 200) + "……");
             }
 
+            this.enlightenment = Math.min(100, this.enlightenment + 8);
+            this.reverence = Math.min(100, this.reverence + 6);
             this.renderStep({
                 speaker: "考亭先生",
                 pose: "pose_3_gesture",
@@ -1717,12 +1794,9 @@ class GalGameEngine {
                 ]
             });
             this.showScoreFloatNotice("+8 悟性");
-
-            // 实时语音配音
-            if (window.playVoiceByText) {
-                window.playVoiceByText(speechText, "yunjian");
-            }
         } catch (err) {
+            if (err && err.name === "AbortError") return;
+            if (seq !== this._inquirySeq) return;
             console.error(err);
             this.renderStep({
                 speaker: "考亭先生",
@@ -1735,6 +1809,10 @@ class GalGameEngine {
                     { text: "💡 另选议题向先生当堂请益", isCustom: true }
                 ]
             });
+        } finally {
+            if (this._inquiryAbortController === controller) {
+                this._inquiryAbortController = null;
+            }
         }
     }
 
